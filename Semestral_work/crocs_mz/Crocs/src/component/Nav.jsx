@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../assets/menu.css'; // Import your CSS file
+import '../assets/style/menu.css'; // Import your CSS file
 import LogoCrocs from '../assets/img/crocs_logo.webp';
 
 const Navbar = () => {

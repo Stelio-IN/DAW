@@ -5,7 +5,7 @@ import Footer from './component/Footer';
 import Nav from './component/Nav'; 
 import Home from './component/Home'; // Componente para a página inicial
 import Login from './component/LoginRegister'; // Componente para a página de login
-import SobreNos from './component/SobreNos'; // Componente para Sobre Nós
+import SobreNos from './component/About'; // Componente para Sobre Nós
 import Loja from './component/Loja'; // Componente para Loja
 
 
