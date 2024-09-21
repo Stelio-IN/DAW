@@ -118,7 +118,71 @@ padding: 0 30px;
     box-shadow: 1px 1px 1px rgb(235, 233, 233);
 }
 
-
+.mark_icon_box {
+    position: relative;
+  }
+  
+  .mark_icon_box:hover .mark_icon {
+    transform: translateY(-3px);
+  }
+  
+  .mark_icon {
+    color: #fff;
+    font-size: 30px;
+    transition: all 0.3s;
+  }
+  
+  .badge_mark {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 20%;
+    background-color: tomato;
+    font-size: 15px;
+    color: #fff;
+  }
+  
+  @keyframes tada {
+    from {
+      transform: scale3d(1, 1, 1);
+      opacity: 0;
+    }
+  
+    10%,
+    20% {
+      transform: scale3d(0.8, 0.66, 0.66) rotate3d(0, 0, 1, -3deg);
+    }
+  
+    30%,
+    50%,
+    70%,
+    90% {
+      transform: scale3d(1.2, 1.2, 1.2) rotate3d(0, 0, 1, 3deg);
+    }
+  
+    40%,
+    60%,
+    80% {
+      transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+    }
+  
+    to {
+      transform: scale3d(1, 1, 1);
+      opacity: 1;
+    }
+  }
+  
+  .tada {
+    animation-name: tada;
+    animation-duration: 300ms;
+    animation-fill-mode: both;
+  }
+  
 
 .mega-box .content{
     background-color: #ffffff;
@@ -453,7 +517,43 @@ padding: 0 30px;
     }
 
     
-
+    .icon_Sopping_box {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+      }
+      
+      .shoppe_icon_box {
+        position: relative;
+      }
+      
+      .shoppe_icon_box:hover .shop_icon {
+        transform: translateY(-3px);
+      }
+      
+      .shop_icon {
+        color: #fff;
+        font-size: 40px;
+        transition: all 0.3s;
+      }
+      
+      .badge_shope {
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        right: -3px;
+        bottom: 0;
+        border-radius: 20%;
+        background-color: tomato;
+        font-size: 15px;
+        color: #fff;
+      }
+      
    
 
     .btn_pesquisa{

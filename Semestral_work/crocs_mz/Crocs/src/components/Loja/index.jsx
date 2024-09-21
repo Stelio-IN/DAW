@@ -1,5 +1,5 @@
 import React from 'react';
-import '../assets/style/loja.css';
+import './loja.css';
 const Loja = () => {
   return (
     <div className='content-loja'>
