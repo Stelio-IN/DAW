@@ -117,6 +117,7 @@ const Navbar = () => {
                   </ul>
                 </div>
                 <div className="row">
+                 
                   <ul className="mega-links">
                     <Link to="#"><img src="pose1.webp" alt="Promo" /></Link>
                     <button>Ver Oferta</button>
@@ -134,7 +135,12 @@ const Navbar = () => {
 
           <li><Link to="/loja">Loja</Link></li>
           <li><Link to="/sobre-nos">About us</Link></li>
-
+          <li><div className='w-5 h-6 bg-gray-100 rounded-full
+        flex justify-center items-center relative' onClick={handleOpenTabCart}>
+            <img src={iconCart} alt="" className='w-4'/>
+            <span className='absolute top-2/3 right-1/2 bg-red-500 text-white text-sm
+            w-5 h-5 rounded-full flex justify-center items-center'>{totalQuantity}</span>
+        </div></li>
           <div className="Componentes">
             <Link to="#"><input type="button" className="btn_carrinho" /></Link>
             <Link to="#"><input type="button" className="btn_favorito" /></Link>
