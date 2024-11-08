@@ -13,14 +13,14 @@
         min-height: 100vh;
     }
   }
-  
-  .content {
-    width: 100%;
-    height: 100vh;
+
+  .container {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #cc5e5e;
-    padding: 20px;
-  }
+    height: 100vh; /* Define a altura total da tela */
+    width: 100vw;
+    background-color: #f2f2f2; /* Cor de fundo opcional */
+}
   
+ 

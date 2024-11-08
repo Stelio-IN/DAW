@@ -23,4 +23,12 @@
     background-color: #d8a8a8;
     padding: 20px;
   }
+  .container-loja {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Define a altura total da tela */
+    width: 100vw;
+    background-color: #f2f2f2; /* Cor de fundo opcional */
+}
   

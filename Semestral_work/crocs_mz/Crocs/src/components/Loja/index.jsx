@@ -2,7 +2,7 @@ import React from 'react';
 import './loja.css';
 const Loja = () => {
   return (
-    <div className='content-loja'>
+    <div className='container-loja'>
     <h1>Loja</h1>
     </div>
   );
