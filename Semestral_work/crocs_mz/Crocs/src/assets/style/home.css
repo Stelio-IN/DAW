@@ -8,12 +8,15 @@ html, body {
   height: 100%;
   display: flex;
   flex-direction: column; /* Permite que o conteúdo cresça na vertical */
+  background-color: white;
 }
 
 .content {
   flex: 1; /* Faz com que o conteúdo preencha o espaço restante */
   display: flex;
   flex-direction: column;
+  width: 100vw;
+  background-color: white;
 }
 
 :root {
@@ -24,20 +27,21 @@ html, body {
   --bg-color: #fff;
 }
 
+
+/*  Seccao 1*/
 .Container {
   min-height: 80vh;
-  width: 100%;
   background-color: rgb(3, 255, 226);
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  background-image: url('../assets/img/background_1.avif');
+  justify-content: space-between;
+  background-image: url('../img/background_1.avif');
   background-position: 70%;
   background-size: cover;
 }
 
 .home-container {
-  width: 99.5vw;
+  margin-left: 5%;
   text-align: justify;
 }
 
@@ -75,6 +79,8 @@ html, body {
   transition: ease 0.5s;
 }
 
+
+/*   seccao 2 */
 .Advantages-Container {
   display: flex;
   width: 800px;
@@ -85,6 +91,7 @@ html, body {
   height: 10vh;
   justify-content: center;
   margin-bottom: 10px;
+  background-color: white;
 }
 
 .Advantages-Container div {
@@ -103,3 +110,174 @@ html, body {
   width: 32px;
   height: 32px;
 }
+
+
+/* seccao 3*/
+
+
+  /* SEÇÃO 3 */
+  .Container_2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 40vh;
+    margin: auto;
+    background-color: rgb(255, 255, 255);
+  }
+  
+  .Container-content {
+    width: 600px;
+    height: 100px;
+    text-align: justify;
+  }
+  
+  .Container-content h2 {
+    font-size: 22pt;
+    font-style: oblique;
+    color: green;
+  }
+  
+  .Container-content p {
+    font-style: italic;
+    color: rgb(93, 94, 95);
+    line-height: 1.5;
+  }
+  
+  .Container-promocional {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 500px;
+    height: 230px;
+    border-radius: 30px;
+    background-color: rgba(223, 223, 223, 0.6);
+    box-shadow: 1px 1px 1px black;
+  }
+  
+  .Container-promocional div:nth-child(1) {
+    margin-left: 16px;
+    width: 200px;
+    text-align: left;
+  }
+  
+  .Container-promocional div:nth-child(2) img {
+    width: 250px;
+  }
+
+  /* SHOP CONTENT */
+  .shop-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1000px;
+    margin: auto;
+    gap: 1rem;
+  }
+  
+  .shop-container .box {
+    position: relative;
+    padding: 10px;
+    border-radius: 0.5rem;
+    box-shadow: 1px 2px 4px rgba(15, 54, 55, 0.1);
+    padding-bottom: 50px;
+  }
+  
+  .shop-container .box img {
+    width: 100%;
+    height: 250px;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    background: #ece9f358;
+  }
+  
+  .shop-container .box h2,
+  .shop-container .box span {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #4a4b4b;
+  }
+  
+  .shop-container .box button {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 1.6rem;
+    padding: 13px;
+    font-style: italic;
+    border-radius: 1rem;
+    background-color: #4a4b4b;
+    color: #fff;
+    border: none;
+    width: 135px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .shop-container .box .bx {
+    position: absolute;
+    bottom: 1rem;
+    right: 0.8rem;
+    padding: 10px;
+    font-size: 20px;
+    background: var(--main--color);
+    color: var(--bg-color);
+    border-radius: 0.5rem;
+  }
+  
+  .heading {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .heading span {
+    border-bottom: 3px solid rgb(28, 195, 28);
+  }
+
+
+  
+  /* SEÇÃO 4 */
+  .Container-extended {
+    display: flex;
+    gap: 2rem;
+    width: 1100px;
+    margin: auto;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  
+  .Container-extended div:nth-child(1),
+  .Container-extended div:nth-child(2) {
+    width: 700px;
+    height: 60vh;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 10px;
+  }
+  
+  .Container-extended div:nth-child(1) {
+    background-image: url('template3.webp');
+  }
+  
+  .Container-extended div:nth-child(2) {
+    background-image: url('teste8.png');
+    background-color: red;
+    opacity: 0.7;
+    transition: opacity 0.5s ease-in;
+  }
+  
+  .Container-extended div:nth-child(2):hover {
+    opacity: 1;
+  }
+  
+  .Container-extended div p {
+    position: relative;
+    top: 20rem;
+    left: 3rem;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    font-style: italic;
+    color: aliceblue;
+    z-index: 1;
+  }
+  
+  

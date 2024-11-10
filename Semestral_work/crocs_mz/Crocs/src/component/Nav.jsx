@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="wrapper">
         <div className="logo">
           <Link to="/">
-            <span style={{ color: 'rgb(0, 0, 0)', fontWeight: 'bold', fontSize: '25pt' }}>
+            <span style={{ color: 'rgb(7, 79, 37)', fontWeight: 'bold', fontSize: '25pt' }}>
               Crocs<sup style={{ fontSize: '0.5rem' }}>TM</sup>
             </span>
             {/* <img src={LogoCrocs} alt="Logo" className="logo-img" /> */}
