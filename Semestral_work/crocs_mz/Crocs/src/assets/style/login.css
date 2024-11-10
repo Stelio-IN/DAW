@@ -1,0 +1,110 @@
+/* * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+} */
+
+html, body {
+    height: 100%;
+    font-family: Arial, sans-serif;
+    margin-bottom: 200px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Define a altura total da tela */
+    width: 100vw;
+    background-color: #f2f2f2; /* Cor de fundo opcional */
+}
+
+.form {
+    width: 60%; /* Ocupará 60% da largura da tela */
+    display: flex;
+    justify-content: space-around;
+    align-items: center; /* Centraliza verticalmente */
+    box-shadow: 2px 2px 2px black;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.login_area, .sign_in_area {
+    width: 45%;
+    padding: 20px;
+    transition: ease-in 0.5s;
+}
+
+.form input {
+    width: 100%; /* Largura de 100% do container pai (que é 300px) */
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-color: rgb(51, 51, 49);
+    border-width: 0.1px;
+    font-style: italic;
+}
+
+.caixas {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.caixas div {
+    display: flex;
+    align-items: center;
+}
+
+.boxes {
+    display: flex;
+    align-items: center;
+}
+
+#btn_logar, #btn_registrar, #registrar {
+    background-color: rgb(38, 42, 42);
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    width: 100%; /* O botão também ocupa a largura total */
+    padding: 10px;
+    margin-top: 20px;
+}
+
+#btn_registrar {
+    pointer-events: none;
+}
+
+.login_area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgb(164, 161, 161);
+}
+
+.sign_in_area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.area_registrar {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.form p {
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+}

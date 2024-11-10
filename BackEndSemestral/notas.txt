@@ -1,0 +1,15 @@
+npm int -y 
+npm install express cors sequelize mysql2
+
+package.json
+
+{
+  "type": "module", // Adicione esta linha
+
+  }
+
+
+
+npm install bcrypt
+carregar variaveis do 
+npm install dotenv
