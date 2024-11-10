@@ -15,15 +15,15 @@ const CartTab = () => {
     transform transition-transform duration-500
     ${statusTab === false ? "translate-x-full" : ""}
     `}>
-        <h2 className='p-5 text-white text-2xl'>Shopping Cart</h2>
+        <h2 className='p-5 text-white text-2xl'>Carrinho</h2>
         <div className='p-5'>
             {carts.map((item, key) => 
                 <CartItem key={key} data={item}/>
             )}
         </div>
         <div className='grid grid-cols-2'>
-            <button className='bg-black text-white' onClick={handleCloseTabCart}>CLOSE</button>
-            <button className='bg-amber-600 text-white'>CHECKOUT</button>
+            <button className='bg-black text-white' onClick={handleCloseTabCart}>Fechar</button>
+            <button className='bg-amber-600 text-white'>Finalizar Compra</button>
         </div>
     </div>
   )
