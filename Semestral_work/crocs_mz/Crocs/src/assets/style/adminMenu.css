@@ -1,0 +1,12 @@
+.nav_admin {
+    position: fixed; /* Mantém o elemento fixo na tela */
+    top: 0;
+    left: 0;
+    height: 100vh; /* Ocupa toda a altura da viewport */
+    width: auto; /* Ajuste conforme a largura necessária */
+    overflow-y: auto; /* Permite rolagem se necessário */
+    display: flex;
+    flex-direction: column; /* Organiza os filhos em uma coluna */
+    border-right: 1px solid #ccc; /* Adicione uma borda, opcional */
+    background-color: #fff; /* Defina a cor de fundo */
+  }
