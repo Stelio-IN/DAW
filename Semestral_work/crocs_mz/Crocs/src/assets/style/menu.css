@@ -116,9 +116,26 @@ padding: 0 30px;
     transition: all 0.4s ease;
     border-radius: 22px;
     box-shadow: 1px 1px 1px rgb(235, 233, 233);
+    display: flex; /* Muda para layout horizontal */
+    flex-direction: row; 
+    gap: 10px;
 }
 
 
+background: #ffffff;
+width: auto; /* Ajuste a largura conforme necessário */
+top: 65px;
+line-height: 45px;
+position: absolute;
+opacity: 0;
+visibility: hidden;
+display: flex; /* Muda para layout horizontal */
+flex-direction: row; /* Certifica-se de que os itens fiquem em linha */
+gap: 10px; /* Espaço entre os itens */
+padding: 10px;
+transition: all 0.3s ease;
+border-radius: 5px;
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 .mega-box .content{
     background-color: #ffffff;
@@ -516,4 +533,3 @@ padding: 0 30px;
 .wrapper #showMega{
     display: none;
 }
-
