@@ -7,7 +7,7 @@ const Nav = ({ isLoggedIn, userEmail, setIsLoggedIn, setUserEmail }) => {
   const handleLogout = () => {
     setIsLoggedIn(false);
     setUserEmail('');
-    navigate('/login');  // Redireciona para a página de login após logout
+    navigate('/login'); // Redireciona para a página de login após logout
   };
 
   return (
@@ -26,6 +26,12 @@ const Nav = ({ isLoggedIn, userEmail, setIsLoggedIn, setUserEmail }) => {
         <li style={styles.navItem}>
           <Link to="/contact" style={styles.link}>Contact</Link>
         </li>
+
+        {isLoggedIn && (
+          <li style={styles.navItem}>
+            <Link to="/profile" style={styles.link}>User</Link>
+          </li>
+        )}
         {/* Exibe o email do usuário logado ou o link de login */}
         <li style={styles.navItem}>
           {isLoggedIn ? (
@@ -36,6 +42,9 @@ const Nav = ({ isLoggedIn, userEmail, setIsLoggedIn, setUserEmail }) => {
             <Link to="/login" style={styles.link}>Login</Link>
           )}
         </li>
+
+        {/* Condicional para exibir o link de user */}
+        
       </ul>
     </nav>
   );

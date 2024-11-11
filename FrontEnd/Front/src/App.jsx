@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage";
 import ProductsPage from "./pages/ProductsPage";
 import ContactPage from "./pages/ContactPage";
 import LoginPage from "./pages/LoginPage";
+import UserProfile from "./pages/UserProfile";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado de login
@@ -32,6 +33,7 @@ const App = () => {
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} setUserEmail={setUserEmail} />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/profile" element={<UserProfile />} />
           </Routes>
         </main>
         <Footer />
