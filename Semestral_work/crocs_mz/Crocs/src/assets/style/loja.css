@@ -5,22 +5,123 @@
   }
   
   html, body {
-    body {
-        margin: 0;
-        display: block;
-        place-items: center;
-        min-width: 320px;
-        min-height: 100vh;
-    }
+    height: 100%;
+    display: flex;
+    flex-direction: column; /* Permite que o conteúdo cresça na vertical */
+    background-color: white;
   }
   
   .content-loja{
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #d8a8a8;
-    padding: 20px;
+ flex: 1; /* Faz com que o conteúdo preencha o espaço restante */
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  background-color: white;
   }
   
+  .shop_filter_container {
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    background-color: aqua;
+    width: 100%;
+    
+  }
+
+  .filter_container{
+    background-color: red;
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    
+  }
+
+.filter_container .filtro{
+  margin-left: 100px;
+}
+  .shop_content {
+    width: 80%;
+    background-color: green;
+    margin-left: 19%;
+  }
+  /**SHOP CONTENT**/
+.shop-container{
+  display: flex;
+  align-items: center;
+  justify-items: center;
+  width: 1000px;
+  margin: auto;
+  gap: 1rem;
+}
+
+.shop-container .box{
+  position: relative;
+  padding: 10px;
+  border-radius: 0.5rem;
+  box-shadow: 1px 2px 4px rgba(15, 54,55,0.1);
+  padding-bottom: 50px;
+}
+
+.shop-container .box img{
+  width: 100%;
+  height: 250px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 0.5rem;
+  background: #ece9f358;
+}
+
+.shop-container .box h2{
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #4a4b4b;
+}
+
+.shop-container .box span{
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #4a4b4b;
+  top: 30px;
+}
+
+.shop-container .box button{
+  position: absolute;
+  bottom: 0.5rem;
+  right: 1.6rem;
+  padding: 13px;
+  font-style: italic;
+  border-radius: 1rem;
+  background-color: #4a4b4b;
+  color: #fff;
+  border-style: none;
+  width: 135px;
+  font-size: 1rem;
+  
+}
+
+.shop-container .box a{
+ text-decoration: none;
+  
+}
+
+.shop-container .box .bx{
+  position: absolute;
+  bottom: 1rem;
+  right: 0.8rem;
+  padding: 10px;
+  font-size: 20px;
+  background: var(--main--color);
+  color: var(--bg-color);
+  border-radius: 0.5rem;
+}
+
+
+.heading{
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.heading span{
+  border-bottom: 3px solid rgb(28, 195, 28);
+}

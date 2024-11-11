@@ -106,11 +106,11 @@ nav .wrapper{
 
 .mega-box{
     position: absolute;
-    top: 80px;
+    top: 65px;
     background: #ffffff;
     width: 100%;
     left: 0;
-padding: 0 30px;
+    padding: 10px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s ease;
@@ -119,23 +119,10 @@ padding: 0 30px;
     display: flex; /* Muda para layout horizontal */
     flex-direction: row; 
     gap: 10px;
+    display: flex; /* Muda para layout horizontal */
+    flex-direction: row;
+    line-height: 45px;
 }
-
-
-background: #ffffff;
-width: auto; /* Ajuste a largura conforme necessário */
-top: 65px;
-line-height: 45px;
-position: absolute;
-opacity: 0;
-visibility: hidden;
-display: flex; /* Muda para layout horizontal */
-flex-direction: row; /* Certifica-se de que os itens fiquem em linha */
-gap: 10px; /* Espaço entre os itens */
-padding: 10px;
-transition: all 0.3s ease;
-border-radius: 5px;
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 .mega-box .content{
     background-color: #ffffff;
@@ -144,7 +131,8 @@ box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
     justify-content: space-between;
     padding-bottom: 200px;
-    
+    display: flex; /* Muda para layout horizontal */
+    flex-direction: row;
 }
 
 .content .row{
@@ -152,11 +140,11 @@ box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     line-height: 45px;
     display: flex;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .content .row img{
-    width: 220px;
+    width: 200px;
     border-radius: 10px;
     height: 90%;
     object-fit: cover;
@@ -171,7 +159,9 @@ box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 
 .content .row .mega-links{
     margin-left: -40px;
-    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .content .row .mega-links a{

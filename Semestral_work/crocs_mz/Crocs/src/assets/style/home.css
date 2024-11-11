@@ -4,6 +4,20 @@
   box-sizing: border-box;
 }
 
+
+
+@keyframes animacao {
+  0% {
+    width: 800px;
+  }
+  50% {
+    width: 830px;
+  }
+  100% {
+    width: 800px;
+  }
+}
+
 html, body {
   height: 100%;
   display: flex;
@@ -92,6 +106,8 @@ html, body {
   justify-content: center;
   margin-bottom: 10px;
   background-color: white;
+  animation: animacao 3s infinite;
+  animation-fill-mode: forwards;
 }
 
 .Advantages-Container div {
@@ -112,7 +128,7 @@ html, body {
 }
 
 
-/* seccao 3*/
+
 
 
   /* SEÇÃO 3 */
