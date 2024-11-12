@@ -1,178 +1,116 @@
-import React from 'react';
-import '../assets/style/home.css';
-import '../assets/style/slide.css';
-import '../assets/style/catalogo.css';
+import React, { useEffect, useState } from 'react';
 
+function Home() {
+  const [products, setProducts] = useState([]);
 
-const Home = () => {
+  useEffect(() => {
+    // Fazendo a requisição para a API
+    fetch('http://localhost:3005/api/products/pr')
+      .then(response => response.json())
+      .then(data => setProducts(data))
+      .catch(error => console.error('Erro ao buscar produtos:', error));
+  }, []);
+
+  // Estilo interno
+  const styles = {
+    shopContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '16px',
+      padding: '20px',
+      justifyContent: 'center',
+    },
+    box: {
+      border: '1px solid #ddd',
+      borderRadius: '8px',
+      padding: '16px',
+      maxWidth: '200px',
+      textAlign: 'center',
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+      transition: 'transform 0.3s ease',
+    },
+    img: {
+      width: '100%',
+      height: 'auto',
+      borderRadius: '4px',
+      marginBottom: '12px',
+    },
+    productName: {
+      fontSize: '18px',
+      margin: '8px 0',
+      color: '#333',
+    },
+    price: {
+      fontSize: '16px',
+      color: '#666',
+      marginBottom: '12px',
+    },
+    colorsContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      marginBottom: '12px',
+    },
+    button: {
+      padding: '8px 12px',
+      backgroundColor: '#007bff',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      textTransform: 'uppercase',
+    },
+    buttonHover: {
+      backgroundColor: '#0056b3',
+    },
+  };
+
   return (
-    <div className='content'>
-      <main>
-        <article>
-          {/* Section 1 */}
-          <div className="Container">
-            <div className="home-container">
-              <h2>Crocs Mozambique</h2>
-              <p>
-                Novos modelos, com os últimos crocs. <br />
-                Mais confortáveis do que nunca
-              </p>
-              <button id="shop_now">Comprar</button>
-            </div>
-
-            <div className="home-container-img"> </div>
-          </div>
-
-          {/* Section 2 */}
-          <div className="Advantages-Container">
-            <div className="Discount">
-              <img src="../assets/img/coupon.png" alt="Desconto" />
-              <p>Descontos todas semanas</p>
-            </div>
-            <div>
-              <img src="../assets/img/online-support.png" alt="Suporte" />
-              <p>Suporte 24/7 dias</p>
-            </div>
-            <div>
-              <img src="delivery.png" alt="Entrega" />
-              <p>Entrega ao domicílio</p>
-            </div>
-            <div>
-              <img src="credit-card.png" alt="Pagamento seguro" />
-              <p>Pagamento seguro</p>
-            </div>
-          </div>
-
-           {/* Section 3 */}
-           <div className="Container_2">
-            <div className="Container-content">
-              <p>A nova marca</p>
-              <h2>Super Mega Promoção</h2>
-              <p>
-                Novos modelos que estão com uma super mega promoção. Aproveite agora
-                mesmo, pois, essa promoção vai terminar a qualquer momento. Compre
-                uma vez, e não se arrependa.
-              </p>
-            </div>
-
-            <div className="Container-promocional">
-              <div>
-                <h1 style={{ fontSize: '40pt', color: 'rgb(75, 134, 34)' }}>25%</h1>
-                <p style={{ color: 'rgb(66, 67, 68)', lineHeight: 1.3 }}>
-                  Oferta especial. Obtenha desconto em qualquer pedido, apenas válido
-                  por hoje.
-                </p>
-              </div>
-              <div>
-                <img src="gif.gif" alt="Promoção" />
-              </div>
-            </div>
-          </div>
-
-
-          
-          {/* Popular Collections */}
-          <section className="carrosel_1">
-            <div className="slider">
-              <h3 style={{ marginBottom: '5px' }}>Coleções Populares</h3>
-              <div className="slide-track">
-                {['../assets/img/col1.avif', '../assets/img/col2.avif', '../assets/img/col3.avif', '../assets/img/col4.avif', '../assets/img/col5.avif', '../assets/img/col6.avif'].map((img, index) => (
-                  <div className="slide" key={index}>
-                    <img src={img} alt={`Coleção ${index + 1}`} />
-                    <p>Collection {index + 1}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          
-          {/* Shop Content */}
-          <div className="heading">
-            <h2>
-              Novas<span>Tendência</span>
-            </h2>
-          </div>
-
-          <div className="shop-container">
-            {['teste3-removebg-preview.png', 'teste4-removebg-preview.png', 'teste5-removebg-preview.png'].map((img, index) => (
-              <div className="box" key={index}>
-                <img src={img} alt={`Produto ${index + 1}`} />
-                <image>  </image>
-                <h2>Nike Therma</h2>
-                <span>70.88$</span>
-                <button>Sneakers</button>
-              </div>
-            ))}
-          </div>
-
-          <div className="shop-container">
-            {['teste6-removebg-preview.png', 'teste6-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
-              <div className="box" key={index}>
-                <img src={img} alt={`Produto ${index + 1}`} />
-                <image>  </image>
-                <h2>Nike Therma</h2>
-                <span>70.88$</span>
-                <button>Sneakers</button>
-              </div>
-            ))}
-          </div>
-     
-
-       {/* Section 4 */}
-       <div className="Container-extended">
-            <div></div>
-            <div>
-              <p>Novas sandálias clássicas</p>
-              <p style={{ fontSize: '20pt', fontWeight: 'bold' }}>Mostre a verdadeira cor</p>
-              <p style={{ textDecoration: 'underline' }}>Compre os clássicos</p>
-            </div>
-          </div>
-
-
-            
-          {/* Catalog */}
-          <div className="main">
-            <header>
-              <h1>Novas Tendências</h1>
-            </header>
-            <section>
-              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
-                <div className="product" key={index}>
-                  <picture>
-                    <img src={img} alt={`Produto ${index + 1}`} />
-                  </picture>
-                  <div className="detail">
-                    <p>
-                      <b>Produto {index + 1}</b>
-                      <br />
-                      <small>Exclusivo</small>
-                    </p>
-                    <samp>4500 Mzn</samp>
-                  </div>
-                  <div className="button">
-                    <p className="star">
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                    </p>
-                    <a href="#">
-                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
-                    </a>
-                  </div>
-                </div>
+    <div style={styles.shopContainer}>
+      {products.length > 0 ? (
+        products.map(product => (
+          <div
+            key={product.product_id}
+            style={styles.box}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <img
+              src={product.images.length > 0 ? product.images[0].image_url : 'default-image.png'}
+              alt={product.product_name}
+              style={styles.img}
+            />
+            <h2 style={styles.productName}>{product.product_id}</h2>
+            <h2 style={styles.productName}>{product.product_name}</h2>
+            <span style={styles.price}>{product.price}$</span>
+            <div style={styles.colorsContainer}>
+              {product.colors.map((color, index) => (
+                <div
+                  key={index}
+                  style={{
+                    backgroundColor: color.hex_code,
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    margin: '0 5px',
+                  }}
+                  title={color.name}
+                />
               ))}
-            </section>
+            </div>
+            <button
+              style={styles.button}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
+            >
+              Ver Produto
+            </button>
           </div>
-
-
-
-        </article>
-      </main>
+        ))
+      ) : (
+        <p>Carregando produtos...</p>
+      )}
     </div>
   );
-};
+}
 
 export default Home;
