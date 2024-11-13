@@ -1,7 +1,7 @@
 
 /*        SLIDE */
 .carrosel_1{
-    background-color: rgba(220, 220, 220, 0.808);
+    background-color: rgba(0, 0, 0, 0.808);
     margin-bottom: 20px;
     padding-bottom: 10px;
   }
@@ -10,7 +10,7 @@
     height: 250px;
     margin: auto;
     position: relative;
-    width: 90%;
+    width: 100%;
     display: grid;
     place-items: center;
     padding: 30px;

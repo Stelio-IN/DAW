@@ -115,7 +115,7 @@ const Home = () => {
             <div className="slider">
               <h3 style={{ marginBottom: '5px' }}>Coleções Populares</h3>
               <div className="slide-track">
-                {['../assets/img/col1.avif', '../assets/img/col2.avif', '../assets/img/col3.avif', '../assets/img/col4.avif', '../assets/img/col5.avif', '../assets/img/col6.avif'].map((img, index) => (
+                {[''].map((img, index) => (
                   <div className="slide" key={index}>
                     <img src={img} alt={`Coleção ${index + 1}`} />
                     <p>Collection {index + 1}</p>
