@@ -301,9 +301,23 @@ html, body {
   /*   Categories*/
   .Categories{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-items: center;
+    background: red;
+    gap: 10px;
+    margin: auto;
+  }
+
+  .Categories div{
+    width: 300px;
+    height: 300px;
+    border-radius: 10px;
+  }
+
+  .Categories div button{
+    width: 70%;
+    margin-top: 20px;
   }
 
   .producte{
@@ -312,8 +326,9 @@ html, body {
 
   }
 
-  .buttone{
+  .Detalhes{
     background-color: #ff8b1f;
-    padding: 20px;
+    display: flex;
+    flex-direction: column;
   }
 

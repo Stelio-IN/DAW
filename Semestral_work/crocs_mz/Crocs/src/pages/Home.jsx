@@ -169,23 +169,47 @@ const Home = () => {
           </div>
 
 
-            {/* Categories*/}
-          <section className="Categories">
-              {['teste2-removebg-preview.png'].map((img) => (
-                <div className="producte">
-                  <picture>
-                    <img src={img} />
-                  </picture>                
-                </div>
-              ))}
-            <div className="Detalhes">   
-              <button>oa</button>
-             </div>
-            </section>
-             
-            
+          <div className='Categories'>
+              <div className='div'>
+                <div className='producte'><p>Imagem</p></div>
+                <div className='Detalhes'>
+                  <h2>Testeedsd</h2>
+                  <p>crocs | Limitada</p>
+                  <button>Comprar Agora</button>
+                  </div>
+              </div>
 
-            
+              <div className='div'>
+                <div className='producte'><p>Imagem</p></div>
+                <div className='Detalhes'>
+                  <h1>Testeedsd</h1>
+                  <p>crocs | Limitada</p>
+                  <button>Comprar agora</button>
+                  </div>
+              </div>
+
+              <div className='div'>
+                <div className='producte'><p>Imagem</p></div>
+                <div className='Detalhes'>
+                  <h1>Testeedsd</h1>
+                  <p>crocs | Limitada</p>
+                  <button>Comprar agora</button>
+                  </div>
+              </div>
+
+              <div className='div'>
+                <div className='producte'><p>Imagem</p></div>
+                <div className='Detalhes'>
+                  <h1>Testeedsd</h1>
+                  <p>crocs | Limitada</p>
+                  <button>Comprar agora</button>
+                  </div>
+              </div>
+          </div>
+
+          
+    
+             
           {/* Catalog */}
           <div className="main">
             <header>
