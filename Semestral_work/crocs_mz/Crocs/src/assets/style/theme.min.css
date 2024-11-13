@@ -5,7 +5,6 @@
   box-sizing: border-box;
 }
 
-/* Estilos gerais */
 html, body {
   height: 100%;
   display: flex;
@@ -13,7 +12,7 @@ html, body {
   background-color: rgb(214, 239, 52);
 }
 
-.content-nav {
+.nav_container {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -21,60 +20,33 @@ html, body {
   background-color: rgb(82, 8, 8);
 }
 
-/* Estilos gerais */
-.nav_admin {
+.admin_navigation {
   background-color: #0d3a68;
   padding: 20px;
   width: 100vw;
   display: flex;
   align-items: center;
-  justify-items: center;
-  width: 100vw;
   height: 100vh;
   margin: 0;
 }
 
-.wrapper {
+.menu_wrapper {
   display: flex;
   align-items: center;
   background-color: gray;
-  align-items: center;
   width: 20%;
   height: 100vh;
 }
 
-.dashboard {
+.main_dashboard {
   background-color: red;
   width: 80%;
   height: 100vh;
 }
 
-.logo span {
-  color: rgb(7, 79, 37);
-  font-weight: bold;
-  font-size: 25pt;
-}
+.menu_item {}
 
-.nav-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-}
-
-.nav-links li {
-  margin-right: 20px;
-}
-
-.nav-links a {
-  text-decoration: none;
-  color: #333;
-  font-size: 16px;
-}
-
-.nav-item {}
-
-.nav-link {
+.menu_link {
   display: block;
   padding: 2px;
   width: 170px;
@@ -86,18 +58,19 @@ html, body {
   transition: background-color 0.3s;
 }
 
-.nav-link:hover {
+.menu_link:hover {
   background-color: #e9ecef;
 }
 
-#navbarVerticalMenuPagesMenu {
+#menuPagesContainer {
   padding: 10px;
   border-radius: 5px;
   background-color: aqua;
+  height: 100vh;
 }
 
-/* Estilos do dropdown */
-.nav-collapse {
+
+.menu_dropdown {
   max-height: 0;
   overflow: hidden;
   list-style: none;
@@ -105,18 +78,17 @@ html, body {
   transition: max-height 0.3s ease-out;
 }
 
-.nav-item.open .nav-collapse {
+.menu_item.menu_open .menu_dropdown {
   max-height: 500px;
   transition: max-height 0.3s ease-in;
 }
 
-/* Estilos para os links dentro do dropdown */
-.nav-collapse .nav-link {
+.menu_dropdown .menu_link {
   padding: 8px 10px;
   background-color: #e9ecef;
   border: none;
 }
 
-.nav-collapse .nav-link:hover {
+.menu_dropdown .menu_link:hover {
   background-color: #d6d8db;
 }

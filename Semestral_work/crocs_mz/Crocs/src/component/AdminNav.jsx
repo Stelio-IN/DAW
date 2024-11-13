@@ -2,87 +2,87 @@ import React, { useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/style/theme.min.css';
 
-const NavAdmin = () => {
-  const [expandedMenus, setExpandedMenus] = useState({});
+const AdminNavigation = () => {
+  const [openMenus, setOpenMenus] = useState({});
 
-  const toggleMenu = useCallback((menuId) => {
-    setExpandedMenus((prev) => {
-      const newState = { ...prev };
-      // Fecha todos os menus antes de abrir o novo
-      Object.keys(newState).forEach((key) => {
+  const handleMenuToggle = useCallback((menuId) => {
+    setOpenMenus((prev) => {
+      const updatedState = { ...prev };
+      Object.keys(updatedState).forEach((key) => {
         if (key !== menuId) {
-          newState[key] = false;
+          updatedState[key] = false;
         }
       });
-      newState[menuId] = !newState[menuId];
-      return newState;
+      updatedState[menuId] = !updatedState[menuId];
+      return updatedState;
     });
   }, []);
 
   return (
-    <div className='content_nav'>
-      <nav className="nav_admin">
-        <div className="wrapper">
-          <div id="navbarVerticalMenuPagesMenu">
-            {/* Dashboard menu */}
-            <div className={`nav-item ${expandedMenus.dashboardMenu ? 'open' : ''}`}>
-              <a
-                className="nav-link dropdown-toggle"
-                onClick={() => toggleMenu('dashboardMenu')}
-                aria-expanded={expandedMenus.dashboardMenu}
-              >
-                Dashboard
-              </a>
-              <div className="nav-collapse">
-                <Link className="nav-link" to="/admin/dashboard">Dashboard</Link>
+    <div className='nav_container'>
+      <nav className="admin_navigation">
+        <div className="menu_wrapper">
+          <div id="menuPagesContainer">
+            <div id="menuPages">
+              
+              {/* Dashboard menu */}
+              <div className={`menu_item ${openMenus.dashboard ? 'menu_open' : ''}`}>
+                <a
+                  className="menu_link dropdown_trigger"
+                  onClick={() => handleMenuToggle('dashboard')}
+                  aria-expanded={openMenus.dashboard}
+                >
+                  Dashboard
+                </a>
+                <div className="menu_dropdown">
+                  <Link className="menu_link" to="/admin/dashboard">Dashboard</Link>
+                </div>
               </div>
-            </div>
-
-            {/* Categoria menu */}
-            <div className={`nav-item ${expandedMenus.categoriaMenu ? 'open' : ''}`}>
-              <a
-                className="nav-link dropdown-toggle"
-                onClick={() => toggleMenu('categoriaMenu')}
-                aria-expanded={expandedMenus.categoriaMenu}
-              >
-                Categoria
-              </a>
-              <div className="nav-collapse">
-                <Link className="nav-link" to="/admin/categoria">Categoria</Link>
+              {/* Categoria menu */}
+              <div className={`menu_item ${openMenus.category ? 'menu_open' : ''}`}>
+                <a
+                  className="menu_link dropdown_trigger"
+                  onClick={() => handleMenuToggle('category')}
+                  aria-expanded={openMenus.category}
+                >
+                  Categoria
+                </a>
+                <div className="menu_dropdown">
+                  <Link className="menu_link" to="/admin/categoria">Categoria</Link>
+                </div>
               </div>
-            </div>
-
-            {/* Produto menu */}
-            <div className={`nav-item ${expandedMenus.produtoMenu ? 'open' : ''}`}>
-              <a
-                className="nav-link dropdown-toggle"
-                onClick={() => toggleMenu('produtoMenu')}
-                aria-expanded={expandedMenus.produtoMenu}
-              >
-                Produto
-              </a>
-              <div className="nav-collapse">
-                <Link className="nav-link" to="/admin/produto">Produto</Link>
+              {/* Produto menu */}
+              <div className={`menu_item ${openMenus.product ? 'menu_open' : ''}`}>
+                <a
+                  className="menu_link dropdown_trigger"
+                  onClick={() => handleMenuToggle('product')}
+                  aria-expanded={openMenus.product}
+                >
+                  Produto
+                </a>
+                <div className="menu_dropdown">
+                  <Link className="menu_link" to="/admin/produto">Produto</Link>
+                </div>
               </div>
-            </div>
-
-            {/* Produto Cor menu */}
-            <div className={`nav-item ${expandedMenus.produtoCorMenu ? 'open' : ''}`}>
-              <a
-                className="nav-link dropdown-toggle"
-                onClick={() => toggleMenu('produtoCorMenu')}
-                aria-expanded={expandedMenus.produtoCorMenu}
-              >
-                Produto Cor
-              </a>
-              <div className="nav-collapse">
-                <Link className="nav-link" to="/admin/produto-color">Produto Cor</Link>
+              {/* Produto Cor menu */}
+              <div className={`menu_item ${openMenus.productColor ? 'menu_open' : ''}`}>
+                <a
+                  className="menu_link dropdown_trigger"
+                  onClick={() => handleMenuToggle('productColor')}
+                  aria-expanded={openMenus.productColor}
+                >
+                  Produto Cor
+                </a>
+                <div className="menu_dropdown">
+                  <Link className="menu_link" to="/admin/produto-color">Produto Cor</Link>
+                </div>
               </div>
+              
+                        </div>
+                      </div>
             </div>
-          </div>
-        </div>
         
-        <div className='dashboard'>
+        <div className='main_dashboard'>
           <p>Assadad</p>
         </div>
       </nav>
@@ -90,4 +90,4 @@ const NavAdmin = () => {
   );
 };
 
-export default NavAdmin;
+export default AdminNavigation;

@@ -44,6 +44,44 @@ const Home = () => {
             </div>
           </div>
 
+
+          <div className="main">
+            <header>
+              <h1>Novas Tendências</h1>
+            </header>
+            <section>
+              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
+                <div className="product" key={index}>
+                  <picture>
+                    <img src={img} alt={`Produto ${index + 1}`} />
+                  </picture>
+                  <div className="detail">
+                    <p>
+                      <b>Produto {index + 1}</b>
+                      <br />
+                      <small>Exclusivo</small>
+                    </p>
+                    <samp>4500 Mzn</samp>
+                  </div>
+                  <div className="button">
+                    <p className="star">
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                    </p>
+                    <a href="#">
+                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </section>
+          </div>
+
+
+
            {/* Section 3 */}
            <div className="Container_2">
             <div className="Container-content">
@@ -130,6 +168,22 @@ const Home = () => {
             </div>
           </div>
 
+
+            {/* Categories*/}
+          <section className="Categories">
+              {['teste2-removebg-preview.png'].map((img) => (
+                <div className="producte">
+                  <picture>
+                    <img src={img} />
+                  </picture>                
+                </div>
+              ))}
+            <div className="Detalhes">   
+              <button>oa</button>
+             </div>
+            </section>
+             
+            
 
             
           {/* Catalog */}
