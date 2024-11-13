@@ -9,6 +9,7 @@ import Home from './pages/Home';
 import Login from './pages/LoginRegister'; 
 import SobreNos from './pages/About'; 
 import Loja from './pages/Loja'; 
+import Detalhes from './pages/DetalhesProduto'; 
 
 // Componentes para Admin
 import AdminNav from './component/AdminNav';
@@ -34,12 +35,13 @@ function MainApp() {
         {isAdminRoute && <AdminNav />}
 
         <main style={{ flexGrow: 1 }}>
-          <Routes>
+          <Routes> 
             {/* Rotas gerais */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/sobre-nos" element={<SobreNos />} />
             <Route path="/loja" element={<Loja />} />
+            <Route path="/Detalhes_produto" element= {<Detalhes />} />
 
             {/* Rotas específicas para admin */}
             <Route path="/admin/dashboard" element={<AdminDashBoard />} />

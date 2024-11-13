@@ -1,215 +1,98 @@
-*{
+/* Estilo Global */
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
 
+.container-detalhes-produto {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    background-color: white;
+}
 
-.container{
+.box-conteudo {
     max-width: 100%;
     margin: auto;
     height: 80vh;
     margin-top: 5%;
     background-color: white;
-    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.1);
-
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
     display: flex;
-   
 }
 
-.left, .right{
+.col-esquerda, .col-direita {
     width: 50%;
 }
 
-.right{
-    align-items: center;
-    justify-items: center;
-}
-
-.right h1{
+.col-direita h1 {
     font-size: 3rem;
 }
 
-.right .btn_cart{
+.col-direita .botao-carrinho {
     border-radius: 12px;
-    color: rgb(255, 255, 255);
+    color: white;
     padding: 13px;
     border: none;
     width: 200px;
-    background: rgb(24, 24, 24);
+    background: black;
     box-shadow: 1px 1px 1px black;
 }
 
-.right .size{
+.informacao-tamanho {
     margin-bottom: 10px;
     border-bottom: 1px solid black;
 }
 
-.btn_size{
+.botao-tamanho, .botao-genero {
     border-radius: 12px;
-    color: rgb(0, 0, 0);
+    color: black;
     padding: 5px;
-    width: 70px;
     background: rgb(251, 251, 251);
     font-weight: bold;
-    border-style: 0.3px solid rgb(160, 160, 160);
-    margin-bottom: 15px;
-}
-.btn_gender{
-    border-radius: 12px;
-    color: rgb(0, 0, 0);
-    padding: 5px;
-    width: 100px;
-    background: rgb(251, 251, 251);
-    font-weight: bold;
-    border-style: 0.3px solid rgb(160, 160, 160);
     margin-bottom: 15px;
 }
 
-.right .tamanhos{
-    max-width: 500px;
-}
-
-
-.flex{
-    display: flex;
-    justify-content: space-between;
-}
-
-.main_image{
+.imagem-principal {
     width: 70%;
     height: 60%;
     margin: auto;
 }
 
-.slide{
+.imagem-slide {
     margin: auto;
-    width: 100%
+    width: 100%;
 }
 
-.option{
+.opcoes {
     margin-top: 20px;
-   width: 400px;
-   margin: auto;
+    width: 400px;
+    margin: auto;
 }
 
-.option img{
+.opcoes img {
     margin-top: 60px;
     width: 55px;
     height: 55px;
     padding: 10px;   
 }
 
-@media only screen and (max-width: 1122px){
-    .option img{
-        margin-top: 10px;
-        width: 55px;
-        height: 55px;
-        padding: 10px;   
-    }
-}
-
-@media only screen and (max-width: 983px){
-    .main_image{
-        width: 100%;
-        height: 60%;
-        margin: auto;
-    }
-}
-
-
-@media only  screen  and (max-width: 768px){
-    .container{
-        max-width: 100%;
-        margin: auto;
-        height: auto;
-    }
-    .left, .right{
-        width: 100%;
-    }
-
-    .container{
+/* Media Queries (Responsividade) */
+@media (max-width: 768px) {
+    .box-conteudo {
         flex-direction: column;
     }
 
-    .main_image{
-        width: 100%;
-        height: 50%;
-        margin: auto;
-    }
-    .slide{
-        margin: auto;
-        width: 60%;
-        margin-top: 30px;
-    }
-    .option{
-        width: 70%;
-        margin: auto;
-     }
-
-}
-
-@media only  screen  and (max-width: 511px){
-    .container{
-        max-width: 100%;
-        padding: 10px;
-        height: auto;
-    }
-
-    .left, .right{
-     padding: 0;
-    }
-
-    .option{
-        display: flex;
-        flex-wrap: wrap;
-    }
-
-    img{
+    .col-esquerda, .col-direita {
         width: 100%;
     }
-
-    .slide{
-        margin: auto;
-        width: 80%;
-        margin-top: 30px;
 }
-}
-@media only screen and (max-width: 383px){
-    .main_image{
-        width: 100%;
-        height: 60%;
-        margin: auto;
-    }
-
-    .option{
-        width: 100%;
-        margin: auto;
-     }
-     .slide{
-        margin: auto;
-        width: 90%;
-        margin-top: 30px;
-}
-}
-
-@media only screen and (max-width: 293px){
-    .main_image{
-        width: 100%;
-        height: 60%;
-        margin: auto;
-    }
-
-    .option{
-        width: 100%;
-        margin: auto;
-     }
-     .slide{
-        margin: auto;
-        width: 100%;
-        margin-top: 30px;
-}
-}
-
- 

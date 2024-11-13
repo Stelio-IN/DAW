@@ -135,7 +135,7 @@ const Home = () => {
 
           <div className="shop-container">
             {['teste3-removebg-preview.png', 'teste4-removebg-preview.png', 'teste5-removebg-preview.png'].map((img, index) => (
-              <Link to='#'><div className="box" key={index}>
+              <Link to='/Detalhes_produto'><div className="box" key={index}>
                 <img src={img} alt={`Produto ${index + 1}`} />
                 <image>  </image>
                 <h2>Nike Therma</h2>
