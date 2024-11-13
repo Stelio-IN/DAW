@@ -25,7 +25,7 @@ function MainApp() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <div className="App" style={{ display: 'flex' }}>
+    <div className="App" style={{ display: 'flex', flexDirection: 'column' }}>
       {/* Renderiza Nav e Footer apenas se não estiver em uma rota Admin */}
       {!isAdminRoute && <Nav />}
 
