@@ -11,53 +11,57 @@ function Home() {
       .catch(error => console.error('Erro ao buscar produtos:', error));
   }, []);
 
-  // Estilo interno
+  // Estilo interno para os elementos
   const styles = {
-    shopContainer: {
+    container: {
       display: 'flex',
       flexWrap: 'wrap',
       gap: '16px',
-      padding: '20px',
       justifyContent: 'center',
+      padding: '20px',
     },
     box: {
       border: '1px solid #ddd',
       borderRadius: '8px',
+      width: '250px',
       padding: '16px',
-      maxWidth: '200px',
       textAlign: 'center',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-      transition: 'transform 0.3s ease',
+      transition: 'transform 0.2s',
     },
-    img: {
+    boxHover: {
+      transform: 'scale(1.05)',
+    },
+    image: {
       width: '100%',
       height: 'auto',
-      borderRadius: '4px',
       marginBottom: '12px',
     },
     productName: {
       fontSize: '18px',
-      margin: '8px 0',
-      color: '#333',
+      fontWeight: 'bold',
+      margin: '12px 0',
     },
     price: {
       fontSize: '16px',
-      color: '#666',
-      marginBottom: '12px',
+      color: '#555',
+      marginBottom: '8px',
     },
-    colorsContainer: {
-      display: 'flex',
-      justifyContent: 'center',
-      marginBottom: '12px',
+    colorBox: {
+      display: 'inline-block',
+      width: '20px',
+      height: '20px',
+      borderRadius: '4px',
+      margin: '0 5px',
     },
     button: {
-      padding: '8px 12px',
+      padding: '8px 16px',
       backgroundColor: '#007bff',
       color: '#fff',
       border: 'none',
       borderRadius: '4px',
       cursor: 'pointer',
-      textTransform: 'uppercase',
+      marginTop: '12px',
     },
     buttonHover: {
       backgroundColor: '#0056b3',
@@ -65,42 +69,40 @@ function Home() {
   };
 
   return (
-    <div style={styles.shopContainer}>
+    <div style={styles.container}>
       {products.length > 0 ? (
         products.map(product => (
-          <div
-            key={product.product_id}
+          <div 
+            className="box" 
+            key={product.product_id} 
             style={styles.box}
-            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <img
-              src={product.images.length > 0 ? product.images[0].image_url : 'default-image.png'}
-              alt={product.product_name}
-              style={styles.img}
+            {/* Usando a primeira imagem como exemplo */}
+            <img 
+              src={Array.isArray(product.images) && product.images.length > 0 
+                ? product.images[0].image_url 
+                : 'default-image.png'} 
+              alt={product.product_name} 
+              style={styles.image}
             />
-            <h2 style={styles.productName}>{product.product_id}</h2>
-            <h2 style={styles.productName}>{product.product_name}</h2>
-            <span style={styles.price}>{product.price}$</span>
-            <div style={styles.colorsContainer}>
-              {product.colors.map((color, index) => (
-                <div
-                  key={index}
-                  style={{
-                    backgroundColor: color.hex_code,
-                    width: '20px',
-                    height: '20px',
-                    borderRadius: '50%',
-                    margin: '0 5px',
-                  }}
+            <h2 style={styles.productName}>Id: {product.product_id}</h2>
+            <h2 style={styles.productName}>Nome: {product.product_name}</h2>
+            <h2 style={styles.productName}>Cores: {product.color_count}</h2>
+            <span style={styles.price}>Preço: {product.price}$</span>
+            <div className="colors">
+              {/* Verificação para garantir que product.colors é um array */}
+              {Array.isArray(product.colors) && product.colors.map((color, index) => (
+                <div 
+                  key={index} 
+                  style={{ ...styles.colorBox, backgroundColor: color.hex_code }}
                   title={color.name}
                 />
               ))}
             </div>
-            <button
+            <button 
               style={styles.button}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
+              onMouseOver={e => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
+              onMouseOut={e => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
             >
               Ver Produto
             </button>
