@@ -17,6 +17,7 @@
   flex-direction: column;
   width: 100vw;
   background-color: white;
+margin-top: 90px;
   }
   
   .shop_filter_container {
@@ -36,17 +37,92 @@
   }
 
 
+
 .filter_container .filtros{
   margin-left: 30px;
 }
 
-.filtros{
+
+.filtros div{
+  border-bottom: 1px solid black;
+  margin-bottom: 15px;
+}
+
+.filtros {
+  width: 100%;
+  margin: 20px 0;
   margin-top: 50px;
   color: black;
 }
-.filtros div{
-  border-bottom: 1px solid black;
+
+.filtros h3 {
+  cursor: pointer;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
 }
+
+.filter-options {
+  padding: 10px;
+  background-color: #fafafa;
+  border-left: 2px solid #ccc;
+  margin-left: 10px;
+}
+
+.filter-options p {
+  margin: 5px 0;
+  cursor: pointer;
+  color: #333;
+}
+
+.filter-options p:hover {
+  color: #007bff;
+}
+.filter-options {
+  padding: 10px;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin: 10px 0;
+}
+
+.price-label {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.price-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: gray;
+}
+
+.filter-options {
+  padding: 10px;
+}
+
+.size-options p {
+  cursor: pointer;
+  padding: 5px 0;
+}
+
+.size-options p:hover {
+  color: blue;
+}
+
+label {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+select {
+  padding: 5px;
+  margin: 5px 0;
+}
+
 
 .catalog-container {
   width: 100%;
@@ -54,6 +130,7 @@
   margin: 10px auto;
   position: relative;
   padding: 5px 0;
+  margin-top: 10px;
 }
 
 .catalog-header {
