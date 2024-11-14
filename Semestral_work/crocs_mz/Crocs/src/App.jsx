@@ -10,6 +10,7 @@ import Login from './pages/LoginRegister';
 import SobreNos from './pages/About'; 
 import Loja from './pages/Loja'; 
 import Produto from './pages/Produto'; 
+import Carrinho from './pages/Carrinho'; 
 
 // Componentes para Admin
 import AdminNav from './component/AdminNav';
@@ -41,6 +42,7 @@ function MainApp() {
             <Route path="/login" element={<Login />} />
             <Route path="/sobre-nos" element={<SobreNos />} />
             <Route path="/loja" element={<Loja />} />
+            <Route path="/Carrinho" element={<Carrinho />} />
           <Route path="/produto/detalhes/:productID" element={<Produto />} />
 
             {/* Rotas específicas para admin */}

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function Produtos() {
-  const { productID } = useParams(); // Captura o ID diretamente da URL como parte do path
+  const { productID } = useParams();
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (productID) {
@@ -12,7 +13,7 @@ function Produtos() {
         .then(response => response.json())
         .then(data => {
           if (Array.isArray(data)) {
-            setProducts(data); // Define a lista de produtos
+            setProducts(data);
           } else {
             console.error('Dados recebidos não são um array:', data);
           }
@@ -21,7 +22,15 @@ function Produtos() {
     }
   }, [productID]);
 
-  // Estilo para os "cards" e outros elementos
+  // Função para adicionar um produto ao carrinho e salvar no localStorage
+  const addToCart = (product) => {
+    const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const updatedCart = [...currentCart, product];
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    console.log('Produto adicionado ao carrinho:', product);
+  };
+
+  // Estilo dos elementos
   const styles = {
     container: {
       marginTop: '100px',
@@ -37,14 +46,14 @@ function Produtos() {
       textAlign: 'center',
       border: '1px solid #ddd',
       borderRadius: '8px',
-      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // Adiciona sombra ao "card"
+      boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       backgroundColor: '#fff',
     },
     image: {
       width: '100%',
       height: 'auto',
       marginBottom: '12px',
-      borderRadius: '4px', // Adiciona cantos arredondados à imagem
+      borderRadius: '4px',
     },
     productName: {
       fontSize: '24px',
@@ -55,6 +64,14 @@ function Produtos() {
       fontSize: '20px',
       color: '#555',
       marginBottom: '8px',
+    },
+    button: {
+      padding: '10px 16px',
+      backgroundColor: '#28a745',
+      color: '#fff',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
     },
   };
 
@@ -72,11 +89,23 @@ function Produtos() {
             <span style={styles.price}>Preço: {product.price}$</span>
             <p>{product.description}</p>
             <p>Estoque: {product.stock_quantity}</p>
+            <button 
+              style={styles.button} 
+              onClick={() => addToCart(product)}
+            >
+              Adicionar ao Carrinho
+            </button>
           </div>
         ))
       ) : (
         <p>Carregando produtos...</p>
       )}
+      <button 
+        style={{ marginTop: '20px', padding: '10px 16px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        onClick={() => navigate('/carrinho')}
+      >
+        Ver Carrinho
+      </button>
     </div>
   );
 }

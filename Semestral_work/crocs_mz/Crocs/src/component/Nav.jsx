@@ -132,6 +132,7 @@ const Navbar = () => {
 
           <li><Link to="/loja">Loja</Link></li>
           <li><Link to="/sobre-nos">About us</Link></li>
+          <li><Link to="/carrinho">Carrinho</Link></li>
 
           <div className="Componentes">
             <Link to="#"><input type="button" className="btn_carrinho" /></Link>
