@@ -137,7 +137,7 @@ const products = async (req, res) => {
 const getProductsEspecific = async (req, res) => {
   const id = req.params.id;  // Alteração: acessar o parâmetro da URL usando req.params.id
 try {
-  const productsEs = await db.sequelize.query(`
+  const products = await db.sequelize.query(`
     SELECT c.name, c.hex_code, p.price, p.description, pc.stock_quantity, pi.image_url
     FROM products p 
     JOIN productcolors pc ON p.product_id = pc.product_id 
@@ -148,7 +148,7 @@ try {
     type: db.sequelize.QueryTypes.SELECT, // Especifica o tipo de consulta
   });
 
-  res.status(200).json(productsEs);
+  res.status(200).json(products);
 } catch (error) {
   console.error('Error fetching products with colors and images:', error);
   res.status(500).json({ error: error.message });

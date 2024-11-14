@@ -100,7 +100,11 @@ function Home() {
             </div>
             <button 
               style={styles.button}
-              onClick={() => navigate(`/produto/${product.product_id}`)} // Navegando para a rota com ID
+              onClick={() => {
+                console.log(`Product ID: ${product.product_id}`); // Imprime o ID no console
+                navigate(`/produto/detalhes/${product.product_id}`);
+                // Navegando para a rota com o ID do produto
+              }}
               onMouseOver={e => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
               onMouseOut={e => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
             >
