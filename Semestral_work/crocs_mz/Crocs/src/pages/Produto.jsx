@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
 
-function page_product() {
+function Produtos() {
   const [products, setProducts] = useState([]);
-
+  
   useEffect(() => {
-    // Fazendo a requisição para a API
-    fetch('http://localhost:3005/api/products/pr')
+    // Fazendo a requisição para a API para buscar todos os produtos
+    fetch('http://localhost:3005/api/products')
       .then(response => response.json())
       .then(data => setProducts(data))
       .catch(error => console.error('Erro ao buscar produtos:', error));
-  }, []);
+  }, []);  // O efeito será executado uma única vez quando o componente for montado
 
   // Estilo interno para os elementos
   const styles = {
     container: {
       display: 'flex',
       flexWrap: 'wrap',
-      gap: '16px',
       justifyContent: 'center',
       padding: '20px',
     },
@@ -28,9 +27,7 @@ function page_product() {
       textAlign: 'center',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       transition: 'transform 0.2s',
-    },
-    boxHover: {
-      transform: 'scale(1.05)',
+      margin: '10px',
     },
     image: {
       width: '100%',
@@ -46,6 +43,16 @@ function page_product() {
       fontSize: '16px',
       color: '#555',
       marginBottom: '8px',
+    },
+    description: {
+      fontSize: '14px',
+      color: '#777',
+      marginBottom: '8px',
+    },
+    stock: {
+      fontSize: '14px',
+      color: '#444',
+      marginBottom: '12px',
     },
     colorBox: {
       display: 'inline-block',
@@ -72,34 +79,25 @@ function page_product() {
     <div style={styles.container}>
       {products.length > 0 ? (
         products.map(product => (
-          <div 
-            className="box" 
-            key={product.product_id} 
-            style={styles.box}
-          >
-            {/* Usando a primeira imagem como exemplo */}
-            <img 
-              src={Array.isArray(product.images) && product.images.length > 0 
-                ? product.images[0].image_url 
-                : 'default-image.png'} 
-              alt={product.product_name} 
+          <div key={product.id} style={styles.box}>
+            {/* Imagem do produto */}
+            <img
+              src={product.image_url || 'default-image.png'}
+              alt={product.name}
               style={styles.image}
             />
-            <h2 style={styles.productName}>Id: {product.product_id}</h2>
-            <h2 style={styles.productName}>Nome: {product.product_name}</h2>
-            <h2 style={styles.productName}>Cores: {product.color_count}</h2>
+            <h2 style={styles.productName}>{product.name}</h2>
             <span style={styles.price}>Preço: {product.price}$</span>
+            <p style={styles.description}>{product.description}</p>
+            <p style={styles.stock}>Estoque: {product.stock_quantity}</p>
             <div className="colors">
-              {/* Verificação para garantir que product.colors é um array */}
-              {Array.isArray(product.colors) && product.colors.map((color, index) => (
-                <div 
-                  key={index} 
-                  style={{ ...styles.colorBox, backgroundColor: color.hex_code }}
-                  title={color.name}
-                />
-              ))}
+              {/* Exibindo a cor do produto */}
+              <div
+                style={{ ...styles.colorBox, backgroundColor: product.hex_code }}
+                title={product.name}
+              />
             </div>
-            <button 
+            <button
               style={styles.button}
               onMouseOver={e => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
               onMouseOut={e => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
@@ -115,4 +113,4 @@ function page_product() {
   );
 }
 
-export default page_product;
+export default Produtos;

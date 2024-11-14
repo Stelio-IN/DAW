@@ -11,6 +11,7 @@ router.put('/:id', productController.updateProduct);
 router.delete('/:id', productController.deleteProduct);
 
 router.get('/pr', productController.products);
+router.get('/pr/:id', productController.getProductsEspecific);
 
 
 

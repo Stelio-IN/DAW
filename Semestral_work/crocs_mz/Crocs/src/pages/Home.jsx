@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Importando useNavigate
 
 function Home() {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate(); // Criando a função de navegação
 
   useEffect(() => {
     // Fazendo a requisição para a API
@@ -28,9 +30,6 @@ function Home() {
       textAlign: 'center',
       boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
       transition: 'transform 0.2s',
-    },
-    boxHover: {
-      transform: 'scale(1.05)',
     },
     image: {
       width: '100%',
@@ -101,6 +100,7 @@ function Home() {
             </div>
             <button 
               style={styles.button}
+              onClick={() => navigate(`/produto/${product.product_id}`)} // Navegando para a rota com ID
               onMouseOver={e => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
               onMouseOut={e => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
             >
