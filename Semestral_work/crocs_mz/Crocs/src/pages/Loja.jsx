@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../assets/style/loja.css';
+import Timeline from '../component/TimeLine'; // Importação da timeline
 
 function Loja() {
   const [activeFilter, setActiveFilter] = useState(null);
   const [gender, setGender] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
 
   // Referência para o filtro de tamanho
   const tamanhoRef = useRef();
@@ -39,6 +41,8 @@ function Loja() {
   const handleSizeChange = (size) => {
     setSelectedSize(size); // Atualiza o tamanho selecionado
   };
+
+
 
   return (
     <div className="content-loja">
@@ -126,34 +130,33 @@ function Loja() {
           <header className="catalog-header">
             <h1>Novas Tendências</h1>
           </header>
+
+          <Timeline currentStep={currentStep} />
+
           <section className="catalog-items">
-            {[...Array(12)].map((_, index) => (
-              <div className="catalog-product" key={index}>
-                <picture className="catalog-image">
-                  <img src={`teste${(index % 3) + 2}-removebg-preview.png`} alt={`Produto ${index + 1}`} />
-                </picture>
+            
+<div className='delivery'>
+             <div> <input type="text" placeholder='   Pais/Regiao'/> </div>
+             <div> <input type="text" placeholder='   Seu primeiro nome'/> <input type="text" placeholder='   Seu sobrenome'/> </div>
+             <div> <input type="text" placeholder='   Endereço primario'/> </div>
+             <div> <input type="text" placeholder='   Endereço secundario'/> </div>
+             <div>
+              <input type="text" placeholder='   Cidade'/> <input type="text" placeholder='   Provincia'/> <input type="text " placeholder='   Código Postal'/>
+              </div>
+             <div> <input type="text" placeholder='   Telefone'/> </div>
+</div>
+
+              <div className="catalog-product" >
+                
                 <div className="catalog-detail">
-                  <p>
-                    <b>Produto {index + 1}</b>
-                    <br />
-                    <small>Exclusivo</small>
-                  </p>
-                  <samp>4500 Mzn</samp>
+                  
                 </div>
                 <div className="catalog-button">
-                  <p className="catalog-stars">
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                  </p>
-                  <a href="#">
-                    <img src="shopping-cart-solid.svg" alt="Carrinho" />
-                  </a>
+                
+                  
                 </div>
               </div>
-            ))}
+         
           </section>
         </div>
       </div>

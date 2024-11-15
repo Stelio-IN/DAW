@@ -138,6 +138,9 @@ const Navbar = () => {
             <Link to="#"><input type="button" className="btn_favorito" /></Link>
             <Link to="/login"><input type="button" className="btn_login" value="Login" /></Link>
             <input type="search" className="btn_pesquisa" placeholder="Search" />
+            <Link to="/carrinho">
+              <p style={{color: 'black'}}>Carrinho</p>
+            </Link>
           </div>
         </ul>
 
