@@ -46,9 +46,49 @@ const Home = () => {
   };
 
   return (
+    
     <div className='content'>
       <main>
         <article>
+          {/* Section 1 */}
+          <div className="Container">
+            <div className="home-container">
+              <h2>Crocs Mozambique</h2>
+              <p>
+                Novos modelos, com os últimos crocs. <br />
+                Mais confortáveis do que nunca
+              </p>
+              <button id="shop_now">Comprar</button>
+            </div>
+
+            <div className="home-container-img"> </div>
+          </div>
+
+          {/* Section 2 */}
+          <div className="Advantages-Container">
+      <div className="Discount">
+        <img src={coupon} alt="Desconto" />
+        <p>Descontos todas semanas</p>
+      </div>
+      <div>
+        <img src={onlineSupport} alt="Suporte" />
+        <p>Suporte 24/7 dias</p>
+      </div>
+      <div>
+        <img src={delivery} alt="Entrega" />
+        <p>Entrega ao domicílio</p>
+      </div>
+      <div>
+        <img src={creditCard} alt="Pagamento seguro" />
+        <p>Pagamento seguro</p>
+      </div>
+    </div>
+
+
+
+
+
+
           <div className="main">
             <header>
               <h1>Novas Tendências</h1>
@@ -103,6 +143,41 @@ const Home = () => {
               )}
             </section>
           </div>
+
+
+  {/* Section 3 */}
+  <div className="Container_2">
+            <div className="Container-content">
+              <div className="promotion">
+                
+                  <h1>GATEWAYS</h1>
+                  <h1>SANDALS</h1>
+              </div>
+              <p> CROCS™ | FEELS LIKE NOTHING AT ALL</p>
+              <br />
+              <p>  Oferta especial. Obtenha desconto em qualquer pedido, apenas válido
+              por hoje.</p>
+
+              <button> Comprar agora</button>
+             
+            </div>
+
+            <div className="Container-promocional">
+              <div>
+                <h1 style={{ fontSize: '40pt', color: 'rgb(75, 134, 34)' }}>25%</h1>
+                <p style={{ color: 'rgb(66, 67, 68)', lineHeight: 1.3 }}>
+                  Oferta especial. Obtenha desconto em qualquer pedido, apenas válido
+                  por hoje.
+                </p>
+              </div>
+              <div>
+                <img src={gif} />
+              </div>
+            </div>
+          </div>
+
+
+
         </article>
       </main>
     </div>
