@@ -1,7 +1,7 @@
 .main{
     width: 100%;
-    height: 840px;
-    /*background: red;*/
+    height: 440px;
+    background: rgb(255, 255, 255);
     margin: 10px auto;
     position: relative;
     padding: 5px 0;
@@ -25,7 +25,7 @@
     width: 98%;
     height: 60px;
     margin: 0 auto;
-    /*background: gray;*/
+    background: rgb(255, 255, 255);
     display: flex;
     align-items: center;
     padding: 20px;
@@ -44,19 +44,24 @@ header p span{
     text-align: center;
     border-radius: 3px;
 }
+
+.main header h1{
+    font-size: 30pt;
+    color: black;
+}
 header p span:hover{
     background: #222;
     color: white;
 }
 section{
     width: 98%;
-    height: 600px;
-    /*background: red;*/
+    height: 400px;
+    background: aqua;
     margin: auto;
     display: flex;
     align-items: center;
     overflow-x: auto;
-    background-color: rgb(250, 250, 250);
+    background-color: rgb(255, 255, 255);
 }
 section::-webkit-scrollbar{
     display: none;
@@ -64,12 +69,12 @@ section::-webkit-scrollbar{
 section .product{
     min-width: 24%;
     height: 70%;
-    margin:  0 20px  0 0;
+    margin:  0 1px  0 0;
     border-radius: 20px;
     position: relative;
     left: 0;
     transition: 0.5s;
-    background-color: rgb(235, 235, 235);
+    background-color: rgb(255, 255, 255);
 
 }
 picture{
