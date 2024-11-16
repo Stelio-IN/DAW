@@ -5,7 +5,7 @@ import './app.css';
 // Componentes gerais
 import Footer from './component/Footer'; 
 import Nav from './component/Nav'; 
-import Carrinho from './component/Carrinho';
+import Carrinho from './component/Carrinho_1';
 import Home from './pages/Home'; 
 import Login from './pages/LoginRegister'; 
 import SobreNos from './pages/About'; 
