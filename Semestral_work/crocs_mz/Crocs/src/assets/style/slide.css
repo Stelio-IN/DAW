@@ -1,9 +1,10 @@
 
 /*        SLIDE */
 .carrosel_1{
-    background-color: rgba(0, 0, 0, 0.808);
+    background-color: rgba(255, 255, 255, 0.808);
     margin-bottom: 20px;
     padding-bottom: 10px;
+    height: 250px;
   }
   
   .slider{
@@ -22,7 +23,7 @@
     display: flex;
     width: calc(200px * 12);
     animation: auto_scroll 100s linear infinite;
-    animation-fill-mode: forwards;
+    animation-fill-mode: both;
   }
   
   @keyframes auto_scroll {

@@ -135,28 +135,52 @@ html, body {
   .Container_2 {
     display: flex;
     align-items: center;
-    justify-content: space-around;
-    height: 40vh;
+    justify-content: space-between;
+    height: 60vh;
+    width: 90vw;
+    justify-items: center;
     margin: auto;
     background-color: rgb(255, 255, 255);
   }
   
-  .Container-content {
-    width: 600px;
-    height: 100px;
+  .Container-content   {
+    width: 500px;
+    height: 300px;
     text-align: justify;
+    text-align: left;
+
   }
+
+ 
+
+  .promotion h1{
+    font-size: 35pt;
+    font-weight: 900;
+    color: black;
+  }
+
+  .promotion{
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 4px;
+  }
+
   
-  .Container-content h2 {
-    font-size: 22pt;
-    font-style: oblique;
-    color: green;
-  }
+ 
   
   .Container-content p {
     font-style: italic;
     color: rgb(93, 94, 95);
-    line-height: 1.5;
+    font-size: 15pt;
+    line-height: 1.6;
+  
+  }
+  .Container-content button {
+  margin-top: 30px;
+  border-radius: 20px;
+    width: 180px;
+    font-weight: 700;
   }
   
   .Container-promocional {
@@ -164,9 +188,9 @@ html, body {
     align-items: center;
     justify-content: space-evenly;
     width: 500px;
-    height: 530px;
+    height: 400px;
     border-radius: 30px;
-    background-color: rgba(223, 223, 223, 0.6);
+    background-color: rgb(96, 95, 95);
     box-shadow: 1px 1px 1px black;
   }
   
@@ -174,10 +198,11 @@ html, body {
     margin-left: 16px;
     width: 200px;
     text-align: left;
+    display: none;
   }
   
   .Container-promocional div:nth-child(2) img {
-    width: 250px;
+    width: 500px;
   }
 
   /* SHOP CONTENT */
@@ -271,11 +296,11 @@ html, body {
   }
   
   .Container-extended div:nth-child(1) {
-    background-image: url('template3.webp');
+    background-image: url('../img/template3.webp');
   }
   
   .Container-extended div:nth-child(2) {
-    background-image: url('teste8.png');
+    background-image: url('../img/teste8.png');
     background-color: red;
     opacity: 0.7;
     transition: opacity 0.5s ease-in;

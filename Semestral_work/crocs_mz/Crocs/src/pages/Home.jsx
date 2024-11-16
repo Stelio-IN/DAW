@@ -4,6 +4,19 @@ import '../assets/style/slide.css';
 import '../assets/style/catalogo.css';
 import { Link } from 'react-router-dom';
 
+// Images
+import coupon from '../assets/img/coupon.png';
+import onlineSupport from '../assets/img/online-support.png';
+import delivery from '../assets/img/delivery.png';
+import creditCard from '../assets/img/credit-card.png';
+import gif from '../assets/img/gif.gif';
+import colecao_1 from '../assets/img/col1.avif';
+import colecao_2 from '../assets/img/col2.avif';
+import colecao_3 from '../assets/img/col3.avif';
+import colecao_4 from '../assets/img/col4.avif';
+import colecao_5 from '../assets/img/col5.avif';
+import colecao_6 from '../assets/img/col6.avif';
+
 
 const Home = () => {
   return (
@@ -26,23 +39,23 @@ const Home = () => {
 
           {/* Section 2 */}
           <div className="Advantages-Container">
-            <div className="Discount">
-              <img src="../assets/img/coupon.png" alt="Desconto" />
-              <p>Descontos todas semanas</p>
-            </div>
-            <div>
-              <img src="../assets/img/online-support.png" alt="Suporte" />
-              <p>Suporte 24/7 dias</p>
-            </div>
-            <div>
-              <img src="delivery.png" alt="Entrega" />
-              <p>Entrega ao domicílio</p>
-            </div>
-            <div>
-              <img src="credit-card.png" alt="Pagamento seguro" />
-              <p>Pagamento seguro</p>
-            </div>
-          </div>
+      <div className="Discount">
+        <img src={coupon} alt="Desconto" />
+        <p>Descontos todas semanas</p>
+      </div>
+      <div>
+        <img src={onlineSupport} alt="Suporte" />
+        <p>Suporte 24/7 dias</p>
+      </div>
+      <div>
+        <img src={delivery} alt="Entrega" />
+        <p>Entrega ao domicílio</p>
+      </div>
+      <div>
+        <img src={creditCard} alt="Pagamento seguro" />
+        <p>Pagamento seguro</p>
+      </div>
+    </div>
 
 
           <div className="main">
@@ -85,13 +98,18 @@ const Home = () => {
            {/* Section 3 */}
            <div className="Container_2">
             <div className="Container-content">
-              <p>A nova marca</p>
-              <h2>Super Mega Promoção</h2>
-              <p>
-                Novos modelos que estão com uma super mega promoção. Aproveite agora
-                mesmo, pois, essa promoção vai terminar a qualquer momento. Compre
-                uma vez, e não se arrependa.
-              </p>
+              <div className="promotion">
+                
+                  <h1>GATEWAYS</h1>
+                  <h1>SANDALS</h1>
+              </div>
+              <p> CROCS™ | FEELS LIKE NOTHING AT ALL</p>
+              <br />
+              <p>  Oferta especial. Obtenha desconto em qualquer pedido, apenas válido
+              por hoje.</p>
+
+              <button> Comprar agora</button>
+             
             </div>
 
             <div className="Container-promocional">
@@ -103,7 +121,7 @@ const Home = () => {
                 </p>
               </div>
               <div>
-                <img src="gif.gif" alt="Promoção" />
+                <img src={gif} />
               </div>
             </div>
           </div>
@@ -115,10 +133,10 @@ const Home = () => {
             <div className="slider">
               <h3 style={{ marginBottom: '5px' }}>Coleções Populares</h3>
               <div className="slide-track">
-                {[''].map((img, index) => (
+                {[colecao_1, colecao_2, colecao_3, colecao_4, colecao_5, colecao_6, colecao_1, colecao_2, colecao_3, colecao_4, colecao_5, colecao_6].map((img, index) => (
                   <div className="slide" key={index}>
                     <img src={img} alt={`Coleção ${index + 1}`} />
-                    <p>Collection {index + 1}</p>
+                    <p>Collection{index + 1}</p>
                   </div>
                 ))}
               </div>
@@ -126,36 +144,42 @@ const Home = () => {
           </section>
 
           
-          {/* Shop Content */}
-          <div className="heading">
-            <h2>
-              Novas<span>Tendência</span>
-            </h2>
+        
+          <div className="main">
+            <header>
+              <h1>Novas Tendências</h1>
+            </header>
+            <section>
+              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
+                <div className="product" key={index}>
+                  <picture>
+                    <img src={img} alt={`Produto ${index + 1}`} />
+                  </picture>
+                  <div className="detail">
+                    <p>
+                      <b>Produto {index + 1}</b>
+                      <br />
+                      <small>Exclusivo</small>
+                    </p>
+                    <samp>4500 Mzn</samp>
+                  </div>
+                  <div className="button">
+                    <p className="star">
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                    </p>
+                    <a href="#">
+                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </section>
           </div>
 
-          <div className="shop-container">
-            {['teste3-removebg-preview.png', 'teste4-removebg-preview.png', 'teste5-removebg-preview.png'].map((img, index) => (
-              <Link to='/Detalhes_produto'><div className="box" key={index}>
-                <img src={img} alt={`Produto ${index + 1}`} />
-                <image>  </image>
-                <h2>Nike Therma</h2>
-                <span>70.88$</span>
-                <button>Sneakers</button>
-              </div></Link>
-            ))}
-          </div>
-
-          <div className="shop-container">
-            {['teste6-removebg-preview.png', 'teste6-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
-              <div className="box" key={index}>
-                <img src={img} alt={`Produto ${index + 1}`} />
-                <image>  </image>
-                <h2>Nike Therma</h2>
-                <span>70.88$</span>
-                <button>Sneakers</button>
-              </div>
-            ))}
-          </div>
      
 
        {/* Section 4 */}
@@ -173,8 +197,8 @@ const Home = () => {
               <div className='div'>
                 <div className='producte'><p>Imagem</p></div>
                 <div className='Detalhes'>
-                  <h2>Testeedsd</h2>
-                  <p>crocs | Limitada</p>
+                  <h2>Testes</h2>
+                  <p>Crocs | Limitada</p>
                   <button>Comprar Agora</button>
                   </div>
               </div>
@@ -182,7 +206,7 @@ const Home = () => {
               <div className='div'>
                 <div className='producte'><p>Imagem</p></div>
                 <div className='Detalhes'>
-                  <h1>Testeedsd</h1>
+                  <h1>Testes</h1>
                   <p>crocs | Limitada</p>
                   <button>Comprar agora</button>
                   </div>
