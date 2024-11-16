@@ -61,6 +61,7 @@ const Home = () => {
           <div className="main">
             <header>
               <h1>Novas Tendências</h1>
+              <p> <b>CROCS™ </b>| FEELS LIKE NOTHING AT ALL</p>
             </header>
             <section>
               {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
@@ -147,7 +148,8 @@ const Home = () => {
         
           <div className="main">
             <header>
-              <h1>Novas Tendências</h1>
+              <h1>JIBBITZ recentes</h1>
+              <p>FRESH DROPS | Personaliza os seus Crocs</p>
             </header>
             <section>
               {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
@@ -199,8 +201,8 @@ const Home = () => {
                   <img src={colecao_1} alt="" />
                   </div>
                 <div className='Detalhes'>
-                <h1> CROCS™ | FEELS LIKE NOTHING AT ALL</h1>
-                  <p>Oferta especial. Obtenha desconto em qualquer pedido, apenas válido</p>
+                <h1> COLLABS</h1>
+                  <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
                   </div>
                   <div className='btn_detalhes'>
                     <button>Comprar Agora</button>
@@ -212,8 +214,8 @@ const Home = () => {
                 <img src={colecao_2} alt="" />
                   </div>
                 <div className='Detalhes'>
-                <h1> CROCS™ | FEELS LIKE NOTHING AT ALL</h1>
-                <p>Oferta especial. Obtenha desconto em qualquer pedido, apenas válido</p>
+                <h1> GIFT CARDS</h1>
+                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
                   </div>
                   <div className='btn_detalhes'>
                     <button>Comprar Agora</button>
@@ -223,8 +225,8 @@ const Home = () => {
               <div className='categor'>
                 <div className='producte'><img src={colecao_3} alt="" /></div>
                 <div className='Detalhes'>
-                <h1> CROCS™ | FEELS LIKE NOTHING AT ALL</h1>
-                <p>Oferta especial. Obtenha desconto em qualquer pedido, apenas válido</p>
+                <h1> CROCS™ NOTHING</h1>
+                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
                   </div>
                   <div className='btn_detalhes'>
                     <button>Comprar Agora</button>
