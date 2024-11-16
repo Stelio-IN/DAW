@@ -2,31 +2,29 @@ import React, { useState, useEffect } from 'react';
 
 function Carrinho() {
   const [cart, setCart] = useState([]);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    // Adiciona uma propriedade `quantity` a cada produto, inicialmente 1
     const cartWithQuantities = storedCart.map(product => ({ ...product, quantity: 1 }));
     setCart(cartWithQuantities);
   }, []);
 
-  // Função para atualizar a quantidade de um produto
+  // Atualiza a quantidade de um produto
   const updateQuantity = (index, delta) => {
     setCart(prevCart => {
       const updatedCart = [...prevCart];
       const item = updatedCart[index];
-      // Verifica se a quantidade resultante está dentro dos limites permitidos
       if (item.quantity + delta >= 1 && item.quantity + delta <= item.stock_quantity) {
         item.quantity += delta;
       }
-      // Atualiza o carrinho no localStorage
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       return updatedCart;
     });
   };
 
-  // Função para remover um item do carrinho
+  // Remove um item do carrinho
   const removeFromCart = (index) => {
     setCart(prevCart => {
       const updatedCart = prevCart.filter((_, i) => i !== index);
@@ -95,6 +93,32 @@ function Carrinho() {
       borderRadius: '4px',
       cursor: 'pointer',
     },
+    modal: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      padding: '20px',
+      borderRadius: '8px',
+      maxWidth: '400px',
+      width: '100%',
+    },
+  };
+
+  const handlePurchaseClick = () => {
+    setShowPaymentModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowPaymentModal(false);
   };
 
   return (
@@ -138,9 +162,29 @@ function Carrinho() {
           <div style={styles.total}>
             <p>Total: {calculateTotal()}$</p>
           </div>
-          <button style={styles.purchaseButton} onClick={() => alert('Compra realizada com sucesso!')}>
+          <button style={styles.purchaseButton} onClick={handlePurchaseClick}>
             Realizar Compra
           </button>
+
+          {/* Modal de Pagamento */}
+          {showPaymentModal && (
+            <div style={styles.modal} onClick={handleCloseModal}>
+              <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <h2>Pagamento</h2>
+                <p>Total a Pagar: {calculateTotal()}$</p>
+                <label>
+                  Celular:
+                  <input type="text" placeholder="Seu celular" />
+                </label>
+                <label>
+                  Local de Entrega:
+                  <input type="text" placeholder="Endereço de entrega" />
+                </label>
+                <button onClick={() => alert('Compra finalizada com sucesso!')}>Finalizar Compra</button>
+                <button onClick={handleCloseModal}>Fechar</button>
+              </div>
+            </div>
+          )}
         </>
       ) : (
         <p>O carrinho está vazio.</p>
