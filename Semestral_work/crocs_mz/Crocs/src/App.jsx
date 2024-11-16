@@ -10,8 +10,8 @@ import Home from './pages/Home';
 import Login from './pages/LoginRegister'; 
 import SobreNos from './pages/About'; 
 import Loja from './pages/Loja'; 
-//import Detalhes from './pages/DetalhesProduto'; 
-import Detalhes from './pages/Produto'; 
+import Detalhes from './pages/DetalhesProduto'; 
+//import Detalhes from './pages/Produto'; 
 
 
 // Componentes para Admin
