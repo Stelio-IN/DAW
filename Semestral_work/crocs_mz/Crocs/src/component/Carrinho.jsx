@@ -59,63 +59,75 @@ function Carrinho() {
               <ul className="productList">
                 {cart.map((product, index) => (
                   <li key={index} className="productItem">
-                    <div className="productDetails">
-                      <h3>{product.name}</h3>
-                      <p>Preço: {product.price}$</p>
-                      <p>Quantidade em Estoque: {product.stock_quantity}</p>
-                      <p>Quantidade: {product.quantity}</p>
-                    </div>
-                    <div className="buttons">
-                      <button
-                        className="button"
-                        onClick={() => updateQuantity(index, 1)}
-                        disabled={product.quantity >= product.stock_quantity}
-                      >
-                        +
-                      </button>
-                      <button
-                        className="button"
-                        onClick={() => updateQuantity(index, -1)}
-                        disabled={product.quantity <= 1}
-                      >
-                        -
-                      </button>
-                      <button
-                        className="button removeButton"
-                        onClick={() => removeFromCart(index)}
-                      >
-                        Remover
-                      </button>
+                    <div className="product">
+                      <div className="productDetails">
+
+                        <div className='productDetails_1'>
+                          <img src="" alt="" />
+                          <p>Faca Upload de imagem aqui</p>
+                          </div>
+                        <div className='productDetails_2'>
+                          <h3>{product.name}</h3>
+                          <p>Preço: {product.price}$</p>
+                          <p>Quantidade em Estoque: {product.stock_quantity}</p>
+                          <p>Quantidade: {product.quantity}</p>
+                        </div>
+                      </div>
+                      <div className="buttons">
+                        <button
+                          className="button"
+                          onClick={() => updateQuantity(index, 1)}
+                          disabled={product.quantity >= product.stock_quantity}
+                        >
+                          +
+                        </button>
+                        <button
+                          className="button"
+                          onClick={() => updateQuantity(index, -1)}
+                          disabled={product.quantity <= 1}
+                        >
+                          -
+                        </button>
+                        <button
+                          className="button removeButton"
+                          onClick={() => removeFromCart(index)}
+                        >
+                          Remover
+                        </button>
+                        <button className='button addWishList'>Adicionar favoritos</button>
+                      </div>
                     </div>
                   </li>
                 ))}
               </ul>
               
                 <div className="Order_summary">
-                    <div className="subtotal">
-                    <p>SubTotal {2000 + 'items'}</p>
-                    <p>2000 Mzn</p>
-                    </div>
-                    <div className="shipping">
-                    <p>Shipping</p>
-                    <p>Calculated on next step</p>
-                    </div>
-                    <div className="descounted">
-                    <p>Voce Poupou</p>
-                    <p> 5000 Mzn</p>
-                    </div>
-              
-                    <div className="total">
-                    <p>Total: </p>
-                    <p>{calculateTotal()} Mzn</p>
-                    </div>
-                    
-                        <button className="purchaseButton" onClick={handlePurchaseClick}>
-                          Realizar Compra
-                         </button>
+                <div className="order">
+                <h2>Order Summary</h2>
+                  <div className="subtotal">
+                  <p>SubTotal</p>
+                  <p>2000 Mzn</p>
+                  </div>
+                  <div className="shipping">
+                  <p>Shipping</p>
+                  <p>Calculated on next step</p>
+                  </div>
+                  <div className="descounted">
+                  <p>Voce Poupou</p>
+                  <p> 5000 Mzn</p>
+                  </div>
+                  <div className="total">
+                  <p>Total: </p>
+                  <p>{calculateTotal()} Mzn</p>
+                  </div>
+                  <button className="purchaseButton" onClick={handlePurchaseClick}>
+                    Realizar Compra
+                   </button>
+              </div>
                     
               
                 </div>
+                
           </div>
 
 
@@ -144,7 +156,7 @@ function Carrinho() {
           )}
         </>
       ) : (
-        <p>carrinho vazio</p>
+       <p>carrinho vazio</p>
       )}
         </div>
 </div>
