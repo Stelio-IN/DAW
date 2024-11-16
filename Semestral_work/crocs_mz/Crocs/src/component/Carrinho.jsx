@@ -109,11 +109,11 @@ function Carrinho() {
                     <p>Total: </p>
                     <p>{calculateTotal()} Mzn</p>
                     </div>
-                    <Link to="/pagamento">
+                    
                         <button className="purchaseButton" onClick={handlePurchaseClick}>
                           Realizar Compra
                          </button>
-                    </Link>
+                    
               
                 </div>
           </div>
@@ -144,68 +144,7 @@ function Carrinho() {
           )}
         </>
       ) : (
-        <div className="carrinho">
-        <ul className="productList">
-          {cart.map((product, index) => (
-            <li key={index} className="productItem">
-              <div className="productDetails">
-                <h3>{product.name}</h3>
-                <p>Preço: {product.price}$</p>
-                <p>Quantidade em Estoque: {product.stock_quantity}</p>
-                <p>Quantidade: {product.quantity}</p>
-              </div>
-              <div className="buttons">
-                <button
-                  className="button"
-                  onClick={() => updateQuantity(index, 1)}
-                  disabled={product.quantity >= product.stock_quantity}
-                >
-                  +
-                </button>
-                <button
-                  className="button"
-                  onClick={() => updateQuantity(index, -1)}
-                  disabled={product.quantity <= 1}
-                >
-                  -
-                </button>
-                <button
-                  className="button removeButton"
-                  onClick={() => removeFromCart(index)}
-                >
-                  Remover
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-        
-          <div className="order_summary">
-              <div className="order">
-                <h2>Order Summary</h2>
-                  <div className="subtotal">
-                  <p>SubTotal</p>
-                  <p>2000 Mzn</p>
-                  </div>
-                  <div className="shipping">
-                  <p>Shipping</p>
-                  <p>Calculated on next step</p>
-                  </div>
-                  <div className="descounted">
-                  <p>Voce Poupou</p>
-                  <p> 5000 Mzn</p>
-                  </div>
-                  <div className="total">
-                  <p>Total: </p>
-                  <p>{calculateTotal()} Mzn</p>
-                  </div>
-                  <button className="purchaseButton" onClick={handlePurchaseClick}>
-                    Realizar Compra
-                   </button>
-              </div>
-        
-          </div>
-    </div>
+        <p>carrinho vazio</p>
       )}
         </div>
 </div>

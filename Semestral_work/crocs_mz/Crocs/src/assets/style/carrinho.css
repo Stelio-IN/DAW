@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color: black;
 }
 
 .content-carrinho {
@@ -16,7 +17,7 @@
     display: flex;
     flex-direction: row;
     height: 100vh;
-    background-color: rgb(250, 250, 250);
+    background-color: rgb(224, 224, 225);
     justify-content: space-between;
     width: 80vw;
     border-radius: 20px;
@@ -27,7 +28,7 @@
     flex-direction: column;
     align-items: center;
     justify-items: center;
-    background-color: rgb(234, 234, 234);
+    background-color: rgb(229, 255, 33);
     width: 50%;
     border-radius: 20px;
 }

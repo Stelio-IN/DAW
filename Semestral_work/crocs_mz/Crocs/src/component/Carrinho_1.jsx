@@ -123,6 +123,7 @@ function Carrinho() {
 
   return (
     <div style={styles.container}>
+      
       {cart.length > 0 ? (
         <>
           <ul style={styles.productList}>

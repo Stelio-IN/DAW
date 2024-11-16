@@ -33,7 +33,7 @@ const Home = () => {
     },
     button: {
       padding: '8px 16px',
-      backgroundColor: '#007bff',
+      backgroundColor: 'red',
       color: '#fff',
       border: 'none',
       borderRadius: '4px',
