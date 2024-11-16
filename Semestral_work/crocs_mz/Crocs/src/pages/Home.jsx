@@ -190,52 +190,55 @@ const Home = () => {
               <p style={{ fontSize: '20pt', fontWeight: 'bold' }}>Mostre a verdadeira cor</p>
               <p style={{ textDecoration: 'underline' }}>Compre os clássicos</p>
             </div>
+        </div>
+
+
+        <div className='Categories'>
+              <div className='categor'>
+                <div className='producte'>
+                  <img src={colecao_1} alt="" />
+                  </div>
+                <div className='Detalhes'>
+                <h1> CROCS™ | FEELS LIKE NOTHING AT ALL</h1>
+                  <p>Oferta especial. Obtenha desconto em qualquer pedido, apenas válido</p>
+                  </div>
+                  <div className='btn_detalhes'>
+                    <button>Comprar Agora</button>
+                    </div>
+              </div>
+
+              <div className='categor'>
+                <div className='producte'>
+                <img src={colecao_2} alt="" />
+                  </div>
+                <div className='Detalhes'>
+                <h1> CROCS™ | FEELS LIKE NOTHING AT ALL</h1>
+                <p>Oferta especial. Obtenha desconto em qualquer pedido, apenas válido</p>
+                  </div>
+                  <div className='btn_detalhes'>
+                    <button>Comprar Agora</button>
+                    </div>
+              </div>
+
+              <div className='categor'>
+                <div className='producte'><img src={colecao_3} alt="" /></div>
+                <div className='Detalhes'>
+                <h1> CROCS™ | FEELS LIKE NOTHING AT ALL</h1>
+                <p>Oferta especial. Obtenha desconto em qualquer pedido, apenas válido</p>
+                  </div>
+                  <div className='btn_detalhes'>
+                    <button>Comprar Agora</button>
+                    </div>
+              </div>
+
+              
           </div>
-
-
-          <div className='Categories'>
-              <div className='div'>
-                <div className='producte'><p>Imagem</p></div>
-                <div className='Detalhes'>
-                  <h2>Testes</h2>
-                  <p>Crocs | Limitada</p>
-                  <button>Comprar Agora</button>
-                  </div>
-              </div>
-
-              <div className='div'>
-                <div className='producte'><p>Imagem</p></div>
-                <div className='Detalhes'>
-                  <h1>Testes</h1>
-                  <p>crocs | Limitada</p>
-                  <button>Comprar agora</button>
-                  </div>
-              </div>
-
-              <div className='div'>
-                <div className='producte'><p>Imagem</p></div>
-                <div className='Detalhes'>
-                  <h1>Testeedsd</h1>
-                  <p>crocs | Limitada</p>
-                  <button>Comprar agora</button>
-                  </div>
-              </div>
-
-              <div className='div'>
-                <div className='producte'><p>Imagem</p></div>
-                <div className='Detalhes'>
-                  <h1>Testeedsd</h1>
-                  <p>crocs | Limitada</p>
-                  <button>Comprar agora</button>
-                  </div>
-              </div>
-          </div>
-
+ 
           
     
              
           {/* Catalog */}
-          <div className="main">
+          <div className="main" >
             <header>
               <h1>Novas Tendências</h1>
             </header>
