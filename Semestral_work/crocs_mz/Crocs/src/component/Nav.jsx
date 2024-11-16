@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/style/menu.css';
 import LogoCrocs from '../assets/img/crocs_logo.webp';
+import { FiShoppingCart } from 'react-icons/fi';
 
 const Navbar = () => {
   return (
@@ -138,9 +139,25 @@ const Navbar = () => {
             <Link to="#"><input type="button" className="btn_favorito" /></Link>
             <Link to="/login"><input type="button" className="btn_login" value="Login" /></Link>
             <input type="search" className="btn_pesquisa" placeholder="Search" />
-            <Link to="/carrinho">
-              <p style={{color: 'black'}}>Carrinho</p>
-            </Link>
+            <Link 
+    to="/carrinho" 
+    style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      textDecoration: 'none', 
+      border: '3px solid #000000', // Adiciona a borda
+      padding: '4px 14px', // Adiciona espaçamento interno
+      borderRadius: '80px', // Bordas arredondadas
+      transition: 'box-shadow 0.3s',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Sombras para destacar
+      hover: {
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Sombras ao passar o mouse
+      },
+    }}
+  >
+    <FiShoppingCart size={20} style={{ marginRight: '8px', color: 'black' }} /> {/* Ícone de carrinho */}
+    <p style={{ color: 'black', margin: 0 }}></p>
+  </Link>
           </div>
         </ul>
 
