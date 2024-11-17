@@ -17,7 +17,7 @@ import colecao_4 from '../assets/img/col4.avif';
 import colecao_5 from '../assets/img/col5.avif';
 import colecao_6 from '../assets/img/col6.avif';
 import carrinhoSvg from '../assets/img/shopping-cart-solid.svg';
-import crocs from '../assets/img/crocs1.webp';
+//import crocs1 from '../assets/img/imgTeste.PNG';
 
 
 
@@ -92,7 +92,7 @@ const Home = () => {
                       <img 
                         src={Array.isArray(product.images) && product.images.length > 0 
                           ? product.images[0].image_url 
-                          : 'crocs1.webp'} 
+                          : colecao_3} 
                         alt={product.product_name} 
                       />
                     </picture>
