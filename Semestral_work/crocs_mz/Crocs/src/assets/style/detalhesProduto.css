@@ -1,0 +1,98 @@
+/* Estilo Global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+.container-detalhes-produto {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    background-color: rgb(102, 14, 14);
+}
+
+.box-conteudo {
+    max-width: 100%;
+    margin: auto;
+    height: 80vh;
+    margin-top: 5%;
+    background-color: rgb(79, 168, 69);
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    display: flex;
+}
+
+.col-esquerda, .col-direita {
+    width: 50%;
+}
+
+.col-direita h1 {
+    font-size: 3rem;
+}
+
+.col-direita .botao-carrinho {
+    border-radius: 12px;
+    color: white;
+    padding: 13px;
+    border: none;
+    width: 200px;
+    background: black;
+    box-shadow: 1px 1px 1px black;
+}
+
+.informacao-tamanho {
+    margin-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.botao-tamanho, .botao-genero {
+    border-radius: 12px;
+    color: black;
+    padding: 5px;
+    background: rgb(251, 251, 251);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.imagem-principal {
+    width: 70%;
+    height: 60%;
+    margin: auto;
+}
+
+.imagem-slide {
+    margin: auto;
+    width: 100%;
+}
+
+.opcoes {
+    margin-top: 20px;
+    width: 400px;
+    margin: auto;
+}
+
+.opcoes img {
+    margin-top: 60px;
+    width: 55px;
+    height: 55px;
+    padding: 10px;   
+}
+
+/* Media Queries (Responsividade) */
+@media (max-width: 768px) {
+    .box-conteudo {
+        flex-direction: column;
+    }
+
+    .col-esquerda, .col-direita {
+        width: 100%;
+    }
+}

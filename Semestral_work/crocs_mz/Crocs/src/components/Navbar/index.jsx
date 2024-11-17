@@ -1,10 +1,16 @@
 import { Link } from 'react-router-dom';
+<<<<<<< HEAD:Semestral_work/crocs_mz/Crocs/src/components/Navbar/index.jsx
 import './menu.css'; // Import your CSS file
 import LogoCrocs from '../../assets/img/crocs_logo.webp';
 import React, { useState, useEffect} from 'react' 
 import iconCart from '../../assets/images/iconCart.png' 
 import { useSelector, useDispatch } from 'react-redux' 
 import { toggleStatusTab } from '../../stores/cart'
+=======
+import '../assets/style/menu.css';
+import LogoCrocs from '../assets/img/crocs_logo.webp';
+import { FiShoppingCart } from 'react-icons/fi';
+>>>>>>> SSumeid:Semestral_work/crocs_mz/Crocs/src/component/Nav.jsx
 
 const Navbar = () => {
 
@@ -24,7 +30,7 @@ const Navbar = () => {
       <div className="wrapper">
         <div className="logo">
           <Link to="/">
-            <span style={{ color: 'rgb(0, 0, 0)', fontWeight: 'bold', fontSize: '25pt' }}>
+            <span style={{ color: 'rgb(7, 79, 37)', fontWeight: 'bold', fontSize: '25pt' }}>
               Crocs<sup style={{ fontSize: '0.5rem' }}>TM</sup>
             </span>
             {/* <img src={LogoCrocs} alt="Logo" className="logo-img" /> */}
@@ -48,6 +54,7 @@ const Navbar = () => {
           <li>
             <Link to="/" className="active">Home</Link>
           </li>
+
           <li>
             <Link to="#" className="desktop-item">Novo</Link>
             <input type="checkbox" id="showDrop" />
@@ -58,6 +65,7 @@ const Navbar = () => {
               <li><Link to="#">Crianças</Link></li>
             </ul>
           </li>
+
           <li>
             <Link to="#" className="desktop-item">Homem</Link>
             <input type="checkbox" id="showMega" />
@@ -65,7 +73,7 @@ const Navbar = () => {
             <div className="mega-box">
               <div className="content">
                 <div className="row">
-                  <img src="crocs_logo.webp" alt="Crocs Logo" />
+                  <img src={LogoCrocs} alt="Crocs Logo" />
                 </div>
                 <div className="row">
                   <header>Por Tendência</header>
@@ -88,7 +96,6 @@ const Navbar = () => {
                   </ul>
                 </div>
                 <div className="row">
-                  <header></header>
                   <ul className="mega-links">
                     <img src="pose3.webp" alt="Promo" />
                     <button>Ver Oferta</button>
@@ -97,7 +104,34 @@ const Navbar = () => {
               </div>
             </div>
           </li>
+
+
+<li>
+  <Link to="/" className="desktop-item">Mulher</Link>
+  <input type="checkbox" id="showMega" />
+
+  <label htmlFor="showMega" className="mobile-item">Testes</label>
+  <div className="mega-box">
+    <div className="content">
+      <div className="row">
+        <img src="crocs_logo.webp" alt="" />
+      </div>
+      <div className="row">
+        <header>Estilo</header>
+        <ul className="mega-links">
+          <li><Link to="/tamancos">Tamancos</Link></li>
+          <li><Link to="/sandalias">Sandálias</Link></li>
+          <li><Link to="/sandalias-de-dedo">Sandálias de dedo</Link></li>
+          <li><Link to="/plataformas-e-cunhas">Plataforma e Cunhas</Link></li>
+          <li><Link to="/apartamentos">Apartamentos</Link></li>
+        </ul>
+      </div>
+
+      <div className="row">
+        <header></header>
+        <ul className="mega-links">
           <li>
+<<<<<<< HEAD:Semestral_work/crocs_mz/Crocs/src/components/Navbar/index.jsx
             <Link to="#" className="desktop-item">Mulher</Link>
             <input type="checkbox" id="showMegaMulher" />
             <label htmlFor="showMegaMulher" className="mobile-item">Testes</label>
@@ -131,7 +165,27 @@ const Navbar = () => {
                 </div>
               </div>
             </div>
+=======
+            <Link to="/oferta1"><img src="pose1.webp" alt="" /></Link>
+            <button>Ver Oferta</button>
+>>>>>>> SSumeid:Semestral_work/crocs_mz/Crocs/src/component/Nav.jsx
           </li>
+        </ul>
+      </div>
+
+      <div className="row">
+        <header></header>
+        <ul className="mega-links">
+          <li>
+            <Link to="/oferta2"><img src="pose2.webp" alt="" /></Link>
+            <button>Ver Oferta</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</li>
+
 
           <li><Link to="/loja">Loja</Link></li>
           <li><Link to="/sobre-nos">About us</Link></li>
@@ -146,6 +200,25 @@ const Navbar = () => {
             <Link to="#"><input type="button" className="btn_favorito" /></Link>
             <Link to="/login"><input type="button" className="btn_login" value="Login" /></Link>
             <input type="search" className="btn_pesquisa" placeholder="Search" />
+            <Link 
+    to="/carrinho" 
+    style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      textDecoration: 'none', 
+      border: '3px solid #000000', // Adiciona a borda
+      padding: '4px 14px', // Adiciona espaçamento interno
+      borderRadius: '80px', // Bordas arredondadas
+      transition: 'box-shadow 0.3s',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Sombras para destacar
+      hover: {
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Sombras ao passar o mouse
+      },
+    }}
+  >
+    <FiShoppingCart size={20} style={{ marginRight: '8px', color: 'black' }} /> {/* Ícone de carrinho */}
+    <p style={{ color: 'black', margin: 0 }}></p>
+  </Link>
           </div>
         </ul>
 
