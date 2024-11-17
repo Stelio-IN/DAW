@@ -89,12 +89,14 @@ const Home = () => {
                 products.map((product, index) => (
                   <div className="product" key={index}>
                     <picture>
-                      <img 
-                        src={Array.isArray(product.images) && product.images.length > 0 
-                          ? product.images[0].image_url 
-                          : colecao_3} 
-                        alt={product.product_name} 
-                      />
+                    <img 
+  src={Array.isArray(product.images) && product.images.length > 0 
+    ? product.images[0].image_url 
+    : "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"} 
+  alt={product.product_name}
+  loading="lazy" 
+/>
+
                     </picture>
                     <div className="detail">
                       <p>
