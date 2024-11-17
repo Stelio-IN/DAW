@@ -60,7 +60,7 @@ html, body {
 }
 
 .home-container h2 {
-  color: rgb(17, 122, 5);
+  color: rgb(55, 114, 48);
   margin: 3px;
   font-size: 45pt;
   letter-spacing: -0.05em;
@@ -284,6 +284,16 @@ html, body {
 
   
   /* SEÇÃO 4 */
+  .Container-promo{
+  display: flex;
+  background-image: url('../img/template3.webp');
+  display: flex;
+    gap: 2rem;
+    width: 1400px;
+    margin: auto;
+
+}
+
   .Container-extended {
     display: flex;
     gap: 2rem;

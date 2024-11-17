@@ -110,7 +110,7 @@ function Carrinho() {
                 <h2>Order Summary</h2>
                   <div className="subtotal">
                   <p>SubTotal</p>
-                  <p>2000 Mzn</p>
+                  <p>0 Mzn</p>
                   </div>
                   <div className="shipping">
                   <p>Shipping</p>
@@ -118,7 +118,7 @@ function Carrinho() {
                   </div>
                   <div className="descounted">
                   <p>Voce Poupou</p>
-                  <p> 5000 Mzn</p>
+                  <p> 0 Mzn</p>
                   </div>
                   <div className="total">
                   <p>Total: </p>

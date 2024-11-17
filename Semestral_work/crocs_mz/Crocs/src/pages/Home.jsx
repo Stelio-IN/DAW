@@ -16,6 +16,7 @@ import colecao_3 from "../assets/img/col3.avif";
 import colecao_4 from "../assets/img/col4.avif";
 import colecao_5 from "../assets/img/col5.avif";
 import colecao_6 from "../assets/img/col6.avif";
+import template from "../assets/img/template5.webp";
 import carrinhoSvg from "../assets/img/shopping-cart-solid.svg";
 //import crocs1 from '../assets/img/imgTeste.PNG';
 
@@ -131,6 +132,12 @@ const Home = () => {
               )}
             </section>
           </div>
+
+              <div className="Container-promo">
+              <img src={template} alt="" />
+              </div>
+
+            
 
           {/* Section 3 */}
           <div className="Container_2">
