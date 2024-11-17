@@ -337,7 +337,7 @@ html, body {
   }
 
   .Categories .categor{
-    width: 270px;
+    width: 300px;
     height: 200px;
     border-radius: 10px;
     background-color: rgb(255, 255, 255);
@@ -361,17 +361,28 @@ html, body {
     background-color: #ffffff;
     display: flex;
     flex-direction: column;
-    height: 180px;
+    height: 80px;
     width: 400px;
   }
    .btn_detalhes {
     margin-top: 5px;
+    border-radius: 20px;
+  }
+  .btn_detalhes button{
+    border-radius: 30px;
+    font-weight: bolder;
+    background-color: rgb(0, 0, 0);
+    padding: 14px;
   }
 
   .Detalhes h1{
     color: black;
-    font-size: 25pt;
-    font-weight: bolder;
+    font-size: 30pt;
+    font-weight: 900;
+    font: 30px 'Proxima nova, sans-serif' bolder;
+    letter-spacing: 0.05em; 
+    line-height: 90%;
+    text-transform: uppercase; 
   }
   .Detalhes p{
     margin-top: 10px;
@@ -380,6 +391,13 @@ html, body {
     color: black;
   }
 
+  /*
+  font-size: 60px;
+  letter-spacing: 0.05em; 
+  line-height: 90%;
+  text-transform: uppercase; 
+  font-weight: 800;
+*/
 
 
   .color-box {
