@@ -106,19 +106,23 @@ nav .wrapper{
 
 .mega-box{
     position: absolute;
-    top: 80px;
+    top: 65px;
     background: #ffffff;
     width: 100%;
     left: 0;
-padding: 0 30px;
+    padding: 10px;
     opacity: 0;
     visibility: hidden;
     transition: all 0.4s ease;
     border-radius: 22px;
     box-shadow: 1px 1px 1px rgb(235, 233, 233);
+    display: flex; /* Muda para layout horizontal */
+    flex-direction: row; 
+    gap: 10px;
+    display: flex; /* Muda para layout horizontal */
+    flex-direction: row;
+    line-height: 45px;
 }
-
-
 
 .mega-box .content{
     background-color: #ffffff;
@@ -127,7 +131,8 @@ padding: 0 30px;
     width: 100%;
     justify-content: space-between;
     padding-bottom: 200px;
-    
+    display: flex; /* Muda para layout horizontal */
+    flex-direction: row;
 }
 
 .content .row{
@@ -135,11 +140,11 @@ padding: 0 30px;
     line-height: 45px;
     display: flex;
     align-items: center;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 .content .row img{
-    width: 220px;
+    width: 200px;
     border-radius: 10px;
     height: 90%;
     object-fit: cover;
@@ -154,7 +159,9 @@ padding: 0 30px;
 
 .content .row .mega-links{
     margin-left: -40px;
-    
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
 
 .content .row .mega-links a{
@@ -516,4 +523,3 @@ padding: 0 30px;
 .wrapper #showMega{
     display: none;
 }
-

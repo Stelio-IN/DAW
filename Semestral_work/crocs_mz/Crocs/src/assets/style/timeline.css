@@ -1,0 +1,65 @@
+.timeline-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .timeline {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    max-width: 600px;
+    justify-content: space-between;
+  }
+  
+  .timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -50%;
+    width: 100%;
+    height: 4px;
+    background-color: #ddd;
+    z-index: 1;
+  }
+  
+  .timeline-step.active:not(:last-child)::after {
+    background-color: #007bff;
+  }
+  
+  .step-number {
+    background-color: #ddd;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    z-index: 2;
+    transition: background-color 0.3s ease;
+  }
+  
+  .timeline-step.active .step-number {
+    background-color: #007bff;
+  }
+  
+  .step-label {
+    font-size: 14px;
+    color: #333;
+  }
+  
