@@ -159,6 +159,9 @@ html, body {
     font-size: 35pt;
     font-weight: 900;
     color: black;
+    letter-spacing: 0.05em; 
+  line-height: 90%;
+  text-transform: uppercase; 
   }
 
   .promotion{

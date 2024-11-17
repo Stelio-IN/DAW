@@ -81,8 +81,8 @@ const Home = () => {
 
           <div className="main">
             <header>
-            <h1>Novas Tendências</h1>
-            <p> <b>CROCS™ </b>| FEELS LIKE NOTHING AT ALL</p>
+            <h1>modelos novos</h1>
+            <p> <b>CROCS™ </b>| SINTA-SE COMO NADA</p>
             </header>
             <section>
               {products.length > 0 ? (
@@ -142,10 +142,10 @@ const Home = () => {
             <div className="Container-content">
               <div className="promotion">
                 
-                  <h1>GATEWAYS</h1>
-                  <h1>SANDALS</h1>
+                  <h1>SANDALIAS</h1>
+                  <h1>ESTILOSAS</h1>
               </div>
-              <p> CROCS™ | FEELS LIKE NOTHING AT ALL</p>
+              <p> CROCS™ | SINTA-SE COMO NUNCA ANTES</p>
               <br />
               <p>  Oferta especial. Obtenha desconto em qualquer pedido, apenas válido
               por hoje.</p>
@@ -172,12 +172,13 @@ const Home = () => {
           {/* Popular Collections */}
           <section className="carrosel_1">
             <div className="slider">
-              <h3 style={{ marginBottom: '5px' }}>Coleções Populares</h3>
+             
+              <button>Coleções Populares</button>
               <div className="slide-track">
                 {[colecao_1, colecao_2, colecao_3, colecao_4, colecao_5, colecao_6, colecao_1, colecao_2, colecao_3, colecao_4, colecao_5, colecao_6].map((img, index) => (
                   <div className="slide" key={index}>
                     <img src={img} alt={`Coleção ${index + 1}`} />
-                    <p>Collection{index + 1}</p>
+                    <p>Coleçao {index + 1}</p>
                   </div>
                 ))}
               </div>
