@@ -10,6 +10,13 @@ import onlineSupport from '../assets/img/online-support.png';
 import delivery from '../assets/img/delivery.png';
 import creditCard from '../assets/img/credit-card.png';
 import gif from '../assets/img/gif.gif';
+import colecao_1 from '../assets/img/col1.avif';
+import colecao_2 from '../assets/img/col2.avif';
+import colecao_3 from '../assets/img/col3.avif';
+import colecao_4 from '../assets/img/col4.avif';
+import colecao_5 from '../assets/img/col5.avif';
+import colecao_6 from '../assets/img/col6.avif';
+
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -23,27 +30,7 @@ const Home = () => {
       .catch(error => console.error('Erro ao buscar produtos:', error));
   }, []);
 
-  const styles = {
-    colorBox: {
-      display: 'inline-block',
-      width: '20px',
-      height: '20px',
-      borderRadius: '4px',
-      margin: '0 5px',
-    },
-    button: {
-      padding: '8px 16px',
-      backgroundColor: 'red',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      marginTop: '12px',
-    },
-    buttonHover: {
-      backgroundColor: '#0056b3',
-    },
-  };
+  
 
   return (
     
@@ -115,27 +102,28 @@ const Home = () => {
                     </div>
                     <div className="button">
                       <div className="colors">
-                        {Array.isArray(product.colors) && product.colors.map((color, index) => (
-                          <div 
-                            key={index} 
-                            style={{ ...styles.colorBox, backgroundColor: color.hex_code }}
-                            title={color.name}
-                          />
-                        ))}
+                        {Array.isArray(product.colors) &&
+                          product.colors.map((color, index) => (
+                            <div
+                              key={index}
+                              className="color-box"
+                              style={{ backgroundColor: color.hex_code }}
+                              title={color.name}
+                            />
+                          ))}
                       </div>
-                      <button 
-                        style={styles.button}
+                      <button
+                        className="product-button"
                         onClick={() => {
                           console.log(`Product ID: ${product.product_id}`);
                           navigate(`/produto/detalhes/${product.product_id}`);
                         }}
-                        onMouseOver={e => e.currentTarget.style.backgroundColor = styles.buttonHover.backgroundColor}
-                        onMouseOut={e => e.currentTarget.style.backgroundColor = styles.button.backgroundColor}
                       >
                         Ver Produto
                         <img src="shopping-cart-solid.svg" alt="Carrinho" />
                       </button>
                     </div>
+
                   </div>
                 ))
               ) : (

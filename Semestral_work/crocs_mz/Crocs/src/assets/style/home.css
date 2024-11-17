@@ -380,3 +380,31 @@ html, body {
     color: black;
   }
 
+
+
+  .color-box {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin: 0 5px;
+  }
+  
+  .product-button {
+    padding: 8px 16px;
+    background-color: red;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .product-button:hover {
+    background-color: #0056b3;
+  }
+  
