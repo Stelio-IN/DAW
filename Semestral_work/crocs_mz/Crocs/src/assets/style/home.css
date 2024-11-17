@@ -60,9 +60,13 @@ html, body {
 }
 
 .home-container h2 {
-  color: rgb(75, 119, 70);
+  color: rgb(55, 114, 48);
   margin: 3px;
-  font-size: 41pt;
+  font-size: 45pt;
+  letter-spacing: -0.05em;
+  line-height: 80%;
+  text-transform: uppercase;
+  font-weight: 900;
 }
 
 .home-container p {
@@ -194,8 +198,8 @@ html, body {
     width: 500px;
     height: 400px;
     border-radius: 30px;
-    background-color: rgb(96, 95, 95);
-    box-shadow: 1px 1px 1px black;
+    background-color: rgb(246, 244, 244);
+    box-shadow: 1px 1px 1px rgb(235, 235, 235);
   }
   
   .Container-promocional div:nth-child(1) {
@@ -280,6 +284,16 @@ html, body {
 
   
   /* SEÇÃO 4 */
+  .Container-promo{
+  display: flex;
+  background-image: url('../img/template3.webp');
+  display: flex;
+    gap: 2rem;
+    width: 1400px;
+    margin: auto;
+
+}
+
   .Container-extended {
     display: flex;
     gap: 2rem;

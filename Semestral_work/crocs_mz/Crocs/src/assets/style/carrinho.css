@@ -113,7 +113,7 @@
   
   .productDetails_1  img{
     width: 150px;
-   
+   color: #fd8c03;
   }
   
 
@@ -127,6 +127,7 @@
     background-color: #007bff00;
     color: #fff;
     cursor: pointer;
+  
   }
   
   .removeButton, .addWishList {
