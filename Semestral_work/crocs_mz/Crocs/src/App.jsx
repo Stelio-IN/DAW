@@ -11,6 +11,7 @@ import Login from './pages/LoginRegister';
 import SobreNos from './pages/About'; 
 import Loja from './pages/Loja'; 
 import Detalhes from './pages/DetalhesProduto'; 
+//import Detalhes from './pages/Produto'; 
 
 
 // Componentes para Admin
@@ -45,7 +46,7 @@ function MainApp() {
             <Route path="/login" element={<Login />} />
             <Route path="/sobre-nos" element={<SobreNos />} />
             <Route path="/loja" element={<Loja />} />
-            <Route path="/Detalhes_produto" element= {<Detalhes />} />
+            <Route path="/produto/detalhes/:productID" element= {<Detalhes />} />
             <Route path="/carrinho" element= {<Carrinho />} />
            
            

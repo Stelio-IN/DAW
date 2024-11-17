@@ -8,7 +8,7 @@
   }
   
   .slider{
-    height: 250px;
+    height: 270px;
     margin: auto;
     position: relative;
     width: 100%;
@@ -18,12 +18,21 @@
    overflow: hidden;
    
   }
+
+  .slider button{
+    background-color: black;
+    color: white;
+    border-radius: 30px;
+    font-weight: 700;
+
+  }
   
   .slide-track{
     display: flex;
     width: calc(200px * 12);
-    animation: auto_scroll 100s linear infinite;
+    animation: auto_scroll 110s linear infinite;
     animation-fill-mode: both;
+    
   }
   
   @keyframes auto_scroll {
