@@ -125,10 +125,15 @@ picture img {
     background-color: rgb(255, 255, 255);
 }
 
+
 .detail samp {
     text-decoration: underline;
     color: #222;
     font-size: 11pt;
+}
+
+.detail small{
+    font-size: 10pt;
 }
 
 .product-button img {

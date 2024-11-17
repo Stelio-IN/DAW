@@ -6,7 +6,7 @@ const Footer = () => {
     <section className="footer">
       <div className="footer-box">
         <a href="#" className="logo">
-          <h1>CROCS<sup style={{ fontSize: '0.5rem' }}>TM</sup></h1>
+          <h1 style={{color: 'green' }}>CROCS<sup style={{ fontSize: '0.5rem', color: 'green' }}>TM</sup></h1>
         </a>
         <div className="social">
           <div className="media">
@@ -15,7 +15,7 @@ const Footer = () => {
             <a href="#"><i className='bx bxl-whatsapp'></i></a>
           </div>
 
-          <p style={{ textAlign: 'left', textDecoration: 'underline', fontSize: '1.1rem' }}><b>Inscreva-se Newsletter</b></p>
+          <p style={{ textAlign: 'left', textDecoration: 'underline', fontSize: '1.1rem' }}><b style={{  color: 'white' }}>Inscreva-se Newsletter</b></p>
           <p style={{ width: '330px', fontSize: '0.8rem' }}>Ao se inscrever você concorda com os termos de uso e política de privacidade.</p>
           <div className="newsletter">
             <form action="">
@@ -26,8 +26,8 @@ const Footer = () => {
 
           <div className="contacts">
             <h3>Contacts</h3>
-            <p><b>Email</b>: suporte@crocsmz.co.mz</p> <br />
-            <p><b>Contacto do suporte</b>: +258 821234567</p>
+            <p><b  style={{  color: 'white' }}>Email</b>: suporte@crocsmz.co.mz</p> <br />
+            <p><b  style={{  color: 'white' }}>Contacto do suporte</b>: +258 821234567</p>
             <p>Seg-Sex: 7:00H - 21:00H</p>
             <p>Sab-Dom: 8:15H - 20:00H</p>
           </div>

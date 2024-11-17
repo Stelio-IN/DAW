@@ -81,18 +81,20 @@ const Home = () => {
               {products.length > 0 ? (
                 products.map((product, index) => (
                   <div className="product" key={index}>
-                    <picture>
-                      <img
-                        src={
-                          product.primary_image_url ||
-                          ""
-                        } // Acesse diretamente a imagem sem verificar uma lista
-                        alt={product.product_name}
-                        loading="lazy"
-                      />
-                    </picture>
+                  
+                      <picture>
+                        <img
+                          src={
+                            product.primary_image_url 
+                          } // Acesse diretamente a imagem sem verificar uma lista
+                          alt={product.product_name}
+                          loading="lazy"
+                        />
+                      </picture>
+                    
 
                     <div className="detail">
+                      
                       <p>
                         {/*<b>Id: {product.product_id}</b>*/}
 
@@ -271,7 +273,7 @@ const Home = () => {
               </div>
               <div className="Detalhes">
                 <h1> COLLABS</h1>
-                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
+                <p>CROCS™ | SINTA-SE COMO NUNCA</p>
               </div>
               <div className="btn_detalhes">
                 <button>Comprar Agora</button>
@@ -284,7 +286,7 @@ const Home = () => {
               </div>
               <div className="Detalhes">
                 <h1> GIFT CARDS</h1>
-                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
+                <p>CROCS™ | CARTOES DE PRESENTE</p>
               </div>
               <div className="btn_detalhes">
                 <button>Comprar Agora</button>
@@ -297,7 +299,7 @@ const Home = () => {
               </div>
               <div className="Detalhes">
                 <h1> CROCS™ NOTHING</h1>
-                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
+                <p>CROCS™ | SEMPRE BARATO E LEVE</p>
               </div>
               <div className="btn_detalhes">
                 <button>Comprar Agora</button>
