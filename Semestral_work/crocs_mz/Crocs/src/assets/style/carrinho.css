@@ -111,6 +111,12 @@
     gap: 3px;
   }
   
+  .productDetails_1  img{
+    width: 150px;
+   
+  }
+  
+
   .buttons {
     display: flex;
     justify-content: space-evenly;
