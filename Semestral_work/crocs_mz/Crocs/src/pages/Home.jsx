@@ -85,7 +85,7 @@ const Home = () => {
                       <img
                         src={
                           product.primary_image_url ||
-                          "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"
+                          ""
                         } // Acesse diretamente a imagem sem verificar uma lista
                         alt={product.product_name}
                         loading="lazy"
@@ -194,8 +194,11 @@ const Home = () => {
 
           <div className="main">
             <header>
-              <h1>JIBBITZ recentes</h1>
-              <p>FRESH DROPS | Personaliza os seus Crocs</p>
+              <h1>JIBBITZ RECENTES</h1>
+              <p>
+                {" "}
+                <b>CROCS™ </b>| PERSONALIZE AO SEU GOSTO
+              </p>
             </header>
             <section>
               {products.length > 0 ? (
@@ -204,18 +207,18 @@ const Home = () => {
                     <picture>
                       <img
                         src={
-                          Array.isArray(product.images) &&
-                          product.images.length > 0
-                            ? product.images[0].image_url
-                            : "default-image.png"
-                        }
+                          product.primary_image_url ||
+                          "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"
+                        } // Acesse diretamente a imagem sem verificar uma lista
                         alt={product.product_name}
+                        loading="lazy"
                       />
                     </picture>
+
                     <div className="detail">
                       <p>
-                        <b>Id: {product.product_id}</b>
-                        <br />
+                        {/*<b>Id: {product.product_id}</b>*/}
+
                         <small>{product.product_name}</small>
                       </p>
                       <samp>{product.price} Mzn</samp>
@@ -239,8 +242,7 @@ const Home = () => {
                           navigate(`/produto/detalhes/${product.product_id}`);
                         }}
                       >
-                        Ver Produto
-                        <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                        <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
                     </div>
                   </div>
@@ -250,7 +252,6 @@ const Home = () => {
               )}
             </section>
           </div>
-
           {/* Section 4 */}
           <div className="Container-extended">
             <div></div>
@@ -307,7 +308,11 @@ const Home = () => {
           {/* Catalog */}
           <div className="main">
             <header>
-              <h1>Novas Tendências</h1>
+              <h1>Novas tendências</h1>
+              <p>
+                {" "}
+                <b>CROCS™ </b>| SINTA-SE COMO NUNCA ANTES
+              </p>
             </header>
             <section>
               {products.length > 0 ? (
@@ -316,18 +321,18 @@ const Home = () => {
                     <picture>
                       <img
                         src={
-                          Array.isArray(product.images) &&
-                          product.images.length > 0
-                            ? product.images[0].image_url
-                            : "default-image.png"
-                        }
+                          product.primary_image_url ||
+                          "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"
+                        } // Acesse diretamente a imagem sem verificar uma lista
                         alt={product.product_name}
+                        loading="lazy"
                       />
                     </picture>
+
                     <div className="detail">
                       <p>
-                        <b>Id: {product.product_id}</b>
-                        <br />
+                        {/*<b>Id: {product.product_id}</b>*/}
+
                         <small>{product.product_name}</small>
                       </p>
                       <samp>{product.price} Mzn</samp>
@@ -351,8 +356,7 @@ const Home = () => {
                           navigate(`/produto/detalhes/${product.product_id}`);
                         }}
                       >
-                        Ver Produto
-                        <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                        <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
                     </div>
                   </div>
