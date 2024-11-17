@@ -27,7 +27,7 @@ const Home = () => {
 
   useEffect(() => {
     // Fetching products from the API
-    fetch('http://localhost:3005/api/products/pr')
+    fetch('http://localhost:3005/api/products/pr/')
       .then(response => response.json())
       .then(data => setProducts(data))
       .catch(error => console.error('Erro ao buscar produtos:', error));
@@ -90,12 +90,12 @@ const Home = () => {
                   <div className="product" key={index}>
                     <picture>
                     <img 
-  src={Array.isArray(product.images) && product.images.length > 0 
-    ? product.images[0].image_url 
-    : crocs1} 
-  alt={product.product_name}
-  loading="lazy" 
-/>
+                        src={Array.isArray(product.images) && product.images.length > 0 
+                          ? product.images[0].image_url 
+                          : ''} 
+                        alt={product.product_name}
+                        loading="lazy" 
+                      />
 
                     </picture>
                     <div className="detail">
