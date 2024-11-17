@@ -176,6 +176,152 @@ const Home = () => {
             </div>
           </div>
 
+  
+          {/* Popular Collections */}
+          <section className="carrosel_1">
+            <div className="slider">
+              <h3 style={{ marginBottom: '5px' }}>Coleções Populares</h3>
+              <div className="slide-track">
+                {[colecao_1, colecao_2, colecao_3, colecao_4, colecao_5, colecao_6, colecao_1, colecao_2, colecao_3, colecao_4, colecao_5, colecao_6].map((img, index) => (
+                  <div className="slide" key={index}>
+                    <img src={img} alt={`Coleção ${index + 1}`} />
+                    <p>Collection{index + 1}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          
+        
+          <div className="main">
+            <header>
+              <h1>JIBBITZ recentes</h1>
+              <p>FRESH DROPS | Personaliza os seus Crocs</p>
+            </header>
+            <section>
+              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
+                <div className="product" key={index}>
+                  <picture>
+                    <img src={img} alt={`Produto ${index + 1}`} />
+                  </picture>
+                  <div className="detail">
+                    <p>
+                      <b>Produto {index + 1}</b>
+                      <br />
+                      <small>Exclusivo</small>
+                    </p>
+                    <samp>4500 Mzn</samp>
+                  </div>
+                  <div className="button">
+                    <p className="star">
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                    </p>
+                    <a href="#">
+                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </section>
+          </div>
+
+     
+
+       {/* Section 4 */}
+       <div className="Container-extended">
+            <div></div>
+            <div>
+              <p>Novas sandálias clássicas</p>
+              <p style={{ fontSize: '20pt', fontWeight: 'bold' }}>Mostre a verdadeira cor</p>
+              <p style={{ textDecoration: 'underline' }}>Compre os clássicos</p>
+            </div>
+        </div>
+
+
+        <div className='Categories'>
+              <div className='categor'>
+                <div className='producte'>
+                  <img src={colecao_1} alt="" />
+                  </div>
+                <div className='Detalhes'>
+                <h1> COLLABS</h1>
+                  <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
+                  </div>
+                  <div className='btn_detalhes'>
+                    <button>Comprar Agora</button>
+                    </div>
+              </div>
+
+              <div className='categor'>
+                <div className='producte'>
+                <img src={colecao_2} alt="" />
+                  </div>
+                <div className='Detalhes'>
+                <h1> GIFT CARDS</h1>
+                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
+                  </div>
+                  <div className='btn_detalhes'>
+                    <button>Comprar Agora</button>
+                    </div>
+              </div>
+
+              <div className='categor'>
+                <div className='producte'><img src={colecao_3} alt="" /></div>
+                <div className='Detalhes'>
+                <h1> CROCS™ NOTHING</h1>
+                <p>CROCS™ | FEELS LIKE NOTHING AT AL</p>
+                  </div>
+                  <div className='btn_detalhes'>
+                    <button>Comprar Agora</button>
+                    </div>
+              </div>
+
+              
+          </div>
+ 
+          
+    
+             
+          {/* Catalog */}
+          <div className="main" >
+            <header>
+              <h1>Novas Tendências</h1>
+            </header>
+            <section>
+              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
+                <div className="product" key={index}>
+                  <picture>
+                    <img src={img} alt={`Produto ${index + 1}`} />
+                  </picture>
+                  <div className="detail">
+                    <p>
+                      <b>Produto {index + 1}</b>
+                      <br />
+                      <small>Exclusivo</small>
+                    </p>
+                    <samp>4500 Mzn</samp>
+                  </div>
+                  <div className="button">
+                    <p className="star">
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                      <strong>&star;</strong>
+                    </p>
+                    <a href="#">
+                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </section>
+          </div>
 
 
         </article>
