@@ -16,6 +16,9 @@ import colecao_3 from '../assets/img/col3.avif';
 import colecao_4 from '../assets/img/col4.avif';
 import colecao_5 from '../assets/img/col5.avif';
 import colecao_6 from '../assets/img/col6.avif';
+import carrinhoSvg from '../assets/img/shopping-cart-solid.svg';
+import crocs from '../assets/img/crocs1.webp';
+
 
 
 const Home = () => {
@@ -78,7 +81,8 @@ const Home = () => {
 
           <div className="main">
             <header>
-              <h1>Novas Tendências</h1>
+            <h1>Novas Tendências</h1>
+            <p> <b>CROCS™ </b>| FEELS LIKE NOTHING AT ALL</p>
             </header>
             <section>
               {products.length > 0 ? (
@@ -88,14 +92,14 @@ const Home = () => {
                       <img 
                         src={Array.isArray(product.images) && product.images.length > 0 
                           ? product.images[0].image_url 
-                          : 'default-image.png'} 
+                          : 'crocs1.webp'} 
                         alt={product.product_name} 
                       />
                     </picture>
                     <div className="detail">
                       <p>
-                        <b>Id: {product.product_id}</b>
-                        <br />
+                        {/*<b>Id: {product.product_id}</b>*/}
+                        
                         <small>{product.product_name}</small>
                       </p>
                       <samp>{product.price} Mzn</samp>
@@ -119,8 +123,8 @@ const Home = () => {
                           navigate(`/produto/detalhes/${product.product_id}`);
                         }}
                       >
-                        Ver Produto
-                        <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                      
+                       <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
                     </div>
 
@@ -188,33 +192,54 @@ const Home = () => {
               <p>FRESH DROPS | Personaliza os seus Crocs</p>
             </header>
             <section>
-              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
-                <div className="product" key={index}>
-                  <picture>
-                    <img src={img} alt={`Produto ${index + 1}`} />
-                  </picture>
-                  <div className="detail">
-                    <p>
-                      <b>Produto {index + 1}</b>
-                      <br />
-                      <small>Exclusivo</small>
-                    </p>
-                    <samp>4500 Mzn</samp>
+              {products.length > 0 ? (
+                products.map((product, index) => (
+                  <div className="product" key={index}>
+                    <picture>
+                      <img 
+                        src={Array.isArray(product.images) && product.images.length > 0 
+                          ? product.images[0].image_url 
+                          : 'default-image.png'} 
+                        alt={product.product_name} 
+                      />
+                    </picture>
+                    <div className="detail">
+                      <p>
+                        <b>Id: {product.product_id}</b>
+                        <br />
+                        <small>{product.product_name}</small>
+                      </p>
+                      <samp>{product.price} Mzn</samp>
+                    </div>
+                    <div className="button">
+                      <div className="colors">
+                        {Array.isArray(product.colors) &&
+                          product.colors.map((color, index) => (
+                            <div
+                              key={index}
+                              className="color-box"
+                              style={{ backgroundColor: color.hex_code }}
+                              title={color.name}
+                            />
+                          ))}
+                      </div>
+                      <button
+                        className="product-button"
+                        onClick={() => {
+                          console.log(`Product ID: ${product.product_id}`);
+                          navigate(`/produto/detalhes/${product.product_id}`);
+                        }}
+                      >
+                        Ver Produto
+                        <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                      </button>
+                    </div>
+
                   </div>
-                  <div className="button">
-                    <p className="star">
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                    </p>
-                    <a href="#">
-                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p>Carregando produtos...</p>
+              )}
             </section>
           </div>
 
@@ -281,33 +306,54 @@ const Home = () => {
               <h1>Novas Tendências</h1>
             </header>
             <section>
-              {['teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png', 'teste2-removebg-preview.png', 'teste4-removebg-preview.png', 'teste6-removebg-preview.png'].map((img, index) => (
-                <div className="product" key={index}>
-                  <picture>
-                    <img src={img} alt={`Produto ${index + 1}`} />
-                  </picture>
-                  <div className="detail">
-                    <p>
-                      <b>Produto {index + 1}</b>
-                      <br />
-                      <small>Exclusivo</small>
-                    </p>
-                    <samp>4500 Mzn</samp>
+              {products.length > 0 ? (
+                products.map((product, index) => (
+                  <div className="product" key={index}>
+                    <picture>
+                      <img 
+                        src={Array.isArray(product.images) && product.images.length > 0 
+                          ? product.images[0].image_url 
+                          : 'default-image.png'} 
+                        alt={product.product_name} 
+                      />
+                    </picture>
+                    <div className="detail">
+                      <p>
+                        <b>Id: {product.product_id}</b>
+                        <br />
+                        <small>{product.product_name}</small>
+                      </p>
+                      <samp>{product.price} Mzn</samp>
+                    </div>
+                    <div className="button">
+                      <div className="colors">
+                        {Array.isArray(product.colors) &&
+                          product.colors.map((color, index) => (
+                            <div
+                              key={index}
+                              className="color-box"
+                              style={{ backgroundColor: color.hex_code }}
+                              title={color.name}
+                            />
+                          ))}
+                      </div>
+                      <button
+                        className="product-button"
+                        onClick={() => {
+                          console.log(`Product ID: ${product.product_id}`);
+                          navigate(`/produto/detalhes/${product.product_id}`);
+                        }}
+                      >
+                        Ver Produto
+                        <img src="shopping-cart-solid.svg" alt="Carrinho" />
+                      </button>
+                    </div>
+
                   </div>
-                  <div className="button">
-                    <p className="star">
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                      <strong>&star;</strong>
-                    </p>
-                    <a href="#">
-                      <img src="shopping-cart-solid.svg" alt="Carrinho" />
-                    </a>
-                  </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p>Carregando produtos...</p>
+              )}
             </section>
           </div>
 

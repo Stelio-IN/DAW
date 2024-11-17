@@ -21,16 +21,22 @@
     margin: auto;
     line-height: 30px;
 }
+
 .main header{
     width: 98%;
-    height: 60px;
+    height: 90px;
     margin: 0 auto;
-    background: rgb(255, 255, 255);
     display: flex;
-    align-items: center;
+    align-items: left;
     padding: 20px;
     justify-content: space-between;
-    border-bottom: 2px solid #ddd;
+    flex-direction: column;
+}
+
+header p{
+    margin: 10px;
+    color: rgb(0, 0, 0);
+    font-size: 15pt;
 }
 header p span{
     font-size: 40px;
@@ -46,7 +52,11 @@ header p span{
 }
 
 .main header h1{
-    font-size: 30pt;
+    font-size: 50px; /* Tamanho da fonte */
+    letter-spacing: -0.05em; /* Espaçamento entre letras */
+    line-height: 80%; /* Altura da linha */
+    text-transform: uppercase; /* Texto em maiúsculas */
+    font-weight: 900;
     color: black;
 }
 header p span:hover{
@@ -56,7 +66,7 @@ header p span:hover{
 section{
     width: 98%;
     height: 400px;
-    background: aqua;
+    background: rgb(255, 255, 255);
     margin: auto;
     display: flex;
     align-items: center;
@@ -67,28 +77,34 @@ section::-webkit-scrollbar{
     display: none;
 }
 section .product{
-    min-width: 24%;
+    width: 20%;
     height: 70%;
     margin:  0 1px  0 0;
     border-radius: 20px;
     position: relative;
     left: 0;
+    bottom: 0;
     transition: 0.5s;
     background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
 
 }
+
 picture{
-    width: 100%;
-    height: 50%;
+    margin: 10px;
+    width: 93%;
+    border-radius: 4px;
+    height: 70%;
     padding: 20px;
-    /*background: green;*/
+    background: rgb(255, 255, 255);
     display: flex;
     overflow: hidden;
     margin-bottom: 20px;
 }
 picture img{
-    width: 70%;
-    margin: auto;
+    width: 100%;
+    height: 100%;
 }
 .detail,
 .button{
@@ -101,34 +117,59 @@ picture img{
     height: 50px;
     font-size: 20px;
     color: #444;
+    background-color: rgb(255, 255, 255);
 }
 
-.button{
-    
+.detail  samp{
+    text-decoration: underline;
+    color: #222;
+    font-size: 11pt;
+}
+
+
+.product-button img{
+    height: 70px;
+}
+
+.colors{
+    background-color: rgb(248, 248, 248);
 }
 small{color: #555;}
 
- .button a{
-    text-decoration: none;
-    padding: 6px 14px;
-    font-size: 15px;
-    margin: 5px 0 0 20px;
-    display: inline-block;
-    background-color: rgb(255, 255, 255);
-    color: white;
-    border-radius: 14px;
-}
 
-.button  a img{
-    width: 20px;
-    height: 30px;
-}
-p.star{
-    margin: 5px auto;
-    width: 65%;
-    font-size: 25px;
-    color: #808080;
-}
+
+.color-box {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 4px;
+    margin: 0 5px;
+  }
+  
+  .product-button {
+    padding: 8px 16px;
+    background-color: rgb(255, 255, 255);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease;
+    color: black;
+    font-weight: 700;
+    width: 70px;
+    height: 40px;
+    margin-bottom: 8px;
+  }
+  
+  .product-button:hover {
+    background-color: #0056b3;
+  }
+  
+ 
 @media (max-width: 768px) {
     .text h1{
         font-size: 35px;
