@@ -101,15 +101,7 @@ const ProdutoDetalhado = () => {
         </div>
       </section>
 
-      <div className="secao-principal">
-        <header>
-          <h1>Novas Tendências</h1>
-          <p>
-            <span>&#139;</span>
-            <span>&#155;</span>
-          </p>
-        </header>
-      </div>
+      
     </div>
   );
 };

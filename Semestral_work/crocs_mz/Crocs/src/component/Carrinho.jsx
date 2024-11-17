@@ -64,7 +64,11 @@ function Carrinho() {
 
                         <div className='productDetails_1'>
                           <img src="" alt="" />
-                          <p>Faca Upload de imagem aqui</p>
+                          <img
+                      src={product.image_url || 'default-image.png'}
+                      alt={product.name}
+                     
+                    />
                           </div>
                         <div className='productDetails_2'>
                           <h3>{product.name}</h3>

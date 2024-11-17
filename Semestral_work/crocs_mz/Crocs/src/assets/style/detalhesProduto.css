@@ -17,7 +17,7 @@ html, body {
     display: flex;
     flex-direction: column;
     width: 100vw;
-    background-color: rgb(102, 14, 14);
+    background-color: rgb(255, 255, 255);
 }
 
 .box-conteudo {
@@ -25,7 +25,7 @@ html, body {
     margin: auto;
     height: 80vh;
     margin-top: 5%;
-    background-color: rgb(79, 168, 69);
+    background-color: rgb(255, 255, 255);
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
     display: flex;
 }

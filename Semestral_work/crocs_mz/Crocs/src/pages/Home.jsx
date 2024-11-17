@@ -17,7 +17,7 @@ import colecao_4 from '../assets/img/col4.avif';
 import colecao_5 from '../assets/img/col5.avif';
 import colecao_6 from '../assets/img/col6.avif';
 import carrinhoSvg from '../assets/img/shopping-cart-solid.svg';
-//import crocs1 from '../assets/img/imgTeste.PNG';
+import crocs1 from '../assets/img/crocs2.webp';
 
 
 
@@ -92,7 +92,7 @@ const Home = () => {
                     <img 
   src={Array.isArray(product.images) && product.images.length > 0 
     ? product.images[0].image_url 
-    : "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"} 
+    : crocs1} 
   alt={product.product_name}
   loading="lazy" 
 />
