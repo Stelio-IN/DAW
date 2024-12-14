@@ -1,10 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../assets/style/loja.css';
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import "../assets/style/loja.css";
 
 function Loja() {
   const [activeFilter, setActiveFilter] = useState(null);
   const [gender, setGender] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
+  const [selectedPriceRange, setSelectedPriceRange] = React.useState({ min: 0, max: 10000 });
+  const [sortOption, setSortOption] = useState("a-z");
+
 
   // Referência para o filtro de tamanho
   const tamanhoRef = useRef();
@@ -12,24 +18,55 @@ function Loja() {
   // Função para detectar cliques fora do filtro de tamanho
   const handleClickOutside = (event) => {
     if (tamanhoRef.current && !tamanhoRef.current.contains(event.target)) {
-      setActiveFilter(null); // Fecha o filtro quando clica fora
+      setActiveFilter(null);
     }
   };
 
-  // Adiciona o evento de clique fora do filtro quando o componente monta
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
+  // Save filter state to localStorage
+  const saveFiltersToLocalStorage = () => {
+    localStorage.setItem("activeFilter", activeFilter);
+    localStorage.setItem("gender", gender);
+    localStorage.setItem("selectedSizes", JSON.stringify(selectedSizes));
+    localStorage.setItem("selectedPriceRange", JSON.stringify(selectedPriceRange));
+  };
+
+  // Load filter state from localStorage
+  const loadFiltersFromLocalStorage = () => {
+    const storedActiveFilter = localStorage.getItem("activeFilter");
+    const storedGender = localStorage.getItem("gender");
+    const storedSelectedSizes = JSON.parse(localStorage.getItem("selectedSizes") || "[]");
+    const storedSelectedPriceRange = JSON.parse(localStorage.getItem("selectedPriceRange") || '{"min":0,"max":10000}');
+
+    if (storedActiveFilter) setActiveFilter(storedActiveFilter);
+    if (storedGender) setGender(storedGender);
+    if (storedSelectedSizes.length > 0) setSelectedSizes(storedSelectedSizes);
+    if (storedSelectedPriceRange) setSelectedPriceRange(storedSelectedPriceRange);
+  };
+
+  useEffect(() => {
+    loadFiltersFromLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    saveFiltersToLocalStorage();
+  }, [activeFilter, gender, selectedSizes, selectedPriceRange]);
+
   const handleFilterClick = (filter) => {
-    if (filter === 'tamanho') {
-      setActiveFilter('tamanho'); // Mantém o filtro de tamanho aberto
-    } else {
-      setActiveFilter((prev) => (prev === filter ? null : filter));
-    }
+    setActiveFilter((prev) => (prev === filter ? null : filter));
+  };
+
+  const handleCheckboxChange = (event, setState) => {
+    const { value, checked } = event.target;
+    setState((prev) =>
+      checked ? [...prev, value] : prev.filter((item) => item !== value)
+    );
   };
 
   const handleGenderChange = (selectedGender) => {
@@ -40,65 +77,297 @@ function Loja() {
     setSelectedSize(size); // Atualiza o tamanho selecionado
   };
 
+  // Fetching products from the API
+  useEffect(() => {
+    fetch("http://localhost:3005/api/products/pr")
+      .then((response) => response.json())
+      .then((data) => setProducts(data))
+      .catch((error) => console.error("Erro ao buscar produtos:", error));
+  }, []);
+
   return (
     <div className="content-loja">
+   
       <div className="shop_filter_container">
-        <div className="filter_container">
-          <div className="filtros">
+      <div className="filter_container">
+        <div className="filtros">
             <h3>Filtros</h3>
 
-            <div onClick={() => handleFilterClick('estilo')}>
-              <h3>Estilo</h3>
-              {activeFilter === 'estilo' && (
-                <div className="filter-options">
-                  <p>Casual</p>
-                  <p>Formal</p>
-                  <p>Esportivo</p>
+            <div onClick={() => handleFilterClick("estilo")}>
+              <h4>Estilo</h4>
+              {activeFilter === "estilo" && (
+                <div className="filter-options" onClick={(e) => e.stopPropagation()}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Casual"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                     Casual
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Formal"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Formal
+                  </label>
+                  <label>                  
+                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
+                         </label>
                 </div>
               )}
             </div>
 
-            <div onClick={() => handleFilterClick('cor')}>
-              <h3>Cor</h3>
-              {activeFilter === 'cor' && (
-                <div className="filter-options">
-                  <p>Vermelho</p>
-                  <p>Azul</p>
-                  <p>Preto</p>
+            <div onClick={() => handleFilterClick("cor")}>
+              <h4>Cor</h4>
+              {activeFilter === "cor" && (
+                <div className="filter-options" onClick={(e) => e.stopPropagation()}>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Vermelho"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Vermelho
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Azul"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Azul
+                  </label>
+                  <label>
+                    <input
+                      type="checkbox"
+                      value="Preto"
+                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                    />
+                    Preto
+                  </label>
                 </div>
               )}
             </div>
 
-            {/* Filtro de Tamanho com seleção de Gênero */}
-            <div onClick={() => handleFilterClick('tamanho')}>
-              <h3>Tamanho</h3>
-              {activeFilter === 'tamanho' && (
-                <div className="filter-options" ref={tamanhoRef}>
-                  {/* Menu de seleção de gênero */}
+            <div onClick={() => handleFilterClick("tamanho")}>
+              <h4>Tamanho</h4>
+              {activeFilter === "tamanho" && (
+                <div
+                  className="filter-options"
+                  ref={tamanhoRef}
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <div>
-                    <p onClick={() => handleGenderChange('masculino')}>Homem</p>
-                    <p onClick={() => handleGenderChange('feminino')}>Mulher</p>
+                    <p onClick={() => setGender("masculino")}>Homem</p>
+                    <p onClick={() => setGender("feminino")}>Mulher</p>
                   </div>
-
-                  {/* Exibe os tamanhos com base no gênero selecionado */}
                   {gender && (
                     <div>
-                      <h4>Tamanhos disponíveis para {gender === 'masculino' ? 'Homem' : 'Mulher'}</h4>
+                      <h4>
+                        Tamanhos {" "}
+                        {gender === "masculino" ? "Masculino" : "Femininos"}
+                      </h4>
                       <div className="size-options">
-                        {gender === 'masculino' && (
+                        {gender === "masculino" && (
                           <>
-                            <p onClick={() => handleSizeChange('P')}>P</p>
-                            <p onClick={() => handleSizeChange('M')}>M</p>
-                            <p onClick={() => handleSizeChange('G')}>G</p>
+                            <label>
+                              <input type="checkbox" value="P"   onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}    />P</label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="M"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              M
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="G"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              G
+                            </label>
                           </>
                         )}
-                        {gender === 'feminino' && (
+                        {gender === "feminino" && (
                           <>
-                            <p onClick={() => handleSizeChange('PP')}>PP</p>
-                            <p onClick={() => handleSizeChange('P')}>P</p>
-                            <p onClick={() => handleSizeChange('M')}>M</p>
-                            <p onClick={() => handleSizeChange('G')}>G</p>
-                            <p onClick={() => handleSizeChange('GG')}>GG</p>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="PP"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              PP
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="P"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              P
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="M"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              M
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="G"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              G
+                            </label>
+                            <label>
+                              <input
+                                type="checkbox"
+                                value="GG"
+                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                              />
+                              GG
+                            </label>
                           </>
                         )}
                       </div>
@@ -108,52 +377,99 @@ function Loja() {
               )}
             </div>
 
-            <div onClick={() => handleFilterClick('preco')}>
-              <h3>Preço</h3>
-              {activeFilter === 'preco' && (
-                <div className="filter-options">
-                  <p>Abaixo de 1000 Mzn</p>
-                  <p>1000 - 5000 Mzn</p>
-                  <p>Acima de 5000 Mzn</p>
-                </div>
-              )}
-            </div>
-            
+            <div onClick={() => handleFilterClick("preco")}>
+                <h4>Preço</h4>
+                {activeFilter === "preco" && (
+                  <div className="filter-options" onClick={(e) => e.stopPropagation()}>
+                    <div className="price-inputs">
+                      <label>Preço Mínimo:</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10000"
+                        step="100"
+                        value={selectedPriceRange.min}
+                        onChange={(e) => setSelectedPriceRange({ ...selectedPriceRange, min: Math.min(Number(e.target.value), selectedPriceRange.max) })}
+                      />
+                      <label>Preço Máximo:</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10000"
+                        step="100"
+                        value={selectedPriceRange.max}
+                        onChange={(e) => setSelectedPriceRange({ ...selectedPriceRange, max: Math.max(Number(e.target.value), selectedPriceRange.min) })}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+
           </div>
         </div>
 
         <div className="catalog-container">
-          <header className="catalog-header">
-            <h1>Novas Tendências</h1>
-          </header>
+        <div className="sort-by">
+            <p htmlFor="sort-select">Ordenar por:</p>
+            <select
+              id="sort-select"
+              value={sortOption}
+              onChange={(e) => setSortOption(e.target.value)}
+            >
+              <option value="a-z">A-Z</option>
+              <option value="z-a">Z-A</option>
+              <option value="mais-vendidos">Mais Vendidos</option>
+              <option value="preco-crescente">Preço: Menor para Maior</option>
+              <option value="preco-decrescente">Preço: Maior para Menor</option>
+            </select>
+      </div>
+
+          <header className="catalog-header"></header>
           <section className="catalog-items">
-            {[...Array(12)].map((_, index) => (
-              <div className="catalog-product" key={index}>
-                <picture className="catalog-image">
-                  <img src={`teste${(index % 3) + 2}-removebg-preview.png`} alt={`Produto ${index + 1}`} />
-                </picture>
-                <div className="catalog-detail">
-                  <p>
-                    <b>Produto {index + 1}</b>
-                    <br />
-                    <small>Exclusivo</small>
-                  </p>
-                  <samp>4500 Mzn</samp>
+            {products.length > 0 ? (
+              products.map((product, index) => (
+                <div className="catalog-product" key={index}>
+                  <picture className="catalog-image">
+                    <img
+                      src={product.primary_image_url}
+                      alt={product.product_name}
+                      loading="lazy"
+                    />
+                  </picture>
+                  <div className="catalog-detail">
+                    <p>
+                      <small>{product.product_name}</small>
+                    </p>
+                    <samp>{product.price} Mzn</samp>
+                  </div>
+                  <div className="catalog-button">
+                    <div className="catalog-colors">
+                      <p>Cores</p>
+                      {Array.isArray(product.colors) &&
+                        product.colors.map((color, idx) => (
+                          <div
+                            key={idx}
+                            className="color-box"
+                            style={{ backgroundColor: color.hex_code }}
+                            title={color.name}
+                          />
+                        ))}
+                    </div>
+                    <button
+                      className="product-button"
+                      onClick={() =>
+                        navigate(`/produto/detalhes/${product.product_id}`)
+                      }
+                    >
+                      <img src="shopping-cart-solid.svg" alt="" />
+                    </button>
+                  </div>
                 </div>
-                <div className="catalog-button">
-                  <p className="catalog-stars">
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                    <strong>&star;</strong>
-                  </p>
-                  <a href="#">
-                    <img src="shopping-cart-solid.svg" alt="Carrinho" />
-                  </a>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>Carregando produtos...</p>
+            )}
           </section>
         </div>
       </div>

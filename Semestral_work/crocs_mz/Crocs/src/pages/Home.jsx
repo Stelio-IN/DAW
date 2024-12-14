@@ -23,6 +23,7 @@ import carrinhoSvg from "../assets/img/shopping-cart-solid.svg";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     // Fetching products from the API

@@ -25,28 +25,38 @@ margin-top: 90px;
   align-items: center;
   justify-items: center;
   width: 100%;
+  
 }
 
+
+/* Filtros */
 .filter_container{
-  width: 20%;
+  width: 25%;
   display: flex;
   flex-direction: column;
   align-items: left;
   height: 100vh;
-  
 }
 
 
 
 .filter_container .filtros{
-margin-left: 30px;
+margin: 10px;
+
+
+}
+
+.filtros {
+  background-color: rgb(255, 255, 255);
 }
 
 
 .filtros div{
-border-bottom: 1px solid black;
-margin-bottom: 15px;
+
+margin-bottom: 30px;
 }
+
+
 
 .filtros {
 width: 100%;
@@ -55,19 +65,94 @@ margin-top: 50px;
 color: black;
 }
 
-.filtros h3 {
+.filtros h4 {
 cursor: pointer;
 padding: 10px;
 background-color: #ffffff;
-border-bottom: 1px solid #f2f0f0;
+border-bottom: 1px solid #dedede;
+margin-bottom: 20px;
+color: #636363;
 }
+
+
+.sort-by{
+  width: 300px;
+  position: absolute;
+  right: 0;
+  margin-right: 30px;
+  margin-top: -20px;
+}
+.sort-by select{
+  width: 300px;
+  height: 40px;
+  border-radius: 3px;
+  background-color: white;
+}
+
+/* Estilizando a área geral dos checkboxes */
+
+/* Criando um estilo customizado para os checkboxes */
 
 .filter-options {
 padding: 10px;
 transition: ease-in-out ; 
 border-left: 2px solid #ccc;
 margin-left: 10px;
+display: flex;
+flex-direction: column;
+overflow-y: auto;
+max-height: 200px;
 }
+
+.filter-options label{
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
+
+
+/* Escondendo o checkbox, mas mantendo-o funcional */
+/* Estilizando diretamente a checkbox */
+.filter-options input[type="checkbox"] {
+  appearance: none; /* Remove o estilo padrão */
+  width: 20px; /* Define largura */
+  height: 20px; /* Define altura */
+  border: 2px solid #666; /* Borda padrão */
+  border-radius: 4px; /* Cantos arredondados */
+  background-color: #fff; /* Fundo padrão */
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+
+}
+
+/* Estado marcado da checkbox */
+.filter-options input[type="checkbox"]:checked {
+  background-color: #007bff; /* Cor de fundo quando marcado */
+  border-color: #23507f; /* Cor da borda quando marcado */
+  position: relative;
+}
+
+/* Adicionando um ícone para checkbox marcado */
+.filter-options input[type="checkbox"]:checked::after {
+  content: '✔'; /* Símbolo do check */
+  color: white; /* Cor do check */
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Hover para realce */
+.filter-options input[type="checkbox"]:hover {
+  border-color: #007bff; /* Borda azul ao passar o mouse */
+}
+
+
+
+
 
 .filter-options p {
 margin: 5px 0;
@@ -123,6 +208,37 @@ padding: 5px;
 margin: 5px 0;
 }
 
+/* filtro preco*/
+.price-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 10px;
+  border-left: 2px solid #ccc;
+  margin-left: 10px;
+}
+
+.price-inputs label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.price-inputs input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: rgb(255, 255, 255);
+}
+
+.price-inputs input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+
 /*catalogo */
 
 .catalog-container {
@@ -151,9 +267,9 @@ height: 600px;
 margin: auto;
 display: grid;
 grid-template-columns: repeat(3, 1fr);
-gap: 1rem;
+gap: 0rem;
 overflow-y: auto;
-background-color: rgb(250, 250, 250);
+background-color: rgb(253, 253, 253);
 }
 
 .catalog-items::-webkit-scrollbar {
@@ -161,40 +277,52 @@ display: none;
 }
 
 .catalog-product {
-min-width: 100%;
-height: 100%;
-margin: 0 0 20px 0;
-border-radius: 20px;
-position: relative;
+width: 98%;
+height: 86%;
+border-radius: 10px;
 transition: 0.5s;
-background-color: rgb(235, 235, 235);
+background-color: rgb(255, 255, 255);
+padding-bottom: 40px;
+box-shadow: 2px 2px 2px rgb(237, 237, 237);
 }
 
 .catalog-image {
-width: 100%;
-height: 50%;
-padding: 20px;
+width: 85%;
+height: 80%;
 display: flex;
 overflow: hidden;
-margin-bottom: 20px;
+
 }
 
 .catalog-image img {
-width: 70%;
+width: 100%;
+height: 100%;
 margin: auto;
 }
 
 .catalog-detail,
 .catalog-button {
-width: 90%;
+width: 100%;
 margin: auto;
-padding: 5px;
+padding: 20px;
 display: flex;
 justify-content: space-between;
 align-items: center;
-height: 50px;
-font-size: 20px;
+height: 52px;
+font-size: 17pt;
+border-radius: 5px;
 color: #444;
+background-color: #fafafa;
+}
+
+.catalog-detail samp{
+  font-size: 15pt;
+  color: #444;
+}
+
+
+.catalog-button{
+  margin-bottom: 20px;
 }
 
 .catalog-button a {
@@ -202,7 +330,7 @@ text-decoration: none;
 padding: 6px 14px;
 font-size: 15px;
 display: inline-block;
-background-color: rgb(255, 255, 255);
+background-color: rgb(252, 13, 13);
 color: white;
 border-radius: 14px;
 }
@@ -212,11 +340,23 @@ width: 20px;
 height: 30px;
 }
 
-.catalog-stars {
-margin: 5px auto;
+.catalog-colors p {
+
 width: 65%;
-font-size: 25px;
-color: #808080;
+font-size: 13pt;
+color: #8b8b8b;
+}
+
+.catalog-colors div{
+  height: 15px;
+  width: 15px;
+  border-radius: 20px;
+}
+
+.product-button{
+  background-color: rgb(255, 255, 255);
+  margin: 10px 20px 20px 10px;
+
 }
 
 @media (max-width: 768px) {

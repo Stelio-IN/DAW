@@ -43,6 +43,8 @@ app.get('/', (req, res) => {
     res.json('API DAO SEMESTRAL WORK');
 });
 
+
+
 // Porta do servidor
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

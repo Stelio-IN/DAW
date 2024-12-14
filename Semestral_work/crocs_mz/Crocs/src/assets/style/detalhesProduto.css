@@ -18,13 +18,13 @@ html, body {
     flex-direction: column;
     width: 100vw;
     background-color: rgb(255, 255, 255);
+    height: 100vh;
 }
 
 .box-conteudo {
-    max-width: 100%;
+    width: 100%;
     margin: auto;
-    height: 80vh;
-    margin-top: 5%;
+
     background-color: rgb(255, 255, 255);
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -63,27 +63,39 @@ html, body {
 }
 
 .imagem-principal {
-    width: 70%;
-    height: 60%;
+    width: 80%;
+    height: 80%;
     margin: auto;
 }
+
+.col-esquerda{
+    display: flex;
+    flex-direction: row-reverse;
+    background-color: rgb(255, 255, 255);
+}
+
+
 
 .imagem-slide {
     margin: auto;
     width: 100%;
 }
 
-.opcoes {
-    margin-top: 20px;
-    width: 400px;
-    margin: auto;
+.opcoes{
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+   
 }
 
 .opcoes img {
     margin-top: 60px;
     width: 55px;
     height: 55px;
-    padding: 10px;   
+    padding: 10px;  
+    margin: auto;
+    background-color: rgb(255, 255, 255); 
 }
 
 /* Media Queries (Responsividade) */

@@ -5,7 +5,7 @@ import '../assets/style/detalhesProduto.css';
 
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
-  const [products, setProducts] = useState([]);
+  const [product, setProduct] = useState([null]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,8 +14,8 @@ const ProdutoDetalhado = () => {
       fetch(`http://localhost:3005/api/products/pr/${productID}`)
         .then((response) => response.json())
         .then((data) => {
-          if (Array.isArray(data)) {
-            setProducts(data);
+          if (data && data.product_id) {
+            setProduct(data);
           } else {
             console.error('Dados recebidos não são um array:', data);
           }
@@ -37,67 +37,75 @@ const ProdutoDetalhado = () => {
     <div className="container-detalhes-produto">
       <section>
         <div className="box-conteudo">
-          <div className="col-esquerda">
-            <div className="imagem-principal">
-              {products.length > 0 ? (
-                products.map((product, index) => (
-                  <div key={index} style={styles.card}>
-                    <img
-                      src={product.image_url || 'default-image.png'}
-                      alt={product.name}
-                      style={styles.image}
-                    />
-                  </div>
-                ))
-              ) : (
-                <p>Carregando produtos...</p>
-              )}
-            </div>
-            <div className="opcoes flexivel">
-              <img src="rascunho0.webp" alt="Opção 1" />
-              <img src="rascunho1.webp" alt="Opção 2" />
-              <img src="rascunho2.webp" alt="Opção 3" />
-              <img src="rascunho3.webp" alt="Opção 4" />
-            </div>
-          </div>
+          
+        {product ? (
+  <div className="col-esquerda">
+    <div className="imagem-principal">
+      <div key={product.product_id} style={styles.card}>
+        <img
+          src={product.primary_image_url || 'default-image.png'}
+          alt={product.name}
+          style={styles.image}
+        />
+      </div>
+    </div>
+    <div className="opcoes">
+      <img src="rascunho0.webp" alt="Opção 1" />
+      <img src="rascunho1.webp" alt="Opção 2" />
+      <img src="rascunho2.webp" alt="Opção 3" />
+      <img src="rascunho3.webp" alt="Opção 4" />
+    </div>
+  </div>
+) : (
+  <p>Carregando detalhes do produto...</p>
+)}
 
-          <div className="col-direita">
-            {products.map((product, index) => (
-              <React.Fragment key={index}>
-                <h1>{product.name}</h1>
-                <div className="informacao-tamanho">
-                  <p>Cor: Amarelo</p>
-                  <p>Preço: {product.price}$</p>
-                  <p style={{ textDecoration: 'underline' }}>
-                    Selecione o tamanho:
-                  </p>
-                  <button className="botao-genero">HOMEM</button>
-                  <button className="botao-genero">MULHER</button>
-                </div>
-                <div className="lista-tamanhos">
-                  {[7, 10, 15, 16, 19, 23, 25, 30, 31, 34, 36].map((tamanho) => (
-                    <button
-                      key={tamanho}
-                      className="botao-tamanho"
-                    >
-                      {tamanho}
-                    </button>
-                  ))}
-                </div>
-                <h4>Descrição:</h4>
-                <p style={{ textAlign: 'justify', maxWidth: '500px' }}>
-                  {product.description}
-                </p>
-                <p>Estoque: {product.stock_quantity}</p>
-                <button
-                  style={styles.button}
-                  onClick={() => addToCart(product)}
-                >
-                  Adicionar ao Carrinho
-                </button>
-              </React.Fragment>
-            ))}
-          </div>
+{product ? (
+  <div className="col-direita">
+    <div className="informacao-tamanho">
+      <h1>{product.name}</h1>
+      <h1>{product.hex_code}</h1>
+      <p>Preço: {product.price} Mzn</p>
+      <p style={{ textAlign: 'justify', maxWidth: '500px' }}>
+        Descrição: {product.description}
+      </p>
+      
+    <div className="colors">
+    <span>Cores: </span>
+                        {Array.isArray(product.colors) &&
+                          product.colors.map((color, index) => (
+                            <div
+                              key={index}
+                              className="color-box"
+                              style={{ backgroundColor: color.hex_code }}
+                              title={color.name}
+                            />
+                          ))}
+                      </div>
+      <p style={{ textDecoration: 'underline' }}>Selecione o tamanho:</p>
+      <button className="botao-genero">HOMEM</button>
+      <button className="botao-genero">MULHER</button>
+    </div>
+    <div className="lista-tamanhos">
+      {[7, 10, 15, 16, 19, 23, 25, 30, 31, 34, 36].map((tamanho) => (
+        <button key={tamanho} className="botao-tamanho">
+          {tamanho}
+        </button>
+      ))}
+    </div>
+   
+    <h4>Descrição:</h4>
+    <p style={{ textAlign: 'justify', maxWidth: '500px' }}>
+      {product.description}
+    </p>
+    <button style={styles.button} onClick={() => addToCart(product)}>
+      Adicionar ao Carrinho
+    </button>
+  </div>
+) : (
+  <p>Carregando...</p>
+)}
+
         </div>
       </section>
 
