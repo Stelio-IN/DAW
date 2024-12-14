@@ -99,8 +99,9 @@ const products = async (req, res) => {
 */
 const products = async (req, res) => {
   try {
-    // Consulta para buscar produtos com cores e imagens associadas, agrupando de forma adequada
-    const products = await db.sequelize.query(`
+    const { search } = req.query; // Termo de pesquisa enviado pelo cliente
+
+    let query = `
       SELECT 
         p.product_id, 
         p.name AS product_name, 
@@ -109,29 +110,39 @@ const products = async (req, res) => {
           SELECT COUNT(DISTINCT pc_inner.color_id)
           FROM ProductColors pc_inner
           WHERE pc_inner.product_id = p.product_id
-        ) AS color_count, -- Subconsulta para contar cores distintas associadas ao produto
+        ) AS color_count, 
         JSON_ARRAYAGG(
           JSON_OBJECT(
             'name', c.name, 
             'hex_code', c.hex_code
           )
-        ) AS colors, -- Coleta cores em formato JSON sem DISTINCT
-        MAX(pi.image_url) AS primary_image_url -- Seleciona uma imagem principal por produto
+        ) AS colors,
+        MAX(pi.image_url) AS primary_image_url
       FROM Products p
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      GROUP BY p.product_id
-    `, {
-      type: db.sequelize.QueryTypes.SELECT, // Especifica o tipo de consulta
+    `;
+
+    // Se houver um termo de pesquisa, adiciona o filtro
+    if (search) {
+      query += ` WHERE p.name LIKE :search OR p.description LIKE :search `;
+    }
+
+    query += ` GROUP BY p.product_id `;
+
+    const products = await db.sequelize.query(query, {
+      replacements: { search: `%${search}%` }, // Adiciona '%' para busca parcial
+      type: db.sequelize.QueryTypes.SELECT,
     });
 
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching products with colors and images:', error);
+    console.error('Error fetching products with search:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const getProductsEspecific = async (req, res) => {
   const id = req.params.id;  // Acessando o parâmetro da URL

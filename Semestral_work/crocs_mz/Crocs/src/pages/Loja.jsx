@@ -10,6 +10,7 @@ function Loja() {
   const navigate = useNavigate();
   const [selectedPriceRange, setSelectedPriceRange] = React.useState({ min: 0, max: 10000 });
   const [sortOption, setSortOption] = useState("a-z");
+  const [searchTerm, setSearchTerm] = useState(''); // Termo de pesquisa
 
 
   // Referência para o filtro de tamanho
@@ -78,12 +79,27 @@ function Loja() {
   };
 
   // Fetching products from the API
-  useEffect(() => {
-    fetch("http://localhost:3005/api/products/pr")
-      .then((response) => response.json())
-      .then((data) => setProducts(data))
-      .catch((error) => console.error("Erro ao buscar produtos:", error));
-  }, []);
+  const fetchProducts = async (search = '') => {
+      try {
+        const response = await fetch(`http://localhost:3005/api/products/pr?search=${search}`);
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Erro ao buscar produtos:', error);
+      }
+    };
+  
+    // Busca os produtos ao carregar o componente
+    useEffect(() => {
+      fetchProducts(); // Busca sem filtro inicialmente
+    }, []);
+  
+    // Manipula a pesquisa
+    const handleSearch = (event) => {
+      const value = event.target.value;
+      setSearchTerm(value);
+      fetchProducts(value); // Faz a busca conforme o termo
+    };
 
   return (
     <div className="content-loja">
@@ -410,6 +426,25 @@ function Loja() {
         </div>
 
         <div className="catalog-container">
+
+        <input
+        type="text"
+        placeholder="Pesquisar produtos..."
+        value={searchTerm}
+        onChange={handleSearch}
+        style={{
+          padding: '10px',
+          width: '250px',
+          borderRadius: '5px',
+          backgroundColor: 'white',
+          border: '1px solid black',
+          position: 'absolute',
+          right: '32%',
+          borderColor: 'gray',
+         
+        }}
+      />
+
         <div className="sort-by">
             <p htmlFor="sort-select">Ordenar por:</p>
             <select
@@ -468,7 +503,7 @@ function Loja() {
                 </div>
               ))
             ) : (
-              <p>Carregando produtos...</p>
+              <p>Produto nao </p>
             )}
           </section>
         </div>
