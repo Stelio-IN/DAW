@@ -64,7 +64,6 @@ const ProdutoDetalhado = () => {
   <div className="col-direita">
     <div className="informacao-tamanho">
       <h1>{product.name}</h1>
-      <h1>{product.hex_code}</h1>
       <p>Preço: {product.price} Mzn</p>
       <p style={{ textAlign: 'justify', maxWidth: '500px' }}>
         Descrição: {product.description}

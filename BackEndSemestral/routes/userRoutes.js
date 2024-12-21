@@ -6,7 +6,7 @@ import { authenticateToken } from '../middleware/authMiddleware.js';
 const router = Router();
 
 // Rota de login (rota pública)
-router.post('/login', userController.loginUser);
+//router.post('/login', userController.loginUser);
 
 // Rota para criar um novo usuário (pode ser pública ou protegida dependendo da sua regra de negócio)
 router.post('/', userController.createUser);
@@ -17,5 +17,6 @@ router.get('/', authenticateToken, userController.getAllUsers);             // P
 router.get('/:id', authenticateToken, userController.getUserById);          // Protegida com token
 router.delete('/:id', authenticateToken, userController.deleteUser);        // Protegida com token
 router.put('/:id', authenticateToken, userController.updateUser);           // Protegida com token
+router.post('/Entrar', userController.loginUser);
 
 export default router;

@@ -23,7 +23,6 @@ import carrinhoSvg from "../assets/img/shopping-cart-solid.svg";
 const Home = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  
 
   useEffect(() => {
     // Fetching products from the API
@@ -32,6 +31,41 @@ const Home = () => {
       .then((data) => setProducts(data))
       .catch((error) => console.error("Erro ao buscar produtos:", error));
   }, []);
+
+  // moeda conversao
+
+  const [currency, setCurrency] = useState("MZN"); // Moeda padrão
+  const [exchangeRates, setExchangeRates] = useState({}); // Taxas de câmbio
+
+  // Função para buscar taxas de câmbio dinamicamente
+  useEffect(() => {
+    const fetchExchangeRates = async () => {
+      try {
+        const response = await fetch(
+          "https://api.exchangerate-api.com/v4/latest/MZN"
+        );
+        const data = await response.json();
+        setExchangeRates(data.rates); // Define todas as taxas disponíveis
+      } catch (error) {
+        console.error("Erro ao buscar taxas de câmbio:", error);
+      }
+    };
+
+    fetchExchangeRates();
+  }, []);
+
+  // Função para converter o preço
+  const convertPrice = (price, targetCurrency) => {
+    if (targetCurrency === "MZN" || !exchangeRates[targetCurrency]) {
+      return price.toFixed(2); // Retorna o preço original se for MZN ou a taxa não existir
+    }
+    return (price * exchangeRates[targetCurrency]).toFixed(2);
+  };
+
+  // Atualizar moeda selecionada
+  const handleCurrencyChange = (newCurrency) => {
+    setCurrency(newCurrency);
+  };
 
   return (
     <div className="content">
@@ -83,27 +117,37 @@ const Home = () => {
               {products.length > 0 ? (
                 products.map((product, index) => (
                   <div className="product" key={index}>
-                  
-                      <picture>
-                        <img
-                          src={
-                            product.primary_image_url 
-                          } // Acesse diretamente a imagem sem verificar uma lista
-                          alt={product.product_name}
-                          loading="lazy"
-                        />
-                      </picture>
-                    
+                    <picture>
+                      <img
+                        src={product.primary_image_url}
+                        alt={product.product_name}
+                        loading="lazy"
+                      />
+                    </picture>
 
                     <div className="detail">
-                      
                       <p>
-                        {/*<b>Id: {product.product_id}</b>*/}
-
                         <small>{product.product_name}</small>
                       </p>
-                      <samp>{product.price} Mzn</samp>
+                      <samp>
+                        {currency === "MZN"
+                          ? `${product.price} MZN`
+                          : `${convertPrice(
+                              product.price,
+                              currency
+                            )} ${currency}`}
+                      </samp>
+                      {/* Dropdown para selecionar a moeda */}
+                      <select
+                        value={currency}
+                        onChange={(e) => handleCurrencyChange(e.target.value)}
+                      >
+                        <option value="MZN">MZN</option>
+                        <option value="USD">USD</option>
+                        <option value="ZAR">ZAR</option>
+                      </select>
                     </div>
+
                     <div className="button">
                       <div className="colors">
                         {Array.isArray(product.colors) &&
@@ -134,11 +178,9 @@ const Home = () => {
             </section>
           </div>
 
-              <div className="Container-promo">
-              <img src={template} alt="" />
-              </div>
-
-            
+          <div className="Container-promo">
+            <img src={template} alt="" />
+          </div>
 
           {/* Section 3 */}
           <div className="Container_2">

@@ -16,7 +16,11 @@ export default (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       unique: true,
-    }
+    },
+    tipo_usuario: {
+      type: DataTypes.ENUM('comum', 'admin'),
+      allowNull: false,
+    },
   }, {
     tableName: 'User',
     timestamps: true, // Ative timestamps para gerenciar createdAt e updatedAt automaticamente

@@ -30,6 +30,32 @@ function Loja() {
     };
   }, []);
 
+  const sortProducts = (products, sortOption) => {
+    if (sortOption === "A-Z") {
+      return [...products].sort((a, b) =>
+        a.product_name.localeCompare(b.product_name)
+      );
+    }
+    if (sortOption === "Z-A") {
+      return [...products].sort((a, b) =>
+        b.product_name.localeCompare(a.product_name)
+      );
+    }
+    if (sortOption === "preco-crescente") {
+      return [...products].sort((a, b) => a.price - b.price);
+    }
+    if (sortOption === "preco-decrescente") {
+      return [...products].sort((a, b) => b.price - a.price);
+    }
+    return products; // Padrão: sem ordenação específica
+  };
+  
+  useEffect(() => {
+    const sortedProducts = sortProducts(products, sortOption);
+    setProducts(sortedProducts);
+  }, [sortOption, products]);
+  
+
   // Save filter state to localStorage
   const saveFiltersToLocalStorage = () => {
     localStorage.setItem("activeFilter", activeFilter);
@@ -83,7 +109,7 @@ function Loja() {
       try {
         const response = await fetch(`http://localhost:3005/api/products/pr?search=${search}`);
         const data = await response.json();
-        setProducts(data);
+        setProducts(sortProducts(data, sortOption));
       } catch (error) {
         console.error('Erro ao buscar produtos:', error);
       }
@@ -101,6 +127,39 @@ function Loja() {
       fetchProducts(value); // Faz a busca conforme o termo
     };
 
+    // moeda conversao
+    
+      const [currency, setCurrency] = useState("MZN"); // Moeda padrão
+      const [exchangeRates, setExchangeRates] = useState({}); // Taxas de câmbio
+    
+      // Função para buscar taxas de câmbio dinamicamente
+      useEffect(() => {
+        const fetchExchangeRates = async () => {
+          try {
+            const response = await fetch("https://api.exchangerate-api.com/v4/latest/MZN");
+            const data = await response.json();
+            setExchangeRates(data.rates); // Define todas as taxas disponíveis
+          } catch (error) {
+            console.error("Erro ao buscar taxas de câmbio:", error);
+          }
+        };
+    
+        fetchExchangeRates();
+      }, []);
+    
+      // Função para converter o preço
+      const convertPrice = (price, targetCurrency) => {
+        if (targetCurrency === "MZN" || !exchangeRates[targetCurrency]) {
+          return price.toFixed(2); // Retorna o preço original se for MZN ou a taxa não existir
+        }
+        return (price * exchangeRates[targetCurrency]).toFixed(2);
+      };
+    
+      // Atualizar moeda selecionada
+      const handleCurrencyChange = (newCurrency) => {
+        setCurrency(newCurrency);
+      };
+
   return (
     <div className="content-loja">
    
@@ -113,155 +172,6 @@ function Loja() {
               <h4>Estilo</h4>
               {activeFilter === "estilo" && (
                 <div className="filter-options" onClick={(e) => e.stopPropagation()}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Casual"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                     Casual
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Formal"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Formal
-                  </label>
                   <label>                  
                       <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
                          </label>
@@ -273,22 +183,7 @@ function Loja() {
               <h4>Cor</h4>
               {activeFilter === "cor" && (
                 <div className="filter-options" onClick={(e) => e.stopPropagation()}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Vermelho"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Vermelho
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      value="Azul"
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                    />
-                    Azul
-                  </label>
+                 
                   <label>
                     <input
                       type="checkbox"
@@ -322,16 +217,7 @@ function Loja() {
                       <div className="size-options">
                         {gender === "masculino" && (
                           <>
-                            <label>
-                              <input type="checkbox" value="P"   onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}    />P</label>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="M"
-                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                              />
-                              M
-                            </label>
+                           
                             <label>
                               <input
                                 type="checkbox"
@@ -344,38 +230,8 @@ function Loja() {
                         )}
                         {gender === "feminino" && (
                           <>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="PP"
-                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                              />
-                              PP
-                            </label>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="P"
-                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                              />
-                              P
-                            </label>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="M"
-                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                              />
-                              M
-                            </label>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="G"
-                                onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
-                              />
-                              G
-                            </label>
+                            
+                          
                             <label>
                               <input
                                 type="checkbox"
@@ -452,8 +308,8 @@ function Loja() {
               value={sortOption}
               onChange={(e) => setSortOption(e.target.value)}
             >
-              <option value="a-z">A-Z</option>
-              <option value="z-a">Z-A</option>
+              <option value="A-Z">A-Z</option>
+              <option value="Z-A">Z-A</option>
               <option value="mais-vendidos">Mais Vendidos</option>
               <option value="preco-crescente">Preço: Menor para Maior</option>
               <option value="preco-decrescente">Preço: Maior para Menor</option>
@@ -473,10 +329,26 @@ function Loja() {
                     />
                   </picture>
                   <div className="catalog-detail">
-                    <p>
-                      <small>{product.product_name}</small>
-                    </p>
-                    <samp>{product.price} Mzn</samp>
+                  <p>
+                        <small>{product.product_name}</small>
+                      </p>
+                      <samp>
+                        {currency === "MZN"
+                          ? `${product.price} MZN`
+                          : `${convertPrice(
+                              product.price,
+                              currency
+                            )} ${currency}`}
+                      </samp>
+                      {/* Dropdown para selecionar a moeda */}
+                      <select
+                        value={currency}
+                        onChange={(e) => handleCurrencyChange(e.target.value)}
+                      >
+                        <option value="MZN">MZN</option>
+                        <option value="USD">USD</option>
+                        <option value="ZAR">ZAR</option>
+                      </select>
                   </div>
                   <div className="catalog-button">
                     <div className="catalog-colors">

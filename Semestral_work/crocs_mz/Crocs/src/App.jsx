@@ -12,6 +12,7 @@ import SobreNos from './pages/About';
 import Loja from './pages/Loja'; 
 import Detalhes from './pages/DetalhesProduto'; 
 import Pesquisa from './pages/ProdutoDetalhado'; 
+import Pagamento from './component/Pay'; 
 //import Detalhes from './pages/Produto'; 
 
 
@@ -50,6 +51,7 @@ function MainApp() {
             <Route path="/produto/detalhes/:productID" element= {<Detalhes />} />
             <Route path="/carrinho" element= {<Carrinho />} />
             <Route path="/pesquisa" element= {<Pesquisa />} />
+            <Route path="/pagamento" element= {<Pagamento />} />
            
            
 

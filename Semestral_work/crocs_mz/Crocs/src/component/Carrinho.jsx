@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../assets/style/carrinho.css'; 
 
 function Carrinho() {
@@ -65,7 +66,7 @@ function Carrinho() {
                         <div className='productDetails_1'>
                           <img src="" alt="" />
                           <img
-                      src={product.image_url || 'default-image.png'}
+                      src={product.primary_image_url || 'default-image.png'}
                       alt={product.name}
                      
                     />
@@ -124,9 +125,11 @@ function Carrinho() {
                   <p>Total: </p>
                   <p>{calculateTotal()} Mzn</p>
                   </div>
-                  <button className="purchaseButton" onClick={handlePurchaseClick}>
-                    Realizar Compra
-                   </button>
+                  <Link to='/pagamento'>
+                    <button className="purchaseButton" onClick={handlePurchaseClick}>
+                      Realizar Compra
+                     </button>
+                  </Link>
               </div>
                     
               
