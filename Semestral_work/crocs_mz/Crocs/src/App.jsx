@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './app.css'; 
+import { FavoritesProvider } from "./context/FavoritesContext.jsx";
 
 // Componentes gerais
 import Footer from './component/Footer'; 
@@ -13,6 +14,7 @@ import Loja from './pages/Loja';
 import Detalhes from './pages/DetalhesProduto'; 
 import Pesquisa from './pages/ProdutoDetalhado'; 
 import Pagamento from './component/Pay'; 
+import Favorito from './pages/Favorito'; 
 //import Detalhes from './pages/Produto'; 
 
 
@@ -52,6 +54,7 @@ function MainApp() {
             <Route path="/carrinho" element= {<Carrinho />} />
             <Route path="/pesquisa" element= {<Pesquisa />} />
             <Route path="/pagamento" element= {<Pagamento />} />
+            <Route path="/favoritos" element= {<Favorito />} />
            
            
 
@@ -74,8 +77,11 @@ function MainApp() {
 function App() {
   return (
     <Router>
+    <FavoritesProvider> {/* Envolvendo a aplicação com o contexto */}
       <MainApp />
-    </Router>
+
+  </FavoritesProvider>
+  </Router>
   );
 }
 

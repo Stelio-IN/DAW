@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/style/about.css';
 import '../assets/style/detalhesProduto.css';
-
+import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
   const [product, setProduct] = useState([null]);
   const navigate = useNavigate();
-
+ const { favorites, toggleFavorite } = useFavorites();
   useEffect(() => {
     if (productID) {
       console.log(`O parâmetro productID foi capturado: ${productID}`);
@@ -100,6 +100,23 @@ const ProdutoDetalhado = () => {
     <button style={styles.button} onClick={() => addToCart(product)}>
       Adicionar ao Carrinho
     </button>
+    <button
+  onClick={() => {
+    console.log("Produto favorito clicado:", product);
+    toggleFavorite(product);
+  }}
+  style={{
+    backgroundColor: favorites.some(
+      (item) => item.product_id === product.product_id
+    )
+      ? "red"
+      : "gray",
+  }}
+>
+  {favorites.some((item) => item.product_id === product.product_id)
+    ? "Remover Favorito"
+    : "Adicionar aos Favoritos"}
+</button>
   </div>
 ) : (
   <p>Carregando...</p>

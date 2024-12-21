@@ -19,10 +19,12 @@ import colecao_6 from "../assets/img/col6.avif";
 import template from "../assets/img/template5.webp";
 import carrinhoSvg from "../assets/img/shopping-cart-solid.svg";
 //import crocs1 from '../assets/img/imgTeste.PNG';
-
+import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
 const Home = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const { favorites, toggleFavorite } = useFavorites();
+  
 
   useEffect(() => {
     // Fetching products from the API
@@ -53,6 +55,8 @@ const Home = () => {
 
     fetchExchangeRates();
   }, []);
+
+  
 
   // Função para converter o preço
   const convertPrice = (price, targetCurrency) => {
@@ -140,7 +144,7 @@ const Home = () => {
                       {/* Dropdown para selecionar a moeda */}
                       <select
                         value={currency}
-                        onChange={(e) => handleCurrencyChange(e.target.value)}
+                        onChange={(e) => handlzeCurrencyChange(e.target.value)}
                       >
                         <option value="MZN">MZN</option>
                         <option value="USD">USD</option>
@@ -169,6 +173,23 @@ const Home = () => {
                       >
                         <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
+                      <button
+  onClick={() => {
+    console.log("Produto favorito clicado:", product);
+    toggleFavorite(product);
+  }}
+  style={{
+    backgroundColor: favorites.some(
+      (item) => item.product_id === product.product_id
+    )
+      ? "red"
+      : "gray",
+  }}
+>
+  {favorites.some((item) => item.product_id === product.product_id)
+    ? "Remover Favorito"
+    : "Adicionar aos Favoritos"}
+</button>
                     </div>
                   </div>
                 ))

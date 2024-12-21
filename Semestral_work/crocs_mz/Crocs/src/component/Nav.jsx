@@ -5,7 +5,9 @@ import LogoCrocs from '../assets/img/crocs_logo.webp';
 import navImg1 from '../assets/img/pose3.webp';
 import navImg2 from '../assets/img/pose1.webp';
 import navImg3 from '../assets/img/pose2.webp';
-import { FiShoppingCart } from 'react-icons/fi';
+import favorito from '../assets/img/favorito.svg';
+import { FiHeart, FiShoppingCart } from 'react-icons/fi';
+
 
 const Navbar = () => {
   return (
@@ -142,6 +144,10 @@ const Navbar = () => {
             <Link to="#"><input type="button" className="btn_favorito" /></Link>
             <Link to="/login"><input type="button" className="btn_login" value="Login" /></Link>
             <input type="search" className="btn_pesquisa" placeholder="Search" />
+         
+            <Link to="/favoritos">
+              <FiHeart size={25} style={{ marginRight: '8px', color: 'black' }} /> {/* Ícone de favorito */}
+            </Link>
             <Link 
     to="/carrinho" 
     style={{ 
@@ -159,8 +165,10 @@ const Navbar = () => {
     }}
   >
     <FiShoppingCart size={20} style={{ marginRight: '8px', color: 'black' }} /> {/* Ícone de carrinho */}
+    
     <p style={{ color: 'black', margin: 0 }}></p>
   </Link>
+
           </div>
         </ul>
 

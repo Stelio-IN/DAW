@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/style/carrinho.css'; 
-
+import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
 function Carrinho() {
   const [cart, setCart] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
+ const { favorites, toggleFavorite } = useFavorites();
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -99,7 +99,23 @@ function Carrinho() {
                         >
                           Remover
                         </button>
-                        <button className='button addWishList'>Adicionar favoritos</button>
+                        <button
+  onClick={() => {
+    console.log("Produto favorito clicado:", product);
+    toggleFavorite(product);
+  }}
+  style={{
+    backgroundColor: favorites.some(
+      (item) => item.product_id === product.product_id
+    )
+      ? "red"
+      : "gray",
+  }}
+>
+  {favorites.some((item) => item.product_id === product.product_id)
+    ? "Remover Favorito"
+    : "Adicionar aos Favoritos"}
+</button>
                       </div>
                     </div>
                   </li>
