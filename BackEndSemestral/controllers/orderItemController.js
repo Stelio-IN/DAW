@@ -68,5 +68,6 @@ export default {
   getAllOrderItems,
   getOrderItemById,
   updateOrderItem,
+  updateOrderItem,
   deleteOrderItem
 };
