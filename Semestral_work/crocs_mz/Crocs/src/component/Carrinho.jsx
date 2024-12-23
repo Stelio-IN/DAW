@@ -1,19 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../assets/style/carrinho.css';
-
+import '../assets/style/carrinho.css'; 
+import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
 function Carrinho() {
   const [cart, setCart] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-
+ const { favorites, toggleFavorite } = useFavorites();
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    // Ajeitar a quantidade corretamente ao carregar o carrinho
-    const cartWithQuantities = storedCart.map(product => ({
-      ...product,
-      quantity: product.quantity  || 1, // Se não existir quantity, define 1
-    }));
+    const cartWithQuantities = storedCart.map(product => ({ ...product, quantity: 1 }));
     setCart(cartWithQuantities);
   }, []);
 
@@ -22,16 +18,10 @@ function Carrinho() {
     setCart(prevCart => {
       const updatedCart = [...prevCart];
       const item = updatedCart[index];
-
-      // Ajusta a quantidade para aumentar ou diminuir em 1 unidade
-      const newQuantity = item.quantity + delta;
-      if (newQuantity >= 1 && newQuantity <= item.stock_quantity) {
-        item.quantity = newQuantity;
+      if (item.quantity + delta >= 1 && item.quantity + delta <= item.stock_quantity) {
+        item.quantity += delta;
       }
-
-      // Atualiza o carrinho no localStorage
       localStorage.setItem('cart', JSON.stringify(updatedCart));
-
       return updatedCart;
     });
   };
@@ -50,6 +40,7 @@ function Carrinho() {
     return cart.reduce((total, product) => total + product.price * product.quantity, 0);
   };
 
+
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
   };
@@ -59,27 +50,32 @@ function Carrinho() {
   };
 
   return (
-    <div className="content-carrinho">
-      <div className="container">
-        {cart.length > 0 ? (
-          <>
-            <div className="carrinho">
+<div className="content-carrinho">
+    
+        <div className="container">
+      {cart.length > 0 ? (
+        <>
+
+          <div className="carrinho">
               <ul className="productList">
                 {cart.map((product, index) => (
                   <li key={index} className="productItem">
                     <div className="product">
                       <div className="productDetails">
+
                         <div className='productDetails_1'>
+                          <img src="" alt="" />
                           <img
-                            src={product.primary_image_url || 'default-image.png'}
-                            alt={product.name}
-                          />
-                        </div>
+                      src={product.primary_image_url || 'default-image.png'}
+                      alt={product.name}
+                     
+                    />
+                          </div>
                         <div className='productDetails_2'>
                           <h3>{product.name}</h3>
                           <p>Preço: {product.price}$</p>
                           <p>Quantidade em Estoque: {product.stock_quantity}</p>
-                          <p>Quantidade: {product.quantity} </p>
+                          <p>Quantidade: {product.quantity}</p>
                         </div>
                       </div>
                       <div className="buttons">
@@ -103,68 +99,91 @@ function Carrinho() {
                         >
                           Remover
                         </button>
-                        <button className='button addWishList'>Adicionar favoritos</button>
+                        <button
+  onClick={() => {
+    console.log("Produto favorito clicado:", product);
+    toggleFavorite(product);
+  }}
+  style={{
+    backgroundColor: favorites.some(
+      (item) => item.product_id === product.product_id
+    )
+      ? "red"
+      : "gray",
+  }}
+>
+  {favorites.some((item) => item.product_id === product.product_id)
+    ? "Remover Favorito"
+    : "Adicionar aos Favoritos"}
+</button>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
-
-              <div className="Order_summary">
+              
+                <div className="Order_summary">
                 <div className="order">
-                  <h2>Order Summary</h2>
+                <h2>Order Summary</h2>
                   <div className="subtotal">
-                    <p>SubTotal</p>
-                    <p>0 Mzn</p>
+                  <p>SubTotal</p>
+                  <p>0 Mzn</p>
                   </div>
                   <div className="shipping">
-                    <p>Shipping</p>
-                    <p>Calculated on next step</p>
+                  <p>Shipping</p>
+                  <p>Calculated on next step</p>
                   </div>
                   <div className="descounted">
-                    <p>Você Poupou</p>
-                    <p> 0 Mzn</p>
+                  <p>Voce Poupou</p>
+                  <p> 0 Mzn</p>
                   </div>
                   <div className="total">
-                    <p>Total: </p>
-                    <p>{calculateTotal()} Mzn</p>
+                  <p>Total: </p>
+                  <p>{calculateTotal()} Mzn</p>
                   </div>
                   <Link to='/pagamento'>
                     <button className="purchaseButton" onClick={handlePurchaseClick}>
                       Realizar Compra
-                    </button>
+                     </button>
                   </Link>
+              </div>
+                    
+              
                 </div>
+                
+          </div>
+
+
+         
+    
+          {/* Modal de Pagamento */}
+          {showPaymentModal && (
+            <div className="modal" onClick={handleCloseModal}>
+              <div className="modalContent" onClick={(e) => e.stopPropagation()}>
+                <h2>Pagamento</h2>
+                <p>Total a Pagar: {calculateTotal()}$</p>
+                <label>
+                  Celular:
+                  <input type="text" placeholder="Seu celular" />
+                </label>
+                <label>
+                  Local de Entrega:
+                  <input type="text" placeholder="Endereço de entrega" />
+                </label>
+                <button onClick={() => alert('Compra finalizada com sucesso!')}>
+                  Finalizar Compra
+                </button>
+                <button onClick={handleCloseModal}>Fechar</button>
               </div>
             </div>
+          )}
+        </>
+      ) : (
+       <p>carrinho vazio</p>
+      )}
+        </div>
+</div>
 
-            {/* Modal de Pagamento */}
-            {showPaymentModal && (
-              <div className="modal" onClick={handleCloseModal}>
-                <div className="modalContent" onClick={(e) => e.stopPropagation()}>
-                  <h2>Pagamento</h2>
-                  <p>Total a Pagar: {calculateTotal()}$</p>
-                  <label>
-                    Celular:
-                    <input type="text" placeholder="Seu celular" />
-                  </label>
-                  <label>
-                    Local de Entrega:
-                    <input type="text" placeholder="Endereço de entrega" />
-                  </label>
-                  <button onClick={() => alert('Compra finalizada com sucesso!')}>
-                    Finalizar Compra
-                  </button>
-                  <button onClick={handleCloseModal}>Fechar</button>
-                </div>
-              </div>
-            )}
-          </>
-        ) : (
-          <p>Carrinho vazio</p>
-        )}
-      </div>
-    </div>
   );
 }
 

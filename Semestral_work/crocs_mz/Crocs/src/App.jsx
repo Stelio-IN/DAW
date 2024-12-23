@@ -15,7 +15,6 @@ import Detalhes from './pages/DetalhesProduto';
 import Pesquisa from './pages/ProdutoDetalhado'; 
 import Pagamento from './component/Pay'; 
 import Favorito from './pages/Favorito'; 
-import Historico from './pages/Historico.jsx'; 
 //import Detalhes from './pages/Produto'; 
 
 
@@ -56,7 +55,6 @@ function MainApp() {
             <Route path="/pesquisa" element= {<Pesquisa />} />
             <Route path="/pagamento" element= {<Pagamento />} />
             <Route path="/favoritos" element= {<Favorito />} />
-            <Route path="/historico" element= {<Historico />} />
            
            
 

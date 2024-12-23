@@ -9,12 +9,11 @@ import Timeline from "../component/TimeLine";
 import PayPalButton from '../component/Paypal';
 
 const Pay = () => {
-  //const [selectedSize, setSelectedSize] = useState(null);
-  const [currentStep] = useState(1);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [currentStep, setCurrentStep] = useState(1);
   // Estado para controlar qual método de pagamento está ativo
-  //const [activePayment, setActivePayment] = useState(null);
+  const [activePayment, setActivePayment] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  
 
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
@@ -114,6 +113,7 @@ const Pay = () => {
               <div>
                 <p> Total a pagar: {calculateTotal()} Mzn</p>
 
+<<<<<<< HEAD
               {/* Paypal */}
 <button
   id="btn_paypal"
@@ -134,6 +134,27 @@ const Pay = () => {
   </div>
 )}
 
+=======
+                {/* Paypal */}
+                <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
+                  {" "}
+                  <img src={paypal} alt="" />
+                </button>
+                {activeMethod === "paypal" && (
+                  <div className="Paypal_payment">
+                    <p>
+                      Nós vamos redirecioná-lo para o PayPal de modo a efetuar o
+                      pagamento.{" "}
+                      <span
+                        style={{ color: "blue", textDecoration: "underline" }}
+                      >
+                        O que é PayPal?
+                      </span>
+                    </p>
+                    <PayPalButton totalMZN={calculateTotal()} />
+                  </div>
+                )}
+>>>>>>> parent of d2296c8e (versao 5)
 
                 {/* Cartão */}
                 <button id="btn_card" onClick={() => toggleMethod("card")}>

@@ -1,34 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/style/menu.css';
 import LogoCrocs from '../assets/img/crocs_logo.webp';
 import navImg1 from '../assets/img/pose3.webp';
 import navImg2 from '../assets/img/pose1.webp';
 import navImg3 from '../assets/img/pose2.webp';
+import favorito from '../assets/img/favorito.svg';
+import { FiHeart, FiShoppingCart } from 'react-icons/fi';
 
-import { FiHeart, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { useFavorites } from '../context/FavoritesContext.jsx';
 
 const Navbar = () => {
-  const { favorites } = useFavorites(); // Hook para acessar favoritos
-  const [cartItemCount, setCartItemCount] = useState(0);
-
-  // Atualiza a contagem do carrinho com base no localStorage
-  useEffect(() => {
-    const updateCartCount = () => {
-      const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-      const itemCount = storedCart.reduce((total, item) => total + (item.quantity || 1), 0);
-      setCartItemCount(itemCount);
-    };
-
-    updateCartCount();
-
-    // Escutando alterações no localStorage (opcional, para garantir reatividade)
-    window.addEventListener('storage', updateCartCount);
-    return () => window.removeEventListener('storage', updateCartCount);
-  }, []);
-
-
   return (
     <nav>
       <div className="wrapper">
@@ -164,61 +145,30 @@ const Navbar = () => {
             <Link to="/login"><input type="button" className="btn_login" value="Login" /></Link>
             <input type="search" className="btn_pesquisa" placeholder="Search" />
          
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <Link to="/favoritos">
-                <FiHeart size={25} style={{ marginRight: '8px', color: 'black' }} />
-              </Link>
-              {favorites.length > 0 && (
-                <span
-                  style={{
-                    position: 'absolute',
-                    top: '-27px',
-                    right: '-1px',
-                    color: 'black',
-                    borderRadius: '100px',
-                    padding: '1px 2px -10px 5px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  {favorites.length}
-                </span>
-              )}
-            </div>
+            <Link to="/favoritos">
+              <FiHeart size={25} style={{ marginRight: '8px', color: 'black' }} /> {/* Ícone de favorito */}
+            </Link>
             <Link 
-      to="/carrinho" 
-      style={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        textDecoration: 'none', 
-        border: '3px solid #000000', 
-        padding: '4px 14px', 
-        borderRadius: '80px', 
-        transition: 'box-shadow 0.3s',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-      }}
-    >
-      <FiShoppingCart size={20} style={{ marginRight: '8px', color: 'black' }} />
-      {cartItemCount > 0 && (
-        <span
-          style={{
-            color: 'green',
-            fontSize: '0.8rem',
-            width: '10px',
-            height: '10px',
-            position: 'relative',
-            top: '-27px',
-            fontWeight: 'bold',  
-          }}
-        >
-          {cartItemCount}
-        </span>
-      )}
-    </Link>
-    <Link to="/historico">
-      <FiUser size={20} style={{ marginRight: '8px', color: 'black' }} />
-    </Link>
+    to="/carrinho" 
+    style={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      textDecoration: 'none', 
+      border: '3px solid #000000', // Adiciona a borda
+      padding: '4px 14px', // Adiciona espaçamento interno
+      borderRadius: '80px', // Bordas arredondadas
+      transition: 'box-shadow 0.3s',
+      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)', // Sombras para destacar
+      hover: {
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Sombras ao passar o mouse
+      },
+    }}
+  >
+    <FiShoppingCart size={20} style={{ marginRight: '8px', color: 'black' }} /> {/* Ícone de carrinho */}
     
+    <p style={{ color: 'black', margin: 0 }}></p>
+  </Link>
+
           </div>
         </ul>
 
