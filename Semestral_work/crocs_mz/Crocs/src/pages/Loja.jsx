@@ -12,6 +12,7 @@ function Loja() {
   const [sortOption, setSortOption] = useState("a-z");
   const [searchTerm, setSearchTerm] = useState(''); // Termo de pesquisa
   const [categories, setCategories] = useState([]);
+  const [colors, setColors] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [error, setError] = useState(null);
  
@@ -108,16 +109,7 @@ function Loja() {
     setSelectedSize(size); // Atualiza o tamanho selecionado
   };
 
-  // Fetching all products from the API
-  const fetchProducts = async (search = '') => {
-      try {
-        const response = await fetch(`http://localhost:3005/api/products/pr?search=${search}`);
-        const data = await response.json();
-        setProducts(sortProducts(data, sortOption));
-      } catch (error) {
-        console.error('Erro ao buscar produtos:', error);
-      }
-    };
+ 
   
     // Busca os produtos ao carregar o componente
     useEffect(() => {
@@ -164,8 +156,27 @@ function Loja() {
         setCurrency(newCurrency);
       };
 
+       // Fetching all products from the API
+  const fetchProducts = async (search = '') => {
+    try {
+      const response = await fetch(`http://localhost:3005/api/products/pr?search=${search}`);
+      const data = await response.json();
+      setProducts(sortProducts(data, sortOption));
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
+    }
+  };
+
        // Função para buscar produtos por categoria
   const fetchProductsByCategory = async (categoryId) => {
+    if (!categoryId) {
+      console.error("Categoria inválida");
+      return;
+    }else {
+      console.log("categoria valida")
+    }
+   
+   
     try {
       const response = await fetch(
         `http://localhost:3005/api/products/pr/byCategory/${categoryId}`
@@ -181,6 +192,8 @@ function Loja() {
     }
   };
 
+  
+
 // Buscar categorias ao carregar o componente
 useEffect(() => {
   const fetchCategories = async () => {
@@ -193,11 +206,30 @@ useEffect(() => {
         console.error("Erro ao buscar categorias");
       }
     } catch (error) {
-      console.error("Erro:", error);
+      console.error("Erro:", error); 
     }
   };
 
   fetchCategories();
+}, []);
+
+// Buscar categorias ao carregar o componente
+useEffect(() => {
+  const fetchColors = async () => {
+    try {
+      const response = await fetch("http://localhost:3005/api/colors");
+      if (response.ok) {
+        const data = await response.json();
+        setColors(data);
+      } else {
+        console.error("Erro ao buscar cores");
+      }
+    } catch (error) {
+      console.error("Erro:", error); 
+    }
+  };
+
+  fetchColors();
 }, []);
 
   // Função para selecionar uma categoria
@@ -205,6 +237,10 @@ useEffect(() => {
     setSelectedCategory(categoryId);
     fetchProductsByCategory(categoryId); // Busca produtos ao selecionar a categoria
   };
+
+
+  
+
 
   return (
     <div className="content-loja">
@@ -214,40 +250,47 @@ useEffect(() => {
         <div className="filtros">
             <h3>Filtros</h3>
 
-            <div>
+            <div onClick={() => handleFilterClick("estilo")}>
         <h4>Estilo</h4>
-        <div className="filter-options">
-          {categories.map((category) => (
-            <label key={category.id}>
-              <input
-                type="radio"
-                name="category"
-                value={category.id}
-                checked={selectedCategory === category.id}
-                onChange={() => handleCategorySelect(category.id)}
-              />
-              {category.name}
-            </label>
-          ))}
-        </div>
+        {activeFilter === "estilo" && (
+        <div className="filter-options" onClick={(e) => e.stopPropagation()}>
+        <h3>Categorias</h3>
+        {categories.map((category) => (
+          <label key={category.category_id}>
+            <input
+              type="radio"
+              name="category"
+              value={category.category_id}
+              checked={selectedCategory === category.category_id}
+              onChange={() => handleCategorySelect(category.category_id)}
+            />
+            {category.name}
+          </label>
+        ))}
+      </div>
+        )}
       </div>
 
             <div onClick={() => handleFilterClick("cor")}>
               <h4>Cor</h4>
               {activeFilter === "cor" && (
                 <div className="filter-options" onClick={(e) => e.stopPropagation()}>
-                 
-                  <label>
+                   {colors.map((colors) => (
+                  <label  key={colors.name}>
                     <input
                       type="checkbox"
-                      value="Preto"
+                      value={colors.name}
                       onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
                     />
-                    Preto
+                   {colors.name}
                   </label>
+                  ))}
                 </div>
               )}
             </div>
+
+           
+
 
             <div onClick={() => handleFilterClick("tamanho")}>
               <h4>Tamanho</h4>

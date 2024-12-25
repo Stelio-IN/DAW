@@ -232,20 +232,58 @@ ORDER BY p.order_id;  -- Ordena pelos order_id
 };
 
 // Controller para obter produtos por categoria
- const getProductsByCategory = async (req, res) => {
+const getProductsByCategory = async (req, res) => {
   const { categoryId } = req.params;
-
+  
   try {
-    const products = await db.query(
-      "SELECT * FROM products WHERE category_id = ?",
-      [categoryId]
+    // Verifique se o categoryId foi passado corretamente
+    if (!categoryId) {
+      return res.status(400).json({ message: "Categoria não fornecida." });
+    }
+
+    // Ajuste na consulta para usar o Sequelize com o método replacements
+    const products = await db.sequelize.query(
+      `
+      SELECT 
+        p.product_id, 
+        p.name AS product_name, 
+        p.price, 
+        (
+          SELECT COUNT(DISTINCT pc_inner.color_id)
+          FROM ProductColors pc_inner
+          WHERE pc_inner.product_id = p.product_id
+        ) AS color_count, 
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'name', c.name, 
+            'hex_code', c.hex_code
+          )
+        ) AS colors,
+        MAX(pi.image_url) AS primary_image_url
+      FROM Products p
+      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
+      LEFT JOIN Colors c ON pc.color_id = c.color_id
+      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      WHERE p.category_id = :categoryId
+      GROUP BY p.product_id
+    `, // Usando :categoryId como parâmetro nomeado
+      {
+        replacements: { categoryId }, // Substituindo :categoryId com o valor real
+        type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
+      }
     );
+    
+    if (products.length === 0) {
+      return res.status(404).json({ message: "Nenhum produto encontrado para esta categoria." });
+    }
+
     res.status(200).json(products);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
-    res.status(500).json({ message: "Erro ao buscar produtos" });
+    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
+
 
 
 
