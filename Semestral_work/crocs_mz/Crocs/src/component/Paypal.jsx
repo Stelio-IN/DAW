@@ -1,128 +1,90 @@
-import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types"; // Importe o PropTypes
+import React, { useEffect, useState } from 'react';
 
-const PayPalButton = ({ totalMZN, setCart }) => {
-
- // Verifique se setCart é uma função
- useEffect(() => {
-  console.log("setCart é uma função? ", typeof setCart === "function"); // Verifica o tipo de setCart
-}, [setCart]);
-
+const PayPalButton = ({ totalMZN, onPaymentSuccess, cartItems }) => {
   const [totalUSD, setTotalUSD] = useState(0);
-  const [paypalReady, setPaypalReady] = useState(false);
 
-  // Função para carregar o script do PayPal
-  const loadPayPalScript = () => {
-    return new Promise((resolve, reject) => {
-      if (window.paypal) {
-        return resolve(window.paypal);
-      }
 
-      const script = document.createElement("script");
-      script.src = "https://www.paypal.com/sdk/js?client-id=AeqHhzKjUTSwvliDMKisOV8up3ylSUw7uNGESVORC0DJxIHz9ZmC0Atg7cFIM-ihdtscWCuREUweiBJi"; // Substitua com seu Client ID do PayPal
-      script.async = true;
-      script.onload = () => resolve(window.paypal);
-      script.onerror = () => reject(new Error("Failed to load PayPal script"));
-
-      document.body.appendChild(script);
-    });
-  };
-
-  // Verifica se o PayPal foi carregado
+   // UseEffect para ver os itens do carrinho quando passados para o PayPalButton
   useEffect(() => {
-    loadPayPalScript()
-      .then(() => setPaypalReady(true))
-      .catch((error) => console.error("Erro ao carregar o script do PayPal:", error));
-  }, []);
+    console.log("Itens do carrinho passados para PayPalButton:", cartItems);
+  }, [cartItems]);
 
-  // Converte o valor de MZN para USD
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
-        const response = await fetch("https://open.er-api.com/v6/latest/MZN");
+        const response = await fetch('https://open.er-api.com/v6/latest/MZN');
         const data = await response.json();
-        const exchangeRate = data.rates.USD; // Taxa de câmbio de MZN para USD
-        setTotalUSD((totalMZN * exchangeRate).toFixed(2)); // Calcula o valor em USD com 2 casas decimais
+        const exchangeRate = data.rates.USD;
+        setTotalUSD((totalMZN * exchangeRate).toFixed(2));
       } catch (error) {
-        console.error("Erro ao obter a taxa de câmbio:", error);
+        console.error('Erro ao obter a taxa de câmbio:', error);
       }
     };
 
     fetchExchangeRate();
-  }, [totalMZN]); // Reexecuta quando o total em MZN mudar
+  }, [totalMZN]);
 
-  // Configuração do botão PayPal
   useEffect(() => {
-    if (paypalReady && totalUSD > 0) {
-      window.paypal.Buttons({
-        createOrder: (data, actions) => {
-          return actions.order.create({
-            purchase_units: [
-              {
-                amount: {
-                  currency_code: "USD",
-                  value: totalUSD, // Usa o valor convertido
+    const renderPayPalButton = () => {
+      if (window.paypal && totalUSD > 0) {
+        window.paypal.Buttons({
+          createOrder: (data, actions) => {
+            return actions.order.create({
+              purchase_units: [
+                {
+                  amount: {
+                    currency_code: 'USD',
+                    value: totalUSD,
+                  },
                 },
-              },
-            ],
-          });
-        },
-        onApprove: async (data, actions) => {
-          try {
-            const details = await actions.order.capture();
-            console.log("Detalhes da transação:", details);
-            const products = JSON.parse(localStorage.getItem("cart"));
-            setCart([]); // Limpa o carrinho
-
-            // Produtos do carrinho
-            const userID = 1; // ID do usuário autenticado (ajuste conforme necessário)
-            const enderecoEntrega = "Rua Exemplo, 123, Cidade, País"; // Exemplo de endereço
-
-            // Envia os dados para o backend
-            const response = await fetch("http://localhost:3005/api/payments/capture-order", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                orderID: data.orderID,
-                userID,
-                products: products.map((product) => ({
-                  id: product.id,
-                  name: product.name,
-                  quantity: product.quantity,
-                  price: product.price,
-                })),
-                enderecoEntrega,
-              }),
+              ],
             });
-            console.log("Resposta do PayPal:", response); // resposta do paypal
-            const result = await response.json();
-            if (response.ok) {
-              localStorage.removeItem("cart"); // Esvazia o carrinho
-              setCart([]); // Atualiza o estado do carrinho
-              alert("Compra concluída com sucesso!");
-            } else {
-              alert(`Erro: ${result.error}`);
-            }
-          } catch (error) {
-            console.error("Erro ao capturar a ordem:", error);
-            console.error("Detalhes do erro:", error.response?.data || error.message);
-            alert("Erro ao processar o pagamento.");
-          }
-        },
-        onError: (err) => {
-          console.error("Erro no PayPal:", err);
-        },
-      }).render("#paypal-button-container");
-    }
-  }, [paypalReady, totalUSD, setCart]); // Reexecuta o botão PayPal quando totalUSD mudar ou PayPal estiver pronto
+          },
+          onApprove: (data, actions) => {
+            return actions.order.capture().then(async (details) => {
+              alert(`Pagamento concluído por ${details.payer.name.given_name}`);
+          
+              // Dados do pagamento
+              const paymentData = {
+                payerName: details.payer.name.given_name,
+                payerEmail: details.payer.email_address,
+                totalUSD: totalUSD,
+                orderId: details.id,
+                cartItems: cartItems, // Envia o carrinho completo
+              };
+
+              console.log("Dados do pagamento e carrinho sendo enviados:", paymentData); // Log para verificar
+          
+              // Enviar os dados para o servidor
+              try {
+                const response = await fetch('http://localhost:3005/api/payments', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(paymentData),
+                });
+          
+                const result = await response.json();
+                console.log('Resposta do servidor:', result);
+              } catch (error) {
+                console.error('Erro ao enviar os dados do pagamento:', error);
+              }
+          
+              if (onPaymentSuccess) {
+                onPaymentSuccess(); // Esvazia o carrinho
+              }
+            });
+          },
+          onError: (err) => {
+            console.error('Erro no PayPal:', err);
+          },
+        }).render('#paypal-button-container');
+      }
+    };
+
+    renderPayPalButton();
+  }, [totalUSD, onPaymentSuccess, cartItems]); // Dependência de cartItems
 
   return <div id="paypal-button-container"></div>;
-};
-
-// Validação das props com PropTypes
-PayPalButton.propTypes = {
-  totalMZN: PropTypes.number.isRequired, // totalMZN deve ser um número obrigatório
-  setCart: PropTypes.func.isRequired, // setCart deve ser uma função obrigatória
 };
 
 export default PayPalButton;

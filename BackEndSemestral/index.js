@@ -13,7 +13,8 @@ import routerProductColor from './routes/productColorRoutes.js';
 import routerProductImage from './routes/productImageRoutes.js';
 import routerOrder from './routes/orderRoutes.js';
 import routerOrderItem from './routes/orderItemRoutes.js';
-import paymentRoutes from './routes/paypalRoutes.js';  // paypal rotas
+import paymentRoutes from './routes/paymentRoutes.js';
+
 
 
 const app = express();
@@ -39,7 +40,8 @@ app.use('/api/product-colors', routerProductColor);
 app.use('/api/product-images', routerProductImage);
 app.use('/api/orders', routerOrder);
 app.use('/api/order-items', routerOrderItem);
-app.use('/api/payments', paymentRoutes); 
+app.use('/api', paymentRoutes);
+
 
 // Rota de teste
 app.get('/', (req, res) => {
@@ -51,3 +53,33 @@ app.get('/', (req, res) => {
 // Porta do servidor
 const PORT = process.env.PORT || 3005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+const environment = new paypal.core.SandboxEnvironment('AerA9zAAOphDi3X_h8qYVVrKhKLDSbnI0YNH_CsgcPmV5uQOB5zaq-MH5QgLiGgsLYUm0KplpHV8OJoF', 'EPpS6S2sZ6vQx6TufxeoMxhmXkr4Q9CIllVyjqxcdU3GnxCA3yijNhHlD5xZ-LOHKNX3ZRX2c7LV8N4Y');
+const client = new paypal.core.PayPalHttpClient(environment);
+
+app.post('/create-order', async (req, res) => {
+  const request = new paypal.orders.OrdersCreateRequest();
+  request.requestBody({
+    intent: 'CAPTURE',
+    purchase_units: [
+      {
+        amount: {
+          currency_code: 'USD',
+          value: '10.00',
+        },
+      },
+    ],
+  });
+
+  const response = await client.execute(request);
+  res.json({ id: response.result.id });
+});
+
+app.post('/capture-order', async (req, res) => {
+  const { orderID } = req.body;
+  const request = new paypal.orders.OrdersCaptureRequest(orderID);
+  const response = await client.execute(request);
+  res.json(response.result);
+});

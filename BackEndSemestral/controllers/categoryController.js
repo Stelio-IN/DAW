@@ -63,10 +63,13 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+
+
+
 export default {
   createCategory,
   getAllCategories,
   getCategoryById,
   updateCategory,
-  deleteCategory,
+  deleteCategory
 };

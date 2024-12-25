@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../assets/style/login.css';
 const LoginRegister = () => {
@@ -9,7 +9,19 @@ const LoginRegister = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+  const [userName, setUserName] = useState(null); // Estado para o nome do usuário
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para verificar se o usuário está logado
+
+
+  // Carregar informações do usuário ao montar o componente
+  useEffect(() => {
+    const storedName = localStorage.getItem('userName');
+    const token = localStorage.getItem('token');
+    if (storedName && token) {
+      setUserName(storedName);
+      setIsLoggedIn(true);
+    }
+  }, []);
   const navigate = useNavigate(); // Para redirecionamento de rotas
 
   const handleTermsChange = (e) => {
@@ -21,6 +33,12 @@ const LoginRegister = () => {
   };
 
   // Função para fazer o login
+  useEffect(() => {
+    const storedName = localStorage.getItem('userName');
+    if (storedName) {
+      setUserName(storedName); // Atualiza o estado com o nome armazenado
+    }
+  }, []);
  // Função para fazer o login
 const handleLogin = async (e) => {
   e.preventDefault(); // Previne o comportamento padrão do formulário
@@ -51,6 +69,9 @@ const handleLogin = async (e) => {
       // Armazenar dados adicionais (exemplo: nome do usuário)
       localStorage.setItem('userName', data.user.nome); // Salva o nome do usuário
   
+      setUserName(data.user.nome); // Atualiza o estado com o nome do usuário
+      setIsLoggedIn(true);
+
 
       // Redirecionamento conforme o tipo de usuário
       if (data.user.tipo_usuario === 'comum') {
@@ -65,6 +86,14 @@ const handleLogin = async (e) => {
     console.error('Erro de conexão:', error);
     setErrorMessage('Erro de conexão. Tente novamente mais tarde.');
   }
+};
+
+// Função para fazer logout
+const handleLogout = () => {
+  localStorage.clear(); // Remove todas as informações do localStorage
+  setUserName(null);
+  setIsLoggedIn(false);
+  navigate('/login'); // Redireciona para a página de login
 };
 
 
@@ -112,7 +141,17 @@ const handleLogin = async (e) => {
   };
   return (
     <div className="container">
+{isLoggedIn ? (
+        <div className="logged_in_area">
+          <p>Bem-vindo, {userName}!</p>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
+      ) : (
+
+
       <div className="form">
+
+
         {/* Área de Login */}
         <div className="login_area">
           <p style={{ fontSize: '1.4rem' }}>
@@ -246,6 +285,7 @@ const handleLogin = async (e) => {
         </div>
                )}
       </div>
+       )}
     </div>
   );
 };

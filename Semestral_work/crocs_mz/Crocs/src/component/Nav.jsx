@@ -6,12 +6,21 @@ import navImg1 from '../assets/img/pose3.webp';
 import navImg2 from '../assets/img/pose1.webp';
 import navImg3 from '../assets/img/pose2.webp';
 
-import { FiHeart, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { FiHeart, FiShoppingBag, FiShoppingCart, FiUser } from 'react-icons/fi';
 import { useFavorites } from '../context/FavoritesContext.jsx';
 
 const Navbar = () => {
   const { favorites } = useFavorites(); // Hook para acessar favoritos
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [userName, setUserName] = useState(null);
+
+  useEffect(() => {
+    const storedName = localStorage.getItem('userName');
+    if (storedName) {
+      setUserName(storedName);
+    }
+  }, []);
+  
 
   // Atualiza a contagem do carrinho com base no localStorage
   useEffect(() => {
@@ -215,9 +224,15 @@ const Navbar = () => {
         </span>
       )}
     </Link>
-    <Link to="/historico">
-      <FiUser size={20} style={{ marginRight: '8px', color: 'black' }} />
+    <Link to="/minhasCompras">
+      <FiShoppingBag size={20} style={{ marginRight: '8px', color: 'black' }} />
     </Link>
+
+    {userName && (
+    <span style={{ fontSize: '14px', fontWeight: 'bold', color: 'black' }}>
+      {userName}
+    </span>
+  )}
     
           </div>
         </ul>

@@ -45,12 +45,18 @@ const Pay = () => {
     setCart(cartWithQuantities);
   }, []);
 
+  const emptyCart = () => {
+    setCart([]); // Esvazia o estado do carrinho
+    localStorage.removeItem("cart"); // Remove os dados do carrinho do localStorage
+  };
+
   const calculateTotal = () => {
     return cart.reduce(
       (total, product) => total + product.price * product.quantity,
       0
     );
   };
+
 
   return (
     <div className="content-pagamento">
@@ -114,27 +120,31 @@ const Pay = () => {
               <div>
                 <p> Total a pagar: {calculateTotal()} Mzn</p>
 
-                {/* Paypal */}
-                <button
-        id="btn_paypal"
-        onClick={() => toggleMethod("paypal")} // Altera o método de pagamento para "paypal"
-      >
-        <img src={paypal} alt="PayPal" />
-      </button>
+               {/* Paypal */}
+               <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
+                  {" "}
+                  <img src={paypal} alt="" />
+                </button>
+                {activeMethod === "paypal" && (
+                  <div className="Paypal_payment">
+                    <p>
+                      Nós vamos redirecioná-lo para o PayPal de modo a efetuar o
+                      pagamento.{" "}
+                      <span
+                        style={{ color: "blue", textDecoration: "underline" }}
+                      >
+                        O que é PayPal?
+                      </span>
+                    </p>
+                    <PayPalButton 
+  totalMZN={calculateTotal()} 
+  onPaymentSuccess={emptyCart} 
+  cartItems={cart} // Passando o cart como prop
+/>
 
-      {activeMethod === "paypal" && (
-        <div className="Paypal_payment">
-          <p>
-            Nós vamos redirecioná-lo para o PayPal de modo a efetuar o pagamento.{" "}
-            <span
-              style={{ color: "blue", textDecoration: "underline" }}
-            >
-              O que é PayPal?
-            </span>
-          </p>
-          <PayPalButton totalMZN={calculateTotal()} setCart={setCart} /> {/* Passa o valor total em MZN e a função de atualizar o carrinho */}
-        </div>
+                  </div>
                 )}
+
 
                 {/* Cartão */}
                 <button id="btn_card" onClick={() => toggleMethod("card")}>

@@ -12,7 +12,8 @@ router.delete('/:id', productController.deleteProduct);
 
 router.get('/pr', productController.products);
 router.get('/pr/:id', productController.getProductsEspecific);
-
+router.get('/compras', productController.ProductHistory);
+router.get('/pr/byCategory/:categoryId', productController.getProductsByCategory);
 
 
 export default router;

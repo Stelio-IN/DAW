@@ -195,6 +195,59 @@ const getProductsEspecific = async (req, res) => {
   }
 };
 
+const ProductHistory = async (req, res) => {
+  try {
+    // Consulta para buscar o histórico de compras
+    const productHistory = await db.sequelize.query(`
+SELECT 
+  p.order_id, 
+  p.payer_name, 
+  p.created_at, 
+  c.nome_produto, 
+  c.quantidade, 
+  c.preco_unitario, 
+  c.preco_total, 
+  MAX(pi.image_url) AS primary_image_url  -- Garantir que traga a imagem principal (única)
+FROM paymentos p
+INNER JOIN compras c ON c.pagamento_id = p.id
+INNER JOIN products pr ON c.produto_id = pr.product_id  -- Junção com a tabela Products
+LEFT JOIN productcolors pc ON pr.product_id = pc.product_id
+LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+GROUP BY p.order_id, p.payer_name, p.created_at, c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total
+ORDER BY p.order_id;  -- Ordena pelos order_id
+    `, {
+      type: db.sequelize.QueryTypes.SELECT, // Tipo de consulta
+    });
+
+    if (productHistory.length === 0) {
+      return res.status(404).json({ error: 'Nenhum histórico de compras encontrado.' });
+    }
+
+    // Retorna o histórico de compras
+    res.status(200).json(productHistory);
+  } catch (error) {
+    console.error('Erro ao buscar histórico de compras:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Controller para obter produtos por categoria
+ const getProductsByCategory = async (req, res) => {
+  const { categoryId } = req.params;
+
+  try {
+    const products = await db.query(
+      "SELECT * FROM products WHERE category_id = ?",
+      [categoryId]
+    );
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
+    res.status(500).json({ message: "Erro ao buscar produtos" });
+  }
+};
+
+
 
 
 export default {
@@ -204,5 +257,7 @@ export default {
     updateProduct,
     deleteProduct,
     products,
-    getProductsEspecific
+    getProductsEspecific,
+    ProductHistory,
+    getProductsByCategory 
 };

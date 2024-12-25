@@ -11,6 +11,10 @@ function Loja() {
   const [selectedPriceRange, setSelectedPriceRange] = React.useState({ min: 0, max: 10000 });
   const [sortOption, setSortOption] = useState("a-z");
   const [searchTerm, setSearchTerm] = useState(''); // Termo de pesquisa
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [error, setError] = useState(null);
+ 
 
 
   // Referência para o filtro de tamanho
@@ -104,7 +108,7 @@ function Loja() {
     setSelectedSize(size); // Atualiza o tamanho selecionado
   };
 
-  // Fetching products from the API
+  // Fetching all products from the API
   const fetchProducts = async (search = '') => {
       try {
         const response = await fetch(`http://localhost:3005/api/products/pr?search=${search}`);
@@ -160,6 +164,48 @@ function Loja() {
         setCurrency(newCurrency);
       };
 
+       // Função para buscar produtos por categoria
+  const fetchProductsByCategory = async (categoryId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/products/pr/byCategory/${categoryId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data); // Atualiza o estado de produtos no componente pai
+      } else {
+        setError("Erro ao buscar produtos.");
+      }
+    } catch (error) {
+      setError("Erro de conexão.");
+    }
+  };
+
+// Buscar categorias ao carregar o componente
+useEffect(() => {
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("http://localhost:3005/api/categories");
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      } else {
+        console.error("Erro ao buscar categorias");
+      }
+    } catch (error) {
+      console.error("Erro:", error);
+    }
+  };
+
+  fetchCategories();
+}, []);
+
+  // Função para selecionar uma categoria
+  const handleCategorySelect = (categoryId) => {
+    setSelectedCategory(categoryId);
+    fetchProductsByCategory(categoryId); // Busca produtos ao selecionar a categoria
+  };
+
   return (
     <div className="content-loja">
    
@@ -168,16 +214,23 @@ function Loja() {
         <div className="filtros">
             <h3>Filtros</h3>
 
-            <div onClick={() => handleFilterClick("estilo")}>
-              <h4>Estilo</h4>
-              {activeFilter === "estilo" && (
-                <div className="filter-options" onClick={(e) => e.stopPropagation()}>
-                  <label>                  
-                      <input   type="checkbox" value="Esportivo"  onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}/>Esportivo
-                         </label>
-                </div>
-              )}
-            </div>
+            <div>
+        <h4>Estilo</h4>
+        <div className="filter-options">
+          {categories.map((category) => (
+            <label key={category.id}>
+              <input
+                type="radio"
+                name="category"
+                value={category.id}
+                checked={selectedCategory === category.id}
+                onChange={() => handleCategorySelect(category.id)}
+              />
+              {category.name}
+            </label>
+          ))}
+        </div>
+      </div>
 
             <div onClick={() => handleFilterClick("cor")}>
               <h4>Cor</h4>
@@ -318,68 +371,52 @@ function Loja() {
 
           <header className="catalog-header"></header>
           <section className="catalog-items">
-            {products.length > 0 ? (
-              products.map((product, index) => (
-                <div className="catalog-product" key={index}>
-                  <picture className="catalog-image">
-                    <img
-                      src={product.primary_image_url}
-                      alt={product.product_name}
-                      loading="lazy"
-                    />
-                  </picture>
-                  <div className="catalog-detail">
-                  <p>
-                        <small>{product.product_name}</small>
-                      </p>
-                      <samp>
-                        {currency === "MZN"
-                          ? `${product.price} MZN`
-                          : `${convertPrice(
-                              product.price,
-                              currency
-                            )} ${currency}`}
-                      </samp>
-                      {/* Dropdown para selecionar a moeda */}
-                      <select
-                        value={currency}
-                        onChange={(e) => handleCurrencyChange(e.target.value)}
-                      >
-                        <option value="MZN">MZN</option>
-                        <option value="USD">USD</option>
-                        <option value="ZAR">ZAR</option>
-                      </select>
-                  </div>
-                  <div className="catalog-button">
-                    <div className="catalog-colors">
-                      <p>Cores</p>
-                      {Array.isArray(product.colors) &&
-                        product.colors.map((color, idx) => (
-                          <div
-                            key={idx}
-                            className="color-box"
-                            style={{ backgroundColor: color.hex_code }}
-                            title={color.name}
-                          />
-                        ))}
-                    </div>
-                    <button
-                      className="product-button"
-                      onClick={() =>
-                        navigate(`/produto/detalhes/${product.product_id}`)
-                      }
-                    >
-                      <img src="shopping-cart-solid.svg" alt="" />
-                    </button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>Produto nao </p>
-            )}
-          </section>
+  {products.length > 0 ? (
+    products.map((product) => (
+      <div className="catalog-product" key={product.product_id}>
+        <picture className="catalog-image">
+          <img
+            src={product.primary_image_url}
+            alt={product.product_name}
+            loading="lazy"
+          />
+        </picture>
+        <div className="catalog-detail">
+          <p>
+            <small>{product.product_name}</small>
+          </p>
+          <samp>
+            {currency === "MZN"
+              ? `${product.price} MZN`
+              : `${convertPrice(product.price, currency)} ${currency}`}
+          </samp>
+          <select
+            value={currency}
+            onChange={(e) => handleCurrencyChange(e.target.value)}
+          >
+            <option value="MZN">MZN</option>
+            <option value="USD">USD</option>
+            <option value="ZAR">ZAR</option>
+          </select>
+        </div>
+        <div className="catalog-button">
+          <button
+            className="product-button"
+            onClick={() => navigate(`/produto/detalhes/${product.product_id}`)}
+          >
+            <img src="shopping-cart-solid.svg" alt="" />
+          </button>
         </div>
       </div>
+    ))
+  ) : (
+    <p>Não há produtos nessa categoria.</p>
+  )}
+</section>
+
+        </div>
+      </div>
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 }
