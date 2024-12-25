@@ -113,7 +113,7 @@ const Pay = () => {
               <div>
                 <p> Total a pagar: {calculateTotal()} Mzn</p>
 
-<<<<<<< HEAD
+
               {/* Paypal */}
 <button
   id="btn_paypal"
@@ -134,7 +134,7 @@ const Pay = () => {
   </div>
 )}
 
-=======
+
                 {/* Paypal */}
                 <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
                   {" "}
@@ -154,7 +154,7 @@ const Pay = () => {
                     <PayPalButton totalMZN={calculateTotal()} />
                   </div>
                 )}
->>>>>>> parent of d2296c8e (versao 5)
+
 
                 {/* Cartão */}
                 <button id="btn_card" onClick={() => toggleMethod("card")}>
