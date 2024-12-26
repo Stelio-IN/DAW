@@ -127,7 +127,6 @@ picture img {
 
 
 .detail samp {
-    text-decoration: underline;
     color: #222;
     font-size: 11pt;
 }
@@ -177,6 +176,11 @@ small {
 
 .product-button:hover {
     background-color: #0056b3;
+}
+
+.btn_favorito{
+    margin-bottom: 200px;
+    margin-right: 10px;
 }
 
 @media (max-width: 768px) {

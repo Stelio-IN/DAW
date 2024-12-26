@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import "../assets/style/home.css";
 import "../assets/style/slide.css";
 import "../assets/style/catalogo.css";
 
+import { FiHeart } from 'react-icons/fi';
+import { FaHeart } from 'react-icons/fa';
 // Images
 import coupon from "../assets/img/coupon.png";
 import onlineSupport from "../assets/img/online-support.png";
@@ -24,7 +26,6 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const { favorites, toggleFavorite } = useFavorites();
-  
 
   useEffect(() => {
     // Fetching products from the API
@@ -55,8 +56,6 @@ const Home = () => {
 
     fetchExchangeRates();
   }, []);
-
-  
 
   // Função para converter o preço
   const convertPrice = (price, targetCurrency) => {
@@ -142,14 +141,14 @@ const Home = () => {
                             )} ${currency}`}
                       </samp>
                       {/* Dropdown para selecionar a moeda */}
-                      <select
-                        value={currency}
-                        onChange={(e) => handlzeCurrencyChange(e.target.value)}
-                      >
-                        <option value="MZN">MZN</option>
-                        <option value="USD">USD</option>
-                        <option value="ZAR">ZAR</option>
-                      </select>
+                      {/**<select
+                      value={currency}
+                      onChange={(e) => handleCurrencyChange(e.target.value)}
+                    >
+                      <option value="MZN">MZN</option>
+                      <option value="USD">USD</option>
+                      <option value="ZAR">ZAR</option>
+                    </select>*/}
                     </div>
 
                     <div className="button">
@@ -173,23 +172,19 @@ const Home = () => {
                       >
                         <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
-                      <button
-  onClick={() => {
-    console.log("Produto favorito clicado:", product);
-    toggleFavorite(product);
-  }}
-  style={{
-    backgroundColor: favorites.some(
-      (item) => item.product_id === product.product_id
-    )
-      ? "red"
-      : "gray",
-  }}
->
-  {favorites.some((item) => item.product_id === product.product_id)
-    ? "Remover Favorito"
-    : "Adicionar aos Favoritos"}
-</button>
+                      <button className="btn_favorito"
+                        onClick={() => {
+                          console.log("Produto favorito clicado:", product);
+                          toggleFavorite(product);
+                        }}
+                       
+                      >
+                        {favorites.some(
+                          (item) => item.product_id === product.product_id
+                        )
+                        ? <FaHeart color={ 'gray'} />
+                        : <FiHeart  size={25} />}
+                      </button>
                     </div>
                   </div>
                 ))
@@ -274,94 +269,99 @@ const Home = () => {
               </p>
             </header>
             <div className="main">
-            <header>
-              <h1>modelos novos</h1>
-              <p>
-                {" "}
-                <b>CROCS™ </b>| SINTA-SE COMO NADA
-              </p>
-            </header>
-            <section>
-              {products.length > 0 ? (
-                products.map((product, index) => (
-                  <div className="product" key={index}>
-                    <picture>
-                      <img
-                        src={product.primary_image_url}
-                        alt={product.product_name}
-                        loading="lazy"
-                      />
-                    </picture>
+              <header>
+                <h1>modelos novos</h1>
+                <p>
+                  {" "}
+                  <b>CROCS™ </b>| SINTA-SE COMO NADA
+                </p>
+              </header>
+              <section>
+                {products.length > 0 ? (
+                  products.map((product, index) => (
+                    <div className="product" key={index}>
+                      
+                      <Link to='/produto/detalhes/${product.product_id}'>
+                        <picture>
+                          <img
+                            src={product.primary_image_url}
+                            alt={product.product_name}
+                            loading="lazy"
+                          />
+                        </picture>
+                      </Link>
 
-                    <div className="detail">
-                      <p>
-                        <small>{product.product_name}</small>
-                      </p>
-                      <samp>
-                        {currency === "MZN"
-                          ? `${product.price} MZN`
-                          : `${convertPrice(
-                              product.price,
-                              currency
-                            )} ${currency}`}
-                      </samp>
-                      {/* Dropdown para selecionar a moeda */}
-                      <select
-                        value={currency}
-                        onChange={(e) => handlzeCurrencyChange(e.target.value)}
-                      >
-                        <option value="MZN">MZN</option>
-                        <option value="USD">USD</option>
-                        <option value="ZAR">ZAR</option>
-                      </select>
-                    </div>
-
-                    <div className="button">
-                      <div className="colors">
-                        {Array.isArray(product.colors) &&
-                          product.colors.map((color, index) => (
-                            <div
-                              key={index}
-                              className="color-box"
-                              style={{ backgroundColor: color.hex_code }}
-                              title={color.name}
-                            />
-                          ))}
+                      <div className="detail">
+                        <p>
+                          <small>{product.product_name}</small>
+                        </p>
+                        <samp>
+                          {currency === "MZN"
+                            ? `${product.price} MZN`
+                            : `${convertPrice(
+                                product.price,
+                                currency
+                              )} ${currency}`}
+                        </samp>
+                        {/* Dropdown para selecionar a moeda */}
+                         {/**<select
+                      value={currency}
+                      onChange={(e) => handleCurrencyChange(e.target.value)}
+                    >
+                      <option value="MZN">MZN</option>
+                      <option value="USD">USD</option>
+                      <option value="ZAR">ZAR</option>
+                    </select>*/}
                       </div>
-                      <button
-                        className="product-button"
-                        onClick={() => {
-                          console.log(`Product ID: ${product.product_id}`);
-                          navigate(`/produto/detalhes/${product.product_id}`);
-                        }}
-                      >
-                        <img src={carrinhoSvg} alt="Carrinho" />
-                      </button>
-                      <button
-  onClick={() => {
-    console.log("Produto favorito clicado:", product);
-    toggleFavorite(product);
-  }}
-  style={{
-    backgroundColor: favorites.some(
-      (item) => item.product_id === product.product_id
-    )
-      ? "red"
-      : "gray",
-  }}
->
-  {favorites.some((item) => item.product_id === product.product_id)
-    ? "Remover Favorito"
-    : "Adicionar aos Favoritos"}
-</button>
+
+                      <div className="button">
+                        <div className="colors">
+                          {Array.isArray(product.colors) &&
+                            product.colors.map((color, index) => (
+                              <div
+                                key={index}
+                                className="color-box"
+                                style={{ backgroundColor: color.hex_code }}
+                                title={color.name}
+                              />
+                            ))}
+                        </div>
+                        <button
+                          className="product-button"
+                          onClick={() => {
+                            console.log(`Product ID: ${product.product_id}`);
+                            navigate(`/produto/detalhes/${product.product_id}`);
+                          }}
+                        >
+                          <img src={carrinhoSvg} alt="Carrinho" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            console.log("Produto favorito clicado:", product);
+                            toggleFavorite(product);
+                          }}
+                          style={{
+                            backgroundColor: favorites.some(
+                              (item) => item.product_id === product.product_id
+                            )
+                              ? "red"
+                              : "gray",
+                          }}
+                        >
+                          {favorites.some(
+                            (item) => item.product_id === product.product_id
+                          )
+                            ? "Remover Favorito"
+                            : "Adicionar aos Favoritos"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <p>Carregando produtos...</p>
-              )}
-            </section>
-          </div>
+                  ))
+                ) : (
+                  <p>Carregando produtos...</p>
+                )}
+              </section>
+            </div>
           </div>
           {/* Section 4 */}
           <div className="Container-extended">
@@ -450,14 +450,14 @@ const Home = () => {
                             )} ${currency}`}
                       </samp>
                       {/* Dropdown para selecionar a moeda */}
-                      <select
-                        value={currency}
-                        onChange={(e) => handlzeCurrencyChange(e.target.value)}
-                      >
-                        <option value="MZN">MZN</option>
-                        <option value="USD">USD</option>
-                        <option value="ZAR">ZAR</option>
-                      </select>
+                      {/**<select
+                      value={currency}
+                      onChange={(e) => handleCurrencyChange(e.target.value)}
+                    >
+                      <option value="MZN">MZN</option>
+                      <option value="USD">USD</option>
+                      <option value="ZAR">ZAR</option>
+                    </select>*/}
                     </div>
 
                     <div className="button">
@@ -482,22 +482,24 @@ const Home = () => {
                         <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
                       <button
-  onClick={() => {
-    console.log("Produto favorito clicado:", product);
-    toggleFavorite(product);
-  }}
-  style={{
-    backgroundColor: favorites.some(
-      (item) => item.product_id === product.product_id
-    )
-      ? "red"
-      : "gray",
-  }}
->
-  {favorites.some((item) => item.product_id === product.product_id)
-    ? "Remover Favorito"
-    : "Adicionar aos Favoritos"}
-</button>
+                        onClick={() => {
+                          console.log("Produto favorito clicado:", product);
+                          toggleFavorite(product);
+                        }}
+                        style={{
+                          backgroundColor: favorites.some(
+                            (item) => item.product_id === product.product_id
+                          )
+                            ? "red"
+                            : "gray",
+                        }}
+                      >
+                        {favorites.some(
+                          (item) => item.product_id === product.product_id
+                        )
+                          ? "Remover Favorito"
+                          : "Adicionar aos Favoritos"}
+                      </button>
                     </div>
                   </div>
                 ))
