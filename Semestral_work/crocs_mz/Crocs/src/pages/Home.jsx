@@ -273,16 +273,21 @@ const Home = () => {
                 <b>CROCS™ </b>| PERSONALIZE AO SEU GOSTO
               </p>
             </header>
+            <div className="main">
+            <header>
+              <h1>modelos novos</h1>
+              <p>
+                {" "}
+                <b>CROCS™ </b>| SINTA-SE COMO NADA
+              </p>
+            </header>
             <section>
               {products.length > 0 ? (
                 products.map((product, index) => (
                   <div className="product" key={index}>
                     <picture>
                       <img
-                        src={
-                          product.primary_image_url ||
-                          "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"
-                        } // Acesse diretamente a imagem sem verificar uma lista
+                        src={product.primary_image_url}
                         alt={product.product_name}
                         loading="lazy"
                       />
@@ -290,12 +295,27 @@ const Home = () => {
 
                     <div className="detail">
                       <p>
-                        {/*<b>Id: {product.product_id}</b>*/}
-
                         <small>{product.product_name}</small>
                       </p>
-                      <samp>{product.price} Mzn</samp>
+                      <samp>
+                        {currency === "MZN"
+                          ? `${product.price} MZN`
+                          : `${convertPrice(
+                              product.price,
+                              currency
+                            )} ${currency}`}
+                      </samp>
+                      {/* Dropdown para selecionar a moeda */}
+                      <select
+                        value={currency}
+                        onChange={(e) => handlzeCurrencyChange(e.target.value)}
+                      >
+                        <option value="MZN">MZN</option>
+                        <option value="USD">USD</option>
+                        <option value="ZAR">ZAR</option>
+                      </select>
                     </div>
+
                     <div className="button">
                       <div className="colors">
                         {Array.isArray(product.colors) &&
@@ -317,6 +337,23 @@ const Home = () => {
                       >
                         <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
+                      <button
+  onClick={() => {
+    console.log("Produto favorito clicado:", product);
+    toggleFavorite(product);
+  }}
+  style={{
+    backgroundColor: favorites.some(
+      (item) => item.product_id === product.product_id
+    )
+      ? "red"
+      : "gray",
+  }}
+>
+  {favorites.some((item) => item.product_id === product.product_id)
+    ? "Remover Favorito"
+    : "Adicionar aos Favoritos"}
+</button>
                     </div>
                   </div>
                 ))
@@ -324,6 +361,7 @@ const Home = () => {
                 <p>Carregando produtos...</p>
               )}
             </section>
+          </div>
           </div>
           {/* Section 4 */}
           <div className="Container-extended">
@@ -381,10 +419,10 @@ const Home = () => {
           {/* Catalog */}
           <div className="main">
             <header>
-              <h1>Novas tendências</h1>
+              <h1>modelos novos</h1>
               <p>
                 {" "}
-                <b>CROCS™ </b>| SINTA-SE COMO NUNCA ANTES
+                <b>CROCS™ </b>| SINTA-SE COMO NADA
               </p>
             </header>
             <section>
@@ -393,10 +431,7 @@ const Home = () => {
                   <div className="product" key={index}>
                     <picture>
                       <img
-                        src={
-                          product.primary_image_url ||
-                          "https://www.indalas.com/16392-large_default/sandalias-azules-princess.jpg"
-                        } // Acesse diretamente a imagem sem verificar uma lista
+                        src={product.primary_image_url}
                         alt={product.product_name}
                         loading="lazy"
                       />
@@ -404,12 +439,27 @@ const Home = () => {
 
                     <div className="detail">
                       <p>
-                        {/*<b>Id: {product.product_id}</b>*/}
-
                         <small>{product.product_name}</small>
                       </p>
-                      <samp>{product.price} Mzn</samp>
+                      <samp>
+                        {currency === "MZN"
+                          ? `${product.price} MZN`
+                          : `${convertPrice(
+                              product.price,
+                              currency
+                            )} ${currency}`}
+                      </samp>
+                      {/* Dropdown para selecionar a moeda */}
+                      <select
+                        value={currency}
+                        onChange={(e) => handlzeCurrencyChange(e.target.value)}
+                      >
+                        <option value="MZN">MZN</option>
+                        <option value="USD">USD</option>
+                        <option value="ZAR">ZAR</option>
+                      </select>
                     </div>
+
                     <div className="button">
                       <div className="colors">
                         {Array.isArray(product.colors) &&
@@ -431,6 +481,23 @@ const Home = () => {
                       >
                         <img src={carrinhoSvg} alt="Carrinho" />
                       </button>
+                      <button
+  onClick={() => {
+    console.log("Produto favorito clicado:", product);
+    toggleFavorite(product);
+  }}
+  style={{
+    backgroundColor: favorites.some(
+      (item) => item.product_id === product.product_id
+    )
+      ? "red"
+      : "gray",
+  }}
+>
+  {favorites.some((item) => item.product_id === product.product_id)
+    ? "Remover Favorito"
+    : "Adicionar aos Favoritos"}
+</button>
                     </div>
                   </div>
                 ))

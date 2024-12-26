@@ -316,7 +316,7 @@ const handleColorSelect = (colorId) => {
 
 
   return (
-    <div className="content-loja">
+    <div className="content-loja1">
    
       <div className="shop_filter_container">
       <div className="filter_container">
@@ -452,7 +452,7 @@ const handleColorSelect = (colorId) => {
           </div>
         </div>
 
-        <div className="catalog-container">
+        <div className="catalog-container1">
 
         <input
         type="text"
@@ -488,18 +488,18 @@ const handleColorSelect = (colorId) => {
       </div>
 
           <header className="catalog-header"></header>
-          <section className="catalog-items">
+          <section className="catalog-items1">
   {products.length > 0 ? (
     products.map((product) => (
-      <div className="catalog-product" key={product.product_id}>
-        <picture className="catalog-image">
+      <div className="catalog-product1" key={product.product_id}>
+        <picture className="catalog-image1">
           <img
             src={product.primary_image_url}
             alt={product.product_name}
             loading="lazy"
           />
         </picture>
-        <div className="catalog-detail">
+        <div className="catalog-detail1">
           <p>
             <small>{product.product_name}</small>
           </p>
@@ -517,9 +517,9 @@ const handleColorSelect = (colorId) => {
             <option value="ZAR">ZAR</option>
           </select>
         </div>
-        <div className="catalog-button">
+        <div className="catalog-button1">
           <button
-            className="product-button"
+            className="product-button1"
             onClick={() => navigate(`/produto/detalhes/${product.product_id}`)}
           >
             <img src="shopping-cart-solid.svg" alt="" />
