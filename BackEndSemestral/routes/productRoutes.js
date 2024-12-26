@@ -14,6 +14,9 @@ router.get('/pr', productController.products);
 router.get('/pr/:id', productController.getProductsEspecific);
 router.get('/compras', productController.ProductHistory);
 router.get('/pr/byCategory/:categoryId', productController.getProductsByCategory);
+router.get('/pr/byColor/:colorId', productController.getProductsByColor);
+router.get('/pr/byPrice/:min/:max', productController.getProductsByPrice);
+
 
 
 export default router;

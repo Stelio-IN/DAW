@@ -284,6 +284,125 @@ const getProductsByCategory = async (req, res) => {
   }
 };
 
+// Controller para obter produtos por categoria
+const getProductsByColor = async (req, res) => {
+  const { colorId } = req.params;
+  
+  try {
+    // Verifique se o categoryId foi passado corretamente
+    if (!colorId) {
+      return res.status(400).json({ message: "Cor não fornecida." });
+    }
+
+    // Ajuste na consulta para usar o Sequelize com o método replacements
+    const products = await db.sequelize.query(
+      `
+      SELECT 
+        p.product_id, 
+        p.name AS product_name, 
+        p.price, 
+        (
+          SELECT COUNT(DISTINCT pc_inner.color_id)
+          FROM ProductColors pc_inner
+          WHERE pc_inner.product_id = p.product_id
+        ) AS color_count, 
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'name', c.name, 
+            'hex_code', c.hex_code
+          )
+        ) AS colors,
+        MAX(pi.image_url) AS primary_image_url
+      FROM Products p
+      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
+      LEFT JOIN Colors c ON pc.color_id = c.color_id
+      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      WHERE c.color_id = :colorId
+      GROUP BY p.product_id
+    `, // Usando :categoryId como parâmetro nomeado
+      {
+        replacements: { colorId }, // Substituindo :categoryId com o valor real
+        type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
+      }
+    );
+    
+    if (products.length === 0) {
+      return res.status(404).json({ message: "Nenhum produto encontrado para esta cor." });
+    }
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
+    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+  }
+};
+
+
+const getProductsByPrice = async (req, res) => {
+  const { min, max } = req.params; // Use os nomes min e max para os parâmetros
+
+  // Log para verificar os parâmetros recebidos
+  console.log("Recebendo parâmetros:", { min, max });
+
+  try {
+    if (min == null || max == null) {
+      console.warn("Intervalo de preço inválido recebido.");
+      return res.status(400).json({ message: "Intervalo de preço inválido." });
+    }
+
+    // Log antes da consulta
+    console.log(`Iniciando consulta para intervalo de preço: ${min} a ${max}`);
+
+    const products = await db.sequelize.query(
+      `
+      SELECT 
+        p.product_id, 
+        p.name AS product_name, 
+        p.price, 
+        (
+          SELECT COUNT(DISTINCT pc_inner.color_id)
+          FROM ProductColors pc_inner
+          WHERE pc_inner.product_id = p.product_id
+        ) AS color_count, 
+        JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'name', c.name, 
+            'hex_code', c.hex_code
+          )
+        ) AS colors,
+        MAX(pi.image_url) AS primary_image_url
+      FROM Products p
+      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
+      LEFT JOIN Colors c ON pc.color_id = c.color_id
+      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      WHERE p.price BETWEEN :min AND :max
+      GROUP BY p.product_id
+    `,
+      {
+        replacements: { min, max },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    // Log para verificar os resultados da consulta
+    console.log("Produtos encontrados:", products);
+
+    if (products.length === 0) {
+      console.warn("Nenhum produto encontrado no intervalo fornecido.");
+      return res.status(404).json({ message: "Nenhum produto encontrado neste intervalo de preço." });
+    }
+
+    // Log para indicar que a resposta foi enviada com sucesso
+    console.log("Enviando resposta com produtos.");
+    res.status(200).json(products);
+  } catch (error) {
+    // Log de erro detalhado
+    console.error("Erro ao buscar produtos por preço:", error);
+    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+  }
+};
+
+
 
 
 
@@ -297,5 +416,7 @@ export default {
     products,
     getProductsEspecific,
     ProductHistory,
-    getProductsByCategory 
+    getProductsByCategory, 
+    getProductsByColor, 
+    getProductsByPrice 
 };

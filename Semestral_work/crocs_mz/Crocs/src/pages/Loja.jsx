@@ -14,6 +14,7 @@ function Loja() {
   const [categories, setCategories] = useState([]);
   const [colors, setColors] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(null);
   const [error, setError] = useState(null);
  
 
@@ -192,6 +193,29 @@ function Loja() {
     }
   };
 
+
+     // Função para buscar produtos por cor
+     const fetchProductsByColor = async (colorId) => {
+      if (!colorId) {
+        console.error("Cor  inválida");
+        return;
+      }else {
+        console.log("cor valida")
+      }
+      try {
+        const response = await fetch(
+          `http://localhost:3005/api/products/pr/byColor/${colorId}`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setProducts(data); // Atualiza o estado de produtos no componente pai
+        } else {
+          setError("Erro ao buscar produtos.");
+        }
+      } catch (error) {
+        setError("Erro de conexão.");
+      }
+    };
   
 
 // Buscar categorias ao carregar o componente
@@ -213,7 +237,7 @@ useEffect(() => {
   fetchCategories();
 }, []);
 
-// Buscar categorias ao carregar o componente
+// Buscar cores ao carregar o componente
 useEffect(() => {
   const fetchColors = async () => {
     try {
@@ -232,12 +256,61 @@ useEffect(() => {
   fetchColors();
 }, []);
 
+
+
+// Função para selecionar uma categoria
+const handleColorSelect = (colorId) => {
+  setSelectedColor(colorId);
+  fetchProductsByColor(colorId); // Busca produtos ao selecionar a categoria
+};
+
   // Função para selecionar uma categoria
   const handleCategorySelect = (categoryId) => {
     setSelectedCategory(categoryId);
     fetchProductsByCategory(categoryId); // Busca produtos ao selecionar a categoria
   };
 
+
+  // Busca pelo preco do produto
+  const handlePriceChange = (field, value) => {
+    const newPriceRange = {
+      ...selectedPriceRange,
+      [field]: Number(value),
+    };
+  
+    if (newPriceRange.min <= newPriceRange.max) {
+      setSelectedPriceRange(newPriceRange);
+      fetchProductsByPrice(newPriceRange.min, newPriceRange.max);
+    } else {
+      console.error("O preço mínimo deve ser menor ou igual ao preço máximo.");
+    }
+  };
+  
+  const fetchProductsByPrice = async (minPrice, maxPrice) => {
+    if (minPrice > maxPrice) {
+      console.error("O preço mínimo não pode ser maior que o preço máximo.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/products/pr/byPrice/${minPrice}/${maxPrice}`
+      );
+      console.log("Resposta do servidor:", response);
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data); // Atualiza o estado de produtos no componente pai
+      } else {
+        const errorData = await response.json();
+        console.error("Erro do servidor:", errorData);
+        setError(errorData.message || "Erro ao buscar produtos.");
+        return;
+      }
+    } catch (error) {
+      setError("Erro de conexão.");
+    }
+  };
+  
 
   
 
@@ -258,7 +331,7 @@ useEffect(() => {
         {categories.map((category) => (
           <label key={category.category_id}>
             <input
-              type="radio"
+              type="checkbox"
               name="category"
               value={category.category_id}
               checked={selectedCategory === category.category_id}
@@ -280,7 +353,8 @@ useEffect(() => {
                     <input
                       type="checkbox"
                       value={colors.name}
-                      onChange={(e) => handleCheckboxChange(e, setSelectedSizes)}
+                      checked={selectedColor === colors.color_id}
+                      onChange={() => handleColorSelect(colors.color_id)}
                     />
                    {colors.name}
                   </label>
@@ -346,32 +420,33 @@ useEffect(() => {
             </div>
 
             <div onClick={() => handleFilterClick("preco")}>
-                <h4>Preço</h4>
-                {activeFilter === "preco" && (
-                  <div className="filter-options" onClick={(e) => e.stopPropagation()}>
-                    <div className="price-inputs">
-                      <label>Preço Mínimo:</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="10000"
-                        step="100"
-                        value={selectedPriceRange.min}
-                        onChange={(e) => setSelectedPriceRange({ ...selectedPriceRange, min: Math.min(Number(e.target.value), selectedPriceRange.max) })}
-                      />
-                      <label>Preço Máximo:</label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="10000"
-                        step="100"
-                        value={selectedPriceRange.max}
-                        onChange={(e) => setSelectedPriceRange({ ...selectedPriceRange, max: Math.max(Number(e.target.value), selectedPriceRange.min) })}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
+  <h4>Preço</h4>
+  {activeFilter === "preco" && (
+    <div className="filter-options" onClick={(e) => e.stopPropagation()}>
+      <div className="price-inputs">
+        <label>Preço Mínimo:</label>
+        <input
+          type="number"
+          min="0"
+          max="5000"
+          step="100"
+          value={selectedPriceRange.min}
+          onChange={(e) => handlePriceChange("min", e.target.value)}
+        />
+        <label>Preço Máximo:</label>
+        <input
+          type="number"
+          min="0"
+          max="5000"
+          step="100"
+          value={selectedPriceRange.max}
+          onChange={(e) => handlePriceChange("max", e.target.value)}
+        />
+      </div>
+    </div>
+  )}
+</div>
+
 
 
           </div>
