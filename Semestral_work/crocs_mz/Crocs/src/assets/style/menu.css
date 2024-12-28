@@ -7,10 +7,11 @@
 } */
 
 
+
 nav{
     position: fixed;
     background: #fff;
-    width: 100%;
+    width: 100vw;
     z-index: 1;
     height: 75px;
     line-height: 65px;
@@ -177,7 +178,9 @@ nav .wrapper{
 }
 
 
-
+#showMegaM{
+    display: none;
+}
 
 .content .row .mega-links button{
     background-color:#74B708;
@@ -269,11 +272,13 @@ nav .wrapper{
     border-radius: 30px;
     border-style: none;
     border-color: #666967;
-    background-color: #0c1a01;
+    background-color: #000000;
     border-bottom: none;
     color: white;
     margin: 2px;
     border-width: 1.5px;
+    font-size: 11pt;
+    font-weight: bold;
 }
 
 
@@ -299,7 +304,19 @@ nav .wrapper{
 
 /* RESPONSIVIDADE NO MOBILE*/
 
-@media screen and (max-width: 840px){
+@media screen and (max-width: 1050px){
+    .btn_pesquisa{
+        display: none;
+    }
+    .btn_login{
+        width: 100px;
+        margin-right: 10px;
+    }
+}
+
+
+
+@media screen and (max-width: 1345px){
 
     .wrapper .btn{
         display: block;
@@ -320,6 +337,21 @@ nav .wrapper{
         transition: all 0.3s ease;   
     }  
 
+    nav .wrapper{
+        position: relative;
+        max-width: 100%;
+        padding: 0 30px;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+    }
+
+    .mega-box{
+        border-radius: 0px;
+        box-shadow: 0px 0px 0px rgb(235, 233, 233);
+    }
+    
     #menu-btn:checked ~ .nav-links{
         left: 0%;
     }
@@ -334,11 +366,20 @@ nav .wrapper{
 
     .nav-links li{
         margin: 15px 10px;
+        text-align: center;
+      
+    }
+
+    #li{
+        border-bottom: 1px solid rgb(231, 226, 226);
+        width: 100%; 
+        
     }
  .nav-links a{
         padding-left: 0 20px;
         display: block;
         font-size: 20px;
+        
     }
 
     .nav-links .drop-menu{
@@ -354,7 +395,8 @@ nav .wrapper{
     }
 
     #showDrop:checked ~ .drop-menu,
-    #showMega:checked ~ .mega-box{
+    #showMega:checked ~ .mega-box,
+    #showMegaM:checked ~ .mega-box{
         max-height: 100%;
     }
     .nav-links .drop-menu li {
@@ -371,7 +413,7 @@ nav .wrapper{
     .nav-links .mobile-item{
         display: block;
         font-size: 18px;
-        color: #f2f2f2;
+        color: #49534b;
         font-weight: 500;
         padding-left: 20px;
         cursor: pointer;
@@ -380,7 +422,8 @@ nav .wrapper{
     }
 
     .nav-links .mobile-item:hover{
-        background: #3a3b3c;
+        background: #55756532;
+        color: #1fd343;
     }
     .mega-box{
         position: static;
@@ -392,13 +435,15 @@ nav .wrapper{
         max-height: 0px;
         overflow: hidden;
         transition: all 0.4s ease;
+        
+        
     }
     
     .mega-box .content{
-        background-color: #043c74;
+        background-color: #ffffff;
         flex-direction: column;
-        padding: 20px 20px 0  20px;
-
+        padding: 10px 0px 0  0px;
+    
     }
     .mega-box .content .row{
         width: 100%;
@@ -413,6 +458,7 @@ nav .wrapper{
     .content .row .mega-links{
         border-left: 0px;
         padding-left: 15px;
+        
 
     }
 
@@ -425,36 +471,70 @@ nav .wrapper{
 
     }
 
-    .Componentes .btn_pesquisa{
-        display: none;
+    .content .row img{
+        width: 270px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin: 10px;
+        margin-bottom: 20px;
     }
-
-    .Componentes_2{
-        display: flex;
-        align-items: center;
-        justify-items: center;
-        margin-bottom: 5px;
-        padding: 20px;
-    }
-
     
 
-   
+ #showMegaM, #logo {
+    display: none;
+ }
+    /* Ícone de voltar: escondido por padrão */
+.mega-box .back-button {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+  }
+  
+  /* Exibir o ícone quando o menu estiver aberto */
+  #showMega:checked ~ .mega-box .back-button, 
+  #showMegaM:checked ~ .mega-box .back-button {
+    display: block;
+  }
 
+  .btn_pesquisa{
+    background-image: url('search-solid.svg');
+    background-repeat: no-repeat;
+    background-size: 15px; 
+    background-position: calc(100% - 20px) center;
+    padding: 10px; 
+    width: 180px;
+    border-radius: 3px;
+    border-style: solid;
+    border-color: #bdbebd;
+    background-color: #e48b1700;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    margin: 5px;
+    border-width: 2px;
+}
+    .Componentes{
+        display: flex;
+        margin-right: 10px;
+    }
+    .Componentes, .nav-links{
+        margin-left: auto;
+        display: flex;
+        
+    }
+
+    .Componentes + .nav-links{
+        margin-left: 100px;
+    }
+    
+    .btn_login{
+        display: none;
+    }
     .btn_pesquisa{
-        background-size: 15px; 
-        background-position: calc(100% - 20px) center;
-        padding: 10px; 
-        width: 180px;
-        border-radius: 30px;
-        border-style: solid;
-        border-color: #bdbebd;
-        background-color: #04b35300;
-        border-top: none;
-        border-left: none;
-        border-right: none;
-        margin: 1px;
-        border-width: 1.5px;
+        display: block;
     }
 }
 
@@ -482,6 +562,7 @@ nav .wrapper{
      .Componentes .btn_pesquisa{
         display: block;
     }
+   
     
 }
 
@@ -500,4 +581,99 @@ nav .wrapper{
 }
 .wrapper #showMega{
     display: none;
+}
+
+/* Ícone do menu - Três barras */
+.btn.menu-btn {
+    display: none;
+}
+
+@media screen and (max-width: 1345px) {
+    .wrapper .nav-links {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: fixed;
+        top: 0;
+        right: -100%; /* Começa fora da tela */
+        width: 80%;
+        height: 100%;
+        background-color: white;
+        box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease; /* Transição suave */
+        z-index: 1000;
+    }
+
+    .wrapper .nav-links.show {
+        right: 0; /* Desliza para dentro da tela */
+    }
+
+    .btn.menu-btn {
+        display: block;
+        color: #333;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .btn.cancel-btn {
+        display: block;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .nav-links li {
+        margin: 20px 0;
+    }
+
+    @media screen and (max-width: 776px) {
+
+        .Componentes, .nav-links{
+            margin-left: auto;
+            display: flex;
+            
+        }
+
+        .Componentes + .nav-links{
+            margin-left: 100px;
+        }
+       
+        .btn_login{
+            display: none;
+        }
+    }
+    @media screen and (max-width: 500px) {
+
+        .Componentes {
+            display: flex;
+            align-items: center; /* Centraliza os itens verticalmente */
+            justify-content: center; /* Ajuste conforme necessário */
+            gap: 0; /* Remove o espaço padrão entre os itens */
+          }
+          
+          .Componentes > * {
+            margin: 0; /* Remove margens de todos os elementos filhos */
+            padding: 0; /* Remove preenchimentos de todos os elementos filhos */
+          }
+          
+          .btn_favorite, .btn_carrinho, .btn_sexto {
+            margin: 0; /* Remove margens específicas dos ícones */
+          }
+          
+         .Componentes span {
+            margin: 0;
+            padding: 0;
+          }
+}
+    @media screen and (max-width: 600px) {
+
+        .btn_pesquisa{
+            display: none;
+        }
+}
+
 }

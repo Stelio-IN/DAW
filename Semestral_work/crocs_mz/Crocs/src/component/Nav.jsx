@@ -6,7 +6,7 @@ import navImg1 from "../assets/img/pose3.webp";
 import navImg2 from "../assets/img/pose1.webp";
 import navImg3 from "../assets/img/pose2.webp";
 
-import { FiHeart, FiShoppingBag, FiShoppingCart, FiUser } from "react-icons/fi";
+import { FiArrowLeft, FiHeart, FiLogIn, FiLogOut, FiSearch, FiShoppingBag, FiShoppingCart, FiUser } from "react-icons/fi";
 import { FaHeart, FaShoppingBag, FaShoppingCart, FaUser } from "react-icons/fa";
 import { useFavorites } from "../context/FavoritesContext.jsx";
 
@@ -14,6 +14,9 @@ const Navbar = () => {
   const { favorites } = useFavorites(); // Hook para acessar favoritos
   const [cartItemCount, setCartItemCount] = useState(0);
   const [userName, setUserName] = useState(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
@@ -58,31 +61,22 @@ const Navbar = () => {
           </Link>
         </div>
 
-        <div className="Componentes_2">
-          <Link to="/login">
-            <input
-              type="button"
-              className="btn_login"
-              value="Loginn"
-              style={{ margin: "5px" }}
-            />
-          </Link>
-        </div>
 
         <input type="radio" name="slide" id="menu-btn" />
         <input type="radio" name="slide" id="cancel-btn" />
         <ul className="nav-links">
-          <label htmlFor="cancel-btn" className="btn cancel-btn">
+          <label htmlFor="cancel-btn" className="btn cancel-btn" onClick={toggleMenu}> 
             <i className="bx bx-x"></i>
+            &times;
           </label>
 
-          <li>
+          <li id="li">
             <Link to="/" className="active">
               Home
             </Link>
           </li>
 
-          <li>
+          <li id="li">
             <Link to="#" className="desktop-item">
               Novo
             </Link>
@@ -103,18 +97,22 @@ const Navbar = () => {
             </ul>
           </li>
 
-          <li>
+          <li id="li">
             <Link to="#" className="desktop-item">
               Homem
             </Link>
+
             <input type="checkbox" id="showMega" />
             <label htmlFor="showMega" className="mobile-item">
-              Produtos +
+              Homens
             </label>
             <div className="mega-box">
+            <div className="back-button">
+            <FiArrowLeft size={30} style={{margin: '20px'}} onClick={() => document.getElementById("showMega").checked = false}/>
+        </div>
               <div className="content">
                 <div className="row">
-                  <img src={LogoCrocs} alt="Crocs Logo" />
+                  <img  src={LogoCrocs} alt="Crocs Logo" />
                 </div>
                 <div className="row">
                   <header></header>
@@ -135,6 +133,11 @@ const Navbar = () => {
                     <li>
                       <Link to="#">Recuperação</Link>
                     </li>
+                    <li>
+                      <Link to="#">Novos clássicos</Link>
+                    </li>
+                  
+                   
                   </ul>
                 </div>
                 <div className="row">
@@ -156,6 +159,11 @@ const Navbar = () => {
                     <li>
                       <Link to="#">Botas</Link>
                     </li>
+                    <li>
+                      <Link to="#">Jibbitz</Link>
+                    </li>
+                   
+                 
                   </ul>
                 </div>
                 <div className="row">
@@ -168,23 +176,27 @@ const Navbar = () => {
             </div>
           </li>
 
-          <li>
-            <Link to="/" className="desktop-item">
+          <li id="li">
+            <Link to="#" className="desktop-item">
               Mulher
             </Link>
-            <input type="checkbox" id="showMega" />
 
-            <label htmlFor="showMega" className="mobile-item">
-              Testes
+            <input type="checkbox" id="showMegaM" />
+            <label htmlFor="showMegaM" className="mobile-item">
+              Mulheres
             </label>
             <div className="mega-box">
+            <div className="back-button">
+            <FiArrowLeft size={30} style={{margin: '20px'}} onClick={() => document.getElementById("showMegaM").checked = false}/>
+        </div>
               <div className="content">
                 <div className="row">
-                  <img src={LogoCrocs} alt="" />
+                  <img id="logo" src={LogoCrocs} alt="" />
                 </div>
                 <div className="row">
                   <header></header>
                   <ul className="mega-links">
+                    <br />
                   <h3>Por Estilo</h3>
                     <li>
                       <Link to="/tamancos">Tamancos</Link>
@@ -203,6 +215,16 @@ const Navbar = () => {
                     <li>
                       <Link to="/apartamentos">Apartamentos</Link>
                     </li>
+                    <li>
+                      <Link to="/tamancos">Tamancos</Link>
+                    </li>
+                    <li>
+                      <Link to="/sandalias">Sandálias</Link>
+                    </li>
+                    <li>
+                      <Link to="/sandalias-de-dedo">Sandálias de dedo</Link>
+                    </li>
+                 
                   </ul>
                 </div>
 
@@ -233,41 +255,31 @@ const Navbar = () => {
             </div>
           </li>
 
-          <li>
+          <li id="li">
             <Link to="/loja">Loja</Link>
           </li>
-          <li>
+          <li id="li">
             <Link to="/sobre-nos">About us</Link>
           </li>
         </ul>
+
+
+
+
+
         <div className="Componentes">
           <Link to="/login">
-            <input type="button" className="btn_login" value="Logine" />
+            <input type="button" className="btn_login" value="Login" />
           </Link>
-          <input
-            type="search"
-            className="btn_pesquisa"
-            placeholder="Pesquise aqui"
-          />
+         
           <Link to="/favoritos">
             <FaHeart
-              size={26}
-              style={{ marginRight: "8px", color: "black", marginTop: "30px" }}
+              size={23} className="btn_favorite"
             />
+           
           </Link>
           {favorites.length > 0 && (
             <span
-              style={{
-                position: "absolute",
-                top: "-6px",
-                right: "130px",
-                color: "black",
-                borderRadius: "100px",
-                padding: "1px 2px -10px 5px",
-                fontSize: "12px",
-                fontWeight: "bold",
-              
-              }}
             >
               {favorites.length}
             </span>
@@ -279,27 +291,18 @@ const Navbar = () => {
               display: "flex",
               alignItems: "center",
               textDecoration: "none",
-              border: "3px solid rgb(255, 255, 255)",
               padding: "4px 14px",
               borderRadius: "80px",
               transition: "box-shadow 0.3s",
             }}
           >
             <FaShoppingCart
-              size={23}
-              style={{ marginRight: "8px", color: "black" }}
+              size={23} className="btn_carrinho"
+              style={{marginTop: "-15px" }}
             />
             {cartItemCount > 0 && (
               <span
                 style={{
-                  color: "black",
-                  fontSize: "0.8rem",
-                  width: "10px",
-                  height: "10px",
-                  position: "relative",
-                  top: "-40px",
-                  right: "5px",
-                  fontWeight: "bold",
                 }}
               >
                 {cartItemCount}
@@ -307,19 +310,25 @@ const Navbar = () => {
             )}
           </Link>
           <Link to="/minhasCompras">
-            <FaShoppingBag
+            <FaShoppingBag className="btn_sexto"
               size={23}
-              style={{ marginLeft: "0px", color: "black", marginTop: "30px" }}
+             
             />
+            
           </Link>
-
+          <input
+            type="search"
+            className="btn_pesquisa"
+            placeholder="Pesquise aqui"
+          />
           {/*{userName && (
   //<span style={{ fontSize: '14px', fontWeight: 'bold', color: 'black' }}>
     {userName}
   </span>
 )}*/}
         </div>
-        <label htmlFor="menu-btn" className="btn menu-btn">
+        <label htmlFor="menu-btn" className="btn menu-btn" onClick={toggleMenu}>
+                    &#9776;
           <i className="bx bx-menu"></i>
         </label>
       </div>
