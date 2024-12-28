@@ -140,7 +140,7 @@ picture img {
 }
 
 .colors {
-    background-color: rgb(248, 248, 248);
+    background-color: rgb(255, 255, 255);
 }
 
 small {
@@ -156,31 +156,29 @@ small {
 }
 
 .product-button {
-    padding: 8px 16px;
     background-color: rgb(255, 255, 255);
-    color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
     transition: background-color 0.3s ease;
     color: black;
-    font-weight: 700;
-    width: 70px;
-    height: 40px;
+    font-family: 'Courier New', Courier, monospace;
+    text-decoration: underline;
     margin-bottom: 8px;
+    width: 115px;
+    font-size: 0.9rem;
+    position: relative;
+    left: 90px;
+    text-align: right;
+
 }
 
-.product-button:hover {
-    background-color: #0056b3;
-}
 
-.btn_favorito{
-    margin-bottom: 200px;
+
+.btn_favoritoo{
+    margin-bottom: 170px;
     margin-right: 10px;
+    z-index: auto;
 }
 
 @media (max-width: 768px) {
