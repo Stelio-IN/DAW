@@ -120,18 +120,16 @@ nav .wrapper{
     display: flex; /* Muda para layout horizontal */
     flex-direction: row; 
     gap: 10px;
-    display: flex; /* Muda para layout horizontal */
-    flex-direction: row;
     line-height: 45px;
 }
 
 .mega-box .content{
     background-color: #ffffff;
-    padding: 25px 20x;
+    
     display: flex;
     width: 100%;
     justify-content: space-between;
-    padding-bottom: 200px;
+    padding-bottom: 20px;
     display: flex; /* Muda para layout horizontal */
     flex-direction: row;
 }
@@ -327,7 +325,7 @@ nav .wrapper{
         height: 100vh;
         width: 100%;
         max-width: 350px;
-        background-color: #242526;
+        background-color: #ffffff;
         display: block;
         top: 0;
         left: -100%;
@@ -668,4 +666,28 @@ nav .wrapper{
     .btn_pesquisa{
         display: none;
     }
+}
+
+@media screen and (max-width: 980px){
+    .content .row img{
+        width: 200px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin: 10px;
+    }
+    .content .row {
+        width: 200px;
+        
+    }
+     #logoimg{
+        width: 200px;
+       z-index: 1;
+    }
+     #logoimgg{
+        width: 120px;
+       z-index: 1;
+    }
+
+    
 }

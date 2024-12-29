@@ -112,7 +112,7 @@ const Navbar = () => {
         </div>
               <div className="content">
                 <div className="row">
-                  <img  src={LogoCrocs} alt="Crocs Logo" />
+                  <img id="logoimg" src={LogoCrocs} alt="Crocs Logo" />
                 </div>
                 <div className="row">
                   <header></header>
@@ -191,7 +191,26 @@ const Navbar = () => {
         </div>
               <div className="content">
                 <div className="row">
-                  <img id="logo" src={LogoCrocs} alt="" />
+                <ul className="mega-links">
+                    <br />
+                  <h3>Por Estilo</h3>
+                    <li>
+                      <Link to="/tamancos">Tamancos</Link>
+                    </li>
+                    <li>
+                      <Link to="/sandalias">Sandálias</Link>
+                    </li>
+                    <li>
+                      <Link to="/sandalias-de-dedo">Sandálias de dedo</Link>
+                    </li>
+                    <li>
+                      <Link to="/plataformas-e-cunhas">
+                        Plataforma e Cunhas
+                      </Link>
+                    </li>
+                  
+                 
+                  </ul>
                 </div>
                 <div className="row">
                   <header></header>
