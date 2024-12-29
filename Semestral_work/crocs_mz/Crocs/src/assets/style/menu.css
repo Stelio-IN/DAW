@@ -263,7 +263,6 @@ nav .wrapper{
 
 
 .btn_login {
-    background-repeat: no-repeat;
     background-size: 20px; 
     background-position:center;
     padding: 10px; 
@@ -299,7 +298,26 @@ nav .wrapper{
     border-width: 2px;
 }
 
+#botao_login{
 
+    background-size: 20px; 
+    background-position:center;
+    padding: 10px; 
+    width: 100px;
+    border-radius: 30px;
+    border-style: none;
+    border-color: #666967;
+    background-color: #000000;
+    border-bottom: none;
+    color: white;
+    margin: 2px;
+    border-width: 1.5px;
+    font-size: 11pt;
+    font-weight: bold;
+}
+#li_login{
+    display: none;
+}
 
 /* RESPONSIVIDADE NO MOBILE*/
 
@@ -534,6 +552,9 @@ nav .wrapper{
         display: none;
     }
     .btn_pesquisa{
+        display: block;
+    }
+    #li_login{
         display: block;
     }
 }

@@ -280,6 +280,12 @@ const Navbar = () => {
           <li id="li">
             <Link to="/sobre-nos">About us</Link>
           </li>
+
+          <li id="li_login">
+          <Link to="/login">
+           <button id="botao_login">Login</button>
+          </Link>
+          </li>
         </ul>
 
 
