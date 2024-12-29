@@ -316,7 +316,8 @@ nav .wrapper{
 
 
 
-@media screen and (max-width: 1345px){
+@media screen and (max-width: 845px){
+
 
     .wrapper .btn{
         display: block;
@@ -588,32 +589,22 @@ nav .wrapper{
     display: none;
 }
 
-@media screen and (max-width: 1345px) {
-    .wrapper .nav-links {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        position: fixed;
-        top: 0;
-        right: -100%; /* Começa fora da tela */
-        width: 80%;
-        height: 100%;
-        background-color: white;
-        box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
-        transition: right 0.3s ease; /* Transição suave */
-        z-index: 1000;
-    }
+@media screen and (max-width: 845px) {
+   
 
     .wrapper .nav-links.show {
         right: 0; /* Desliza para dentro da tela */
     }
 
     .btn.menu-btn {
-        display: block;
+        display: block; /* Mostra as três barras */
         color: #333;
         font-size: 24px;
         cursor: pointer;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 1001; 
     }
 
     .btn.cancel-btn {
@@ -630,50 +621,51 @@ nav .wrapper{
         margin: 20px 0;
     }
 
-    @media screen and (max-width: 776px) {
+  
 
-        .Componentes, .nav-links{
-            margin-left: auto;
-            display: flex;
-            
-        }
+}
+@media screen and (max-width: 776px) {
 
-        .Componentes + .nav-links{
-            margin-left: 100px;
-        }
-       
-        .btn_login{
-            display: none;
-        }
+    .Componentes, .nav-links{
+        margin-left: auto;
+        display: flex;
+        
     }
-    @media screen and (max-width: 500px) {
 
-        .Componentes {
-            display: flex;
-            align-items: center; /* Centraliza os itens verticalmente */
-            justify-content: center; /* Ajuste conforme necessário */
-            gap: 0; /* Remove o espaço padrão entre os itens */
-          }
-          
-          .Componentes > * {
-            margin: 0; /* Remove margens de todos os elementos filhos */
-            padding: 0; /* Remove preenchimentos de todos os elementos filhos */
-          }
-          
-          .btn_favorite, .btn_carrinho, .btn_sexto {
-            margin: 0; /* Remove margens específicas dos ícones */
-          }
-          
-         .Componentes span {
-            margin: 0;
-            padding: 0;
-          }
+    .Componentes + .nav-links{
+        margin-left: 100px;
+    }
+   
+    .btn_login{
+        display: none;
+    }
 }
-    @media screen and (max-width: 600px) {
+@media screen and (max-width: 500px) {
 
-        .btn_pesquisa{
-            display: none;
-        }
+    .Componentes {
+        display: flex;
+        align-items: center; /* Centraliza os itens verticalmente */
+        justify-content: center; /* Ajuste conforme necessário */
+        gap: 0; /* Remove o espaço padrão entre os itens */
+      }
+      
+      .Componentes > * {
+        margin: 0; /* Remove margens de todos os elementos filhos */
+        padding: 0; /* Remove preenchimentos de todos os elementos filhos */
+      }
+      
+      .btn_favorite, .btn_carrinho, .btn_sexto {
+        margin: 0; /* Remove margens específicas dos ícones */
+      }
+      
+     .Componentes span {
+        margin: 0;
+        padding: 0;
+      }
 }
+@media screen and (max-width: 600px) {
 
+    .btn_pesquisa{
+        display: none;
+    }
 }
