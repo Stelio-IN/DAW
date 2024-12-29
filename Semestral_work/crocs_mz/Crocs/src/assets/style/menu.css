@@ -146,11 +146,12 @@ nav .wrapper{
 }
 
 .content .row img{
-    width: 320px;
+    width: 300px;
     border-radius: 10px;
     height: 90%;
     object-fit: cover;
-    margin: 10px;
+    margin: 15px;
+    
 }
 
 .content .row header{
@@ -689,5 +690,65 @@ nav .wrapper{
        z-index: 1;
     }
 
+    
+}
+@media screen and (max-width: 1250px){
+    .content .row img{
+        width: 250px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin: 10px;
+    }
+   
+
+    
+}
+@media screen and (max-width: 1080px){
+    .content .row img{
+        width: 210px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin: 10px;
+    }
+   
+
+    
+}
+@media screen and (max-width: 945px){
+    .content .row img{
+        width: 180px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin: 10px;
+    }
+   
+
+    
+}
+@media screen and (max-width: 945px){
+    .content .row img{
+        width: 180px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin: 10px;
+    }
+    .btn_login{
+        display: none;
+    }
+
+    
+}
+@media screen and (max-width: 855px){
+    .content .row img{
+        width: 150px;
+        border-radius: 10px;
+        height: 90%;
+        object-fit: cover;
+        margin-right: 30px;
+    }
     
 }
