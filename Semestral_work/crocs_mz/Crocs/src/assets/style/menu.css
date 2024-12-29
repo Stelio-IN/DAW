@@ -297,6 +297,21 @@ nav .wrapper{
     margin: 5px;
     border-width: 2px;
 }
+#botao_pesquisa{
+    background-image: url('search-solid.svg');
+    background-repeat: no-repeat;
+    background-size: 15px; 
+    background-position: calc(100% - 20px) center;
+    padding: 10px; 
+    width: 180px;
+    border-radius: 20px;
+    border-style: solid;
+    border-color: #b4b5b4;
+    background-color: #e48b1700;
+    
+    margin: 5px;
+    border-width: 2px;
+}
 
 #botao_login{
 
@@ -515,6 +530,7 @@ nav .wrapper{
   #showMega:checked ~ .mega-box .back-button, 
   #showMegaM:checked ~ .mega-box .back-button {
     display: block;
+    position: fixed;
   }
 
   .btn_pesquisa{
@@ -555,7 +571,9 @@ nav .wrapper{
         display: block;
     }
     #li_login{
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }
 

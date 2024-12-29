@@ -285,6 +285,11 @@ const Navbar = () => {
           <Link to="/login">
            <button id="botao_login">Login</button>
           </Link>
+          <input
+            type="search"
+            id="botao_pesquisa"
+            placeholder="Pesquise aqui"
+          />
           </li>
         </ul>
 
