@@ -1,6 +1,6 @@
 .main{
-    width: 100%;
-    height: 840px;
+    width: 80%;
+    height: 590px;
     /*background: red;*/
     margin: 10px auto;
     position: relative;
@@ -37,15 +37,15 @@
 
 header p {
     margin: 10px;
-    color: rgb(0, 0, 0);
-    font-size: 15pt;
+    color: rgb(33, 33, 33);
+    font-size: 1.3rem;
 }
 
 header p span {
     font-size: 40px;
     margin: 0 5px;
     cursor: pointer;
-    color: #555;
+    color: rgb(85, 85, 85);
     width: 30px;
     height: 30px;
     display: inline-block;
@@ -55,12 +55,12 @@ header p span {
 }
 
 .main header h1 {
-    font-size: 50px;
+    font-size: 30px;
     letter-spacing: -0.05em;
     line-height: 80%;
     text-transform: uppercase;
     font-weight: 900;
-    color: black;
+    color: rgb(134, 134, 134);
 }
 
 header p span:hover {
@@ -180,6 +180,33 @@ small {
     margin-right: 10px;
     z-index: auto;
 }
+
+#seta_esquerda {
+    position: absolute;
+    left: -50px; /* Ajuste conforme necessário */
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1000; /* Certifique-se de que a seta esteja acima do conteúdo */
+    background-color: #eeeeee;
+    border-radius: 10px;
+  }
+  
+  #seta_direita {
+    position: absolute;
+    right: -50px; /* Ajuste conforme necessário */
+    top: 50%; /* Centraliza verticalmente */
+    transform: translateY(-50%);
+    cursor: pointer;
+    z-index: 1000;
+    background-color: #eeeeee;
+    border-radius: 10px;
+    
+   
+    /* Certifique-se de que a seta esteja acima do conteúdo */
+  }
+  
+ 
 
 @media (max-width: 768px) {
     .text h1 {

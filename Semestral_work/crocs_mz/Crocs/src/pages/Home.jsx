@@ -4,7 +4,7 @@ import "../assets/style/home.css";
 import "../assets/style/slide.css";
 import "../assets/style/catalogo.css";
 
-import { FiHeart } from 'react-icons/fi';
+import { FiArrowLeft, FiArrowRight, FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 // Images
 import coupon from "../assets/img/coupon.png";
@@ -19,6 +19,9 @@ import colecao_4 from "../assets/img/col4.avif";
 import colecao_5 from "../assets/img/col5.avif";
 import colecao_6 from "../assets/img/col6.avif";
 import template from "../assets/img/template5.webp";
+import template2 from "../assets/img/template4.webp";
+import template3 from "../assets/img/template3.webp";
+import template4 from "../assets/img/template6.webp";
 import carrinhoSvg from "../assets/img/shopping-cart-solid.svg";
 //import crocs1 from '../assets/img/imgTeste.PNG';
 import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
@@ -74,6 +77,10 @@ const Home = () => {
     <div className="content">
       <main>
         <article>
+      
+
+
+
           {/* Section 1 */}
           <div className="Container">
             <div className="home-container">
@@ -88,193 +95,24 @@ const Home = () => {
             <div className="home-container-img"> </div>
           </div>
 
-          {/* Section 2 */}
-          <div className="Advantages-Container">
-            <div className="Discount">
-              <img src={coupon} alt="Desconto" />
-              <p>Descontos todas semanas</p>
-            </div>
-            <div>
-              <img src={onlineSupport} alt="Suporte" />
-              <p>Suporte 24/7 dias</p>
-            </div>
-            <div>
-              <img src={delivery} alt="Entrega" />
-              <p>Entrega ao domicílio</p>
-            </div>
-            <div>
-              <img src={creditCard} alt="Pagamento seguro" />
-              <p>Pagamento seguro</p>
-            </div>
+    
+
+ <br /><br />
+   {/* Section 3 */}   
+   <div className="Container-promo">
+   <img src={template} alt="" />
           </div>
+        
 
           <div className="main">
-            <header>
-              <h1>modelos novos</h1>
-              <p>
-                {" "}
-                <b>CROCS™ </b>| SINTA-SE COMO NADA
-              </p>
-            </header>
-            <section>
-              {products.length > 0 ? (
-                products.map((product, index) => (
-                  <div className="product" key={index}>
-                    <picture>
-                      <img
-                        src={product.primary_image_url}
-                        alt={product.product_name}
-                        loading="lazy"
-                      />
-                    </picture>
-
-                    <div className="detail">
-                      <p>
-                        <small>{product.product_name}</small>
-                      </p>
-                      <samp>
-                        {currency === "MZN"
-                          ? `${product.price} MZN`
-                          : `${convertPrice(
-                              product.price,
-                              currency
-                            )} ${currency}`}
-                      </samp>
-                      {/* Dropdown para selecionar a moeda */}
-                      {/**<select
-                      value={currency}
-                      onChange={(e) => handleCurrencyChange(e.target.value)}
-                    >
-                      <option value="MZN">MZN</option>
-                      <option value="USD">USD</option>
-                      <option value="ZAR">ZAR</option>
-                    </select>*/}
-                    </div>
-
-                    <div className="button">
-                      <div className="colors">
-                        {Array.isArray(product.colors) &&
-                          product.colors.map((color, index) => (
-                            <div
-                              key={index}
-                              className="color-box"
-                              style={{ backgroundColor: color.hex_code }}
-                              title={color.name}
-                            />
-                          ))}
-                      </div>
-                      <button
-                        className="product-button"
-                        onClick={() => {
-                          console.log(`Product ID: ${product.product_id}`);
-                          navigate(`/produto/detalhes/${product.product_id}`);
-                        }}
-                      >
-                        ver mais
-                      </button>
-                      <button className="btn_favorito"
-                        onClick={() => {
-                          console.log("Produto favorito clicado:", product);
-                          toggleFavorite(product);
-                        }}
-                       
-                      >
-                        {favorites.some(
-                          (item) => item.product_id === product.product_id
-                        )
-                        ? <FaHeart color={ 'gray'} />
-                        : <FiHeart  size={25} />}
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>Carregando produtos...</p>
-              )}
-            </section>
-          </div>
-
-          <div className="Container-promo">
-            <img src={template} alt="" />
-          </div>
-
-          {/* Section 3 */}
-          <div className="Container_2">
-            <div className="Container-content">
-              <div className="promotion">
-                <h1>SANDALIAS</h1>
-                <h1>ESTILOSAS</h1>
-              </div>
-              <p> CROCS™ | SINTA-SE COMO NUNCA ANTES</p>
-              <br />
-              <p>
-                {" "}
-                Oferta especial. Obtenha desconto em qualquer pedido, apenas
-                válido por hoje.
-              </p>
-
-              <button> Comprar agora</button>
-            </div>
-
-            <div className="Container-promocional">
-              <div>
-                <h1 style={{ fontSize: "40pt", color: "rgb(75, 134, 34)" }}>
-                  25%
-                </h1>
-                <p style={{ color: "rgb(66, 67, 68)", lineHeight: 1.3 }}>
-                  Oferta especial. Obtenha desconto em qualquer pedido, apenas
-                  válido por hoje.
-                </p>
-              </div>
-              <div>
-                <img src={gif} />
-              </div>
-            </div>
-          </div>
-
-          {/* Popular Collections */}
-          <section className="carrosel_1">
-            <div className="slider">
-              <button>Coleções Populares</button>
-              <div className="slide-track">
-                {[
-                  colecao_1,
-                  colecao_2,
-                  colecao_3,
-                  colecao_4,
-                  colecao_5,
-                  colecao_6,
-                  colecao_1,
-                  colecao_2,
-                  colecao_3,
-                  colecao_4,
-                  colecao_5,
-                  colecao_6,
-                ].map((img, index) => (
-                  <div className="slide" key={index}>
-                    <img src={img} alt={`Coleção ${index + 1}`} />
-                    <p>Coleçao {index + 1}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <div className="main">
-            <header>
-              <h1>JIBBITZ RECENTES</h1>
-              <p>
-                {" "}
-                <b>CROCS™ </b>| PERSONALIZE AO SEU GOSTO
-              </p>
-            </header>
-            <div className="main">
               <header>
-                <h1>modelos novos</h1>
+                <h1></h1>
                 <p>
                   {" "}
-                  <b>CROCS™ </b>| SINTA-SE COMO NADA
+                 <b style={{fontSize: '2rem'}}>CROCS™ | </b>  NOVOS MODELOS
                 </p>
+                <span><FiArrowLeft size={40} id="seta_esquerda"/></span>
+                <span><FiArrowRight size={40} id="seta_direita"/></span>
               </header>
               <section>
               {products.length > 0 ? (
@@ -353,70 +191,133 @@ const Home = () => {
               )}
             </section>
             </div>
-          </div>
+
+ {/* Popular Collections */}
+ <section className="carrosel_1">
+         
+         <div className="slider">
+         <p id="txt_colecao">
+              <b style={{fontSize: '2rem'}}>CROCS™ | </b>  COLEÇÕES
+             </p>
+           <div className="slide-track">
+             {[
+               colecao_1,
+               colecao_2,
+               colecao_3,
+               colecao_4,
+               colecao_5,
+               colecao_6,
+               colecao_1,
+               colecao_2,
+               colecao_3,
+               colecao_4,
+               colecao_5,
+               colecao_6,
+             ].map((img, index) => (
+               <div className="slide" key={index}>
+                 <img src={img} alt={`Coleção ${index + 1}`} />
+                 <p>Coleçao {index + 1}</p>
+               </div>
+             ))}
+           </div>
+         </div>
+       </section>
           {/* Section 4 */}
           <div className="Container-extended">
-            <div></div>
             <div>
-              <p>Novas sandálias clássicas</p>
-              <p style={{ fontSize: "20pt", fontWeight: "bold" }}>
-                Mostre a verdadeira cor
-              </p>
-              <p style={{ textDecoration: "underline" }}>Compre os clássicos</p>
+              <img src={template3} alt="" />
+              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi tempora magni</p>
+             <button>Comprar agora</button>
             </div>
+            <div>
+            
+              <h1>Aproveite as novidades crocs agora como nunca antes </h1>
+              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut non quibusdam sint atque praesentium dignissimos id sunt eum provident ad earum, dolor eos consectetur doloribus repellendus aliquam.</p>
+              <button>Comprar agora</button>
+            </div>
+
+            
           </div>
 
-          <div className="Categories">
-            <div className="categor">
-              <div className="producte">
-                <img src={colecao_1} alt="" />
+      {/* 
+          <div className="Container_2">
+            <div className="Container-content">
+              <div className="promotion">
+                <h1>SANDALIAS</h1>
+                <h1>ESTILOSAS</h1>
               </div>
-              <div className="Detalhes">
-                <h1> COLLABS</h1>
-                <p>CROCS™ | SINTA-SE COMO NUNCA</p>
-              </div>
-              <div className="btn_detalhes">
-                <button>Comprar Agora</button>
-              </div>
-            </div>
-
-            <div className="categor">
-              <div className="producte">
-                <img src={colecao_2} alt="" />
-              </div>
-              <div className="Detalhes">
-                <h1> GIFT CARDS</h1>
-                <p>CROCS™ | CARTOES DE PRESENTE</p>
-              </div>
-              <div className="btn_detalhes">
-                <button>Comprar Agora</button>
-              </div>
-            </div>
-
-            <div className="categor">
-              <div className="producte">
-                <img src={colecao_3} alt="" />
-              </div>
-              <div className="Detalhes">
-                <h1> CROCS™ NOTHING</h1>
-                <p>CROCS™ | SEMPRE BARATO E LEVE</p>
-              </div>
-              <div className="btn_detalhes">
-                <button>Comprar Agora</button>
-              </div>
-            </div>
-          </div>
-
-          {/* Catalog */}
-          <div className="main">
-            <header>
-              <h1>modelos novos</h1>
+              <p> CROCS™ | SINTA-SE COMO NUNCA ANTES</p>
+              <br />
               <p>
                 {" "}
-                <b>CROCS™ </b>| SINTA-SE COMO NADA
+                Oferta especial. Obtenha desconto em qualquer pedido, apenas
+                válido por hoje.
               </p>
-            </header>
-            <section>
+
+              <button> Comprar agora</button>
+            </div>
+
+            <div className="Container-promocional">
+              <div>
+                <h1 style={{ fontSize: "40pt", color: "rgb(75, 134, 34)" }}>
+                  25%
+                </h1>
+                <p style={{ color: "rgb(66, 67, 68)", lineHeight: 1.3 }}>
+                  Oferta especial. Obtenha desconto em qualquer pedido, apenas
+                  válido por hoje.
+                </p>
+              </div>
+              <div>
+                <img src={gif} />
+              </div>
+            </div>
+          </div> */} 
+
+          {/* Popular Collections */}
+          <section className="carrosel_1">
+         
+            <div className="slider">
+            <p id="txt_colecao">
+                 <b style={{fontSize: '2rem'}}>CROCS™ | </b>  COLEÇÕES
+                </p>
+              <div className="slide-track">
+                {[
+                  colecao_1,
+                  colecao_2,
+                  colecao_3,
+                  colecao_4,
+                  colecao_5,
+                  colecao_6,
+                  colecao_1,
+                  colecao_2,
+                  colecao_3,
+                  colecao_4,
+                  colecao_5,
+                  colecao_6,
+                ].map((img, index) => (
+                  <div className="slide" key={index}>
+                    <img src={img} alt={`Coleção ${index + 1}`} />
+                    <p>Coleçao {index + 1}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+{/* Section 3 */}   <div className="Container-promo">
+<img src={template4} alt="" />
+          </div>
+            <div className="main">
+              <header>
+                <h1></h1>
+                <p>
+                  {" "}
+                 <b style={{fontSize: '2rem'}}>CROCS™ | </b>  NOVOS MODELOS
+                </p>
+                <span><FiArrowLeft size={40} id="seta_esquerda"/></span>
+                <span><FiArrowRight size={40} id="seta_direita"/></span>
+              </header>
+              <section>
               {products.length > 0 ? (
                 products.map((product, index) => (
                   <div className="product" key={index}>
@@ -472,7 +373,7 @@ const Home = () => {
                       >
                         ver mais
                       </button>
-                      <button className="btn_favorito"
+                      <button className="btn_favoritoo"
                         onClick={() => {
                           console.log("Produto favorito clicado:", product);
                           toggleFavorite(product);
@@ -492,7 +393,23 @@ const Home = () => {
                 <p>Carregando produtos...</p>
               )}
             </section>
-          </div>
+            </div>
+        
+         <section className="Categorias"> 
+                <div className="categor">
+                 <img src={template2} alt="" />
+                 <h2>Encontre uma loja</h2>
+                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumenda hic dignissimos corporis repellat, suscipit voluptatem dolores exercitationem, commodi earum laboriosam qui qui</p>
+                </div>
+                <div className="categor">
+                  <img src={template2} alt="" />
+                  <h2>Encontre uma loja</h2>
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumenda hic dignissimos corporis repellat, suscipit voluptatem dolores exercitationem, commodi earum laboriosam qui qui</p>
+                </div>
+         </section>
+
+        
+       
         </article>
       </main>
     </div>

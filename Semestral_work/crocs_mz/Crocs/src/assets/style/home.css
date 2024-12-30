@@ -44,7 +44,7 @@ html, body {
 
 /*  Seccao 1*/
 .Container {
-  min-height: 80vh;
+  min-height: 95vh;
   background-color: rgb(255, 255, 255);
   display: flex;
   align-items: center;
@@ -296,32 +296,36 @@ html, body {
 
   .Container-extended {
     display: flex;
-    gap: 2rem;
-    width: 1100px;
+    width: 100%;
     margin: auto;
     align-items: center;
-    justify-content: space-between;
-    margin-top: 30px;
+    justify-content: space-evenly;
+    background-color: rgb(255, 255, 255);
+    margin-bottom: 180px;
   }
   
   .Container-extended div:nth-child(1),
   .Container-extended div:nth-child(2) {
-    width: 700px;
-    height: 60vh;
-    background-repeat: no-repeat;
-    background-size: cover;
+    width: 800px;
+    height: 80vh;
     border-radius: 10px;
+    background-color: rgb(241, 241, 241);
+    margin-left: 0;
   }
-  
-  .Container-extended div:nth-child(1) {
-    background-image: url('../img/template3.webp');
+  .Container-extended div:nth-child(1) p{
+    max-width: 570px;
+  }
+  .Container-extended div:nth-child(2) h1{
+    margin-left: 20px;
+    margin-right: 20px;
+    width: 100%;
+    font-size: 4rem;
   }
   
   .Container-extended div:nth-child(2) {
-    background-image: url('../img/teste8.png');
-    background-color: red;
-    opacity: 0.7;
-    transition: opacity 0.5s ease-in;
+    background-color: rgb(255, 255, 255);
+    height: 60vh;
+    padding: 20px;
   }
   
   .Container-extended div:nth-child(2):hover {
@@ -329,92 +333,27 @@ html, body {
   }
   
   .Container-extended div p {
-    position: relative;
-    top: 20rem;
-    left: 3rem;
     font-size: 1.2rem;
     line-height: 1.5;
     font-style: italic;
-    color: aliceblue;
-    z-index: 1;
+    color: rgb(0, 0, 0);
+    margin: 10px;
+    margin-right: 10px;
+    width: 97%;
   }
-  
-  
-
-  /*   Categories*/
-  .Categories{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-items: center;
-    justify-content: space-evenly;
-    background: rgb(255, 255, 255);
-    margin-top: 30px;
-    margin-bottom: 300px;
-    height: 270px;
-  }
-
-  .Categories .categor{
-    width: 300px;
-    height: 200px;
-    border-radius: 10px;
-    background-color: rgb(255, 255, 255);
-  }
-
-  .Categories .categor button{
-    width: 70%;
-    margin-top: 20px;
+  .Container-extended div button {
+    border-radius: 40px;
+    width: 200px;
+    margin: 20px;
     color: white;
+    font-weight: bold;
+padding: 13px;
   }
-
-  .producte{
-    background-color: rgb(255, 255, 255);
-  }
-  .producte img{
-    width: 100%;
-    height: 100%;
-  }
+  
+  
 
 
-  .Detalhes{
-    background-color: #ffffff;
-    display: flex;
-    flex-direction: column;
-    height: 80px;
-    width: 400px;
-  }
-   .btn_detalhes {
-    margin-top: 5px;
-    border-radius: 20px;
-  }
-  .btn_detalhes button{
-    border-radius: 30px;
-    font-weight: bolder;
-    background-color: rgb(0, 0, 0);
-    padding: 14px;
-  }
 
-  .Detalhes h1{
-    color: black;
-    font-size: 30pt;
-    font-weight: 900;
-    font: 30px 'Proxima nova, sans-serif' bolder;
-    letter-spacing: 0.05em; 
-    line-height: 90%;
-    text-transform: uppercase; 
-  }
-  .Detalhes p{
-    margin-top: 10px;
-    font-size: 14pt;
-    line-height: 1.2;
-    color: black;
-  }
 
-  /*
-  font-size: 60px;
-  letter-spacing: 0.05em; 
-  line-height: 90%;
-  text-transform: uppercase; 
-  font-weight: 800;
-*/
 
+  
