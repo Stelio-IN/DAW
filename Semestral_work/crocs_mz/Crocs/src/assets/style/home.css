@@ -301,32 +301,32 @@ html, body {
     align-items: center;
     justify-content: space-evenly;
     background-color: rgb(255, 255, 255);
-    margin-bottom: 180px;
+    gap: 10px;
+    height: 100vh;
+    margin-bottom: 100px;
   }
+  .Container-extended  h2{
+   font-weight: 900;
+   line-height: 90%;
+   text-transform: uppercase;
+   letter-spacing: 0.01em;
+   margin-top: 10px;
+   font-size: 20pt;
+  }
+
   
   .Container-extended div:nth-child(1),
   .Container-extended div:nth-child(2) {
-    width: 800px;
-    height: 80vh;
+    width: 700px;
+    height: 100vh;
     border-radius: 10px;
-    background-color: rgb(241, 241, 241);
-    margin-left: 0;
-  }
-  .Container-extended div:nth-child(1) p{
-    max-width: 570px;
-  }
-  .Container-extended div:nth-child(2) h1{
-    margin-left: 20px;
-    margin-right: 20px;
-    width: 100%;
-    font-size: 4rem;
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
   }
   
-  .Container-extended div:nth-child(2) {
-    background-color: rgb(255, 255, 255);
-    height: 60vh;
-    padding: 20px;
-  }
+  
+  
+
   
   .Container-extended div:nth-child(2):hover {
     opacity: 1;
@@ -347,7 +347,9 @@ html, body {
     margin: 20px;
     color: white;
     font-weight: bold;
-padding: 13px;
+    padding: 13px;
+    font-size: 14.5pt;
+    background-color: black;
   }
   
   

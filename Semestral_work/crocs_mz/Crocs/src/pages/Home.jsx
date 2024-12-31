@@ -17,8 +17,7 @@ import template from "../assets/img/template5.webp";
 import template2 from "../assets/img/template4.webp";
 import template3 from "../assets/img/template3.webp";
 import template4 from "../assets/img/template6.webp";
-import crocs1 from "../assets/img/crocsbolsa.jpeg";
-import crocs2 from "../assets/img/crocssummer.jpeg";
+import template5 from "../assets/img/template7.webp";
 //import crocs1 from '../assets/img/imgTeste.PNG';
 import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
 const Home = () => {
@@ -222,18 +221,20 @@ const Home = () => {
           {/* Section 4 */}
           <div className="Container-extended">
             <div>
-              <img src={template3} alt="" />
-              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi tempora magni</p>
-             <button>Comprar agora</button>
+              <img src={template5} alt="" />
+              <h2>Confor e Facil</h2>
+              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi tempora magni tempora magni  </p>
+             <button>Saber mais</button>
             </div>
             <div>
             
-              <h1>Aproveite as novidades crocs agora como nunca antes </h1>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aut non quibusdam sint atque praesentium dignissimos id sunt eum provident ad earum, dolor eos consectetur doloribus repellendus aliquam.</p>
-              <button>Comprar agora</button>
+            <img src={template5} alt="" />
+            <h2>Conheca as novidades</h2>
+              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi tempora magni  </p>
+             <button>Saber mais</button>
             </div>
 
-            
+        
           </div>
 
       {/* 
@@ -271,6 +272,7 @@ const Home = () => {
           </div> */} 
 
           {/* Popular Collections */}
+        
           <section className="carrosel_1">
          
             <div className="slider">
@@ -404,7 +406,7 @@ const Home = () => {
         <div className="social">
           <br />
           <h1>@CROCS_MOZAMBIQUE | <b style={{fontSize: '15pt', fontWeight: '100'}}>No Instagram</b></h1>
-          <button>Seguir  @crocs_mozambique</button>
+          <button href="https://www.instagram.com/crocs_mozambique/?hl=en" target='blank' >Seguir  @crocs_mozambique</button>
          
         </div>
                 <div className="categore">
