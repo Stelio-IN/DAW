@@ -7,11 +7,6 @@ import "../assets/style/catalogo.css";
 import { FiArrowLeft, FiArrowRight, FiHeart } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 // Images
-import coupon from "../assets/img/coupon.png";
-import onlineSupport from "../assets/img/online-support.png";
-import delivery from "../assets/img/delivery.png";
-import creditCard from "../assets/img/credit-card.png";
-import gif from "../assets/img/gif.gif";
 import colecao_1 from "../assets/img/col1.avif";
 import colecao_2 from "../assets/img/col2.avif";
 import colecao_3 from "../assets/img/col3.avif";
@@ -22,7 +17,8 @@ import template from "../assets/img/template5.webp";
 import template2 from "../assets/img/template4.webp";
 import template3 from "../assets/img/template3.webp";
 import template4 from "../assets/img/template6.webp";
-import carrinhoSvg from "../assets/img/shopping-cart-solid.svg";
+import crocs1 from "../assets/img/crocsbolsa.jpeg";
+import crocs2 from "../assets/img/crocssummer.jpeg";
 //import crocs1 from '../assets/img/imgTeste.PNG';
 import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
 const Home = () => {
@@ -304,6 +300,9 @@ const Home = () => {
             </div>
           </section>
 
+       
+
+
 {/* Section 3 */}   <div className="Container-promo">
 <img src={template4} alt="" />
           </div>
@@ -394,20 +393,33 @@ const Home = () => {
               )}
             </section>
             </div>
-        
-         <section className="Categorias"> 
-                <div className="categor">
-                 <img src={template2} alt="" />
-                 <h2>Encontre uma loja</h2>
-                 <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumenda hic dignissimos corporis repellat, suscipit voluptatem dolores exercitationem, commodi earum laboriosam qui qui</p>
-                </div>
-                <div className="categor">
-                  <img src={template2} alt="" />
-                  <h2>Encontre uma loja</h2>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumenda hic dignissimos corporis repellat, suscipit voluptatem dolores exercitationem, commodi earum laboriosam qui qui</p>
+           
+            <section className="categorias"> 
+        <div className="social">
+          <h1>@CROCS_MOZAMBIQUE</h1>
+          <button>Seguir @crocs_mozambique</button>
+        </div>
+                <div className="categore">
+                  <div className="categor">
+                   <img src={template} alt="" />
+                   <h2>CONFORTÁVEL</h2>
+                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumenda hic dignissimos corporis</p>
+                   <button>Ver lojas</button>
+                  </div>
+                  <div className="categor">
+                    <img src={template4} alt="" />
+                    <h2>ENCONTRE UMA LOJA</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumend</p>
+                    <button>Ver lojas</button>
+                  </div>
+                  <div className="categor">
+                    <img src={template4} alt="" />
+                    <h2>ENCONTRE UMA LOJA</h2>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumend</p>
+                    <button>Ver lojas</button>
+                  </div>
                 </div>
          </section>
-
         
        
         </article>

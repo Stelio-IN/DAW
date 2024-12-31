@@ -352,7 +352,77 @@ padding: 13px;
   
   
 
-
+.categorias{
+  display: flex;
+  margin: auto;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  background-color: rgb(245, 255, 245);
+  height: 100vh;
+  padding: 20px;
+  border-radius: 20px;
+  justify-content: space-evenly;
+}
+.categorias .social{
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  align-items: left;
+  justify-items: left;
+  width: 100%;
+  margin: 40px;
+  margin-left: 60px;
+}
+.categorias .social h1{
+  font-size: 45pt;
+    font-weight: 900;
+    color: black;
+    letter-spacing: 0.01em; 
+  line-height: 90%;
+  text-transform: uppercase; 
+}
+.categorias .social button{
+  border-radius: 40px;
+  padding: 20px;
+  width: 380px;
+  color: white;
+  font-weight: bold;
+  background-color: black;
+  font-size: 1.3rem;
+}
+.categorias .categore{
+  display: flex;
+  margin: auto;
+}
+.categorias .categor{
+  width: 600px;
+  margin: auto;
+}
+.categorias .categor img{
+  width: 450px;
+  border-radius: 20px;
+  height: 350px;
+}
+.categorias .categor h2{
+  max-width: 400px;
+  font-size: 1.4rem;
+  font-weight: bolder;
+  color: rgb(0, 0, 0);
+}
+.categorias .categor p{
+  max-width: 400px;
+  font-size: 10pt;
+  margin-bottom: 10px;
+}
+.categorias .categor button{
+  border-radius: 40px;
+  padding: 12px;
+  width: 180px;
+  color: white;
+  font-weight: bold;
+  background-color: black;
+}
 
 
 
