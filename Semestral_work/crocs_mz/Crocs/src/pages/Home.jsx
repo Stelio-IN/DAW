@@ -218,6 +218,7 @@ const Home = () => {
            </div>
          </div>
        </section>
+
           {/* Section 4 */}
           <div className="Container-extended">
             <div>
@@ -382,7 +383,7 @@ const Home = () => {
                         {favorites.some(
                           (item) => item.product_id === product.product_id
                         )
-                        ? <FaHeart color={ 'gray'} />
+                        ? <FaHeart color={ 'gray'}/>
                         : <FiHeart  size={25} />}
                       </button>
                     </div>
@@ -394,28 +395,33 @@ const Home = () => {
             </section>
             </div>
            
+                {/* Section 3 */}   <div className="Container-promo">
+<img src={template4} alt="" />
+          </div>
+
+
             <section className="categorias"> 
         <div className="social">
-          <h1>@CROCS_MOZAMBIQUE</h1>
-          <button>Seguir @crocs_mozambique</button>
+          <br />
+          <h1>@CROCS_MOZAMBIQUE | <b style={{fontSize: '15pt', fontWeight: '100'}}>No Instagram</b></h1>
+          <button>Seguir  @crocs_mozambique</button>
+         
         </div>
                 <div className="categore">
                   <div className="categor">
+                  
                    <img src={template} alt="" />
-                   <h2>CONFORTÁVEL</h2>
-                   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumenda hic dignissimos corporis</p>
-                   <button>Ver lojas</button>
+                   <h2>Cartões</h2>
+                   <button>Solicitar</button>
                   </div>
                   <div className="categor">
                     <img src={template4} alt="" />
-                    <h2>ENCONTRE UMA LOJA</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumend</p>
-                    <button>Ver lojas</button>
+                    <h2>jibbitz</h2>
+                    <button>Comprar</button>
                   </div>
                   <div className="categor">
                     <img src={template4} alt="" />
-                    <h2>ENCONTRE UMA LOJA</h2>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quo assumend</p>
+                    <h2>LOJAs</h2>
                     <button>Ver lojas</button>
                   </div>
                 </div>

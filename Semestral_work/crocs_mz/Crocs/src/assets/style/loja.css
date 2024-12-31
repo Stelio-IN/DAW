@@ -370,7 +370,11 @@ color: #8b8b8b;
 
 .btn_favorito{
   margin-bottom: 210px;
-  margin-right: 10px;
+  margin-left: 120px;
+  position: absolute;
+  top: 100px;
+  background: rgb(255, 255, 255);
+  
 }
 
 @media (max-width: 768px) {

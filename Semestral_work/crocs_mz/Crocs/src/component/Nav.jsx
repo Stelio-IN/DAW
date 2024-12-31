@@ -42,7 +42,7 @@ const Navbar = () => {
     window.addEventListener("storage", updateCartCount);
     return () => window.removeEventListener("storage", updateCartCount);
   }, []);
-
+  
   return (
     <nav>
       <div className="wrapper">
@@ -51,8 +51,10 @@ const Navbar = () => {
             <span
               style={{
                 color: "rgb(0, 0, 0)",
-                fontWeight: "bold",
                 fontSize: "28pt",
+                 fontWeight: "bold",
+                letterSpacing: '0.01em',
+                lineHeight: '90%',
               }}
             >
               Crocs<sup style={{ fontSize: "0.5rem" }}>TM</sup>

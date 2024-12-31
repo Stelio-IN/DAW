@@ -176,8 +176,10 @@ small {
 
 
 .btn_favoritoo{
-    margin-bottom: 170px;
-    margin-right: 10px;
+    margin-left: 140px;
+  position: absolute;
+  top: 2px;
+  background: rgb(255, 255, 255);
     z-index: auto;
 }
 
