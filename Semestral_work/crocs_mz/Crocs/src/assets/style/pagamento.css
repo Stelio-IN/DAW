@@ -287,6 +287,10 @@
    width: 90%;
  }
 
+ .Paymentos{
+  display: none;
+ }
+
 .Card_payment .div1{
 width: 100%;
 margin: 0;
@@ -369,43 +373,48 @@ flex-direction: row;
 /*  Responsividade mobile*/
 @media screen and (max-width: 840px){
   .pagamento{
+    justify-content: space-between;
+    width: 100vw;   
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: rgb(255, 255, 255);
-    justify-content: space-between;
-    width: 100vw;
-    background-color: red;
-    
+    overflow-y: auto;
 }
 
 .catalog-items {
-  width: 100vw;
+  width: 100%;
   margin: auto;
   display: flex;
   grid-template-columns: repeat(3, 1fr);
   overflow-y: auto;
-  background-color: rgb(203, 228, 42);
   flex-direction: column;
   margin: 5px;
+  margin: auto;
+  overflow-y: hidden;
+  height: auto;
+  flex: 0 0 auto;
 }
 
-
+.Payments{
+  margin: auto;
+}
 .Detalhes{
-  width: 100vw;
-  height: 100%;
-  
+  width: 90vw;
+  margin: auto;
+  overflow-y: hidden;
+  height: auto;
+  flex: 0 0 auto;
+  padding-bottom: 50px;
 }
 
 .delivery{
   display: flex;
   flex-direction: column;
-  margin: 15px;
-  height: 100vh;
-  width: 100vw;
-  background-color: rgb(25, 190, 64);
- 
-
+  width: 90vw;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: auto;
+  flex: 0 0 auto;
 }
 
 .Order_summary{
@@ -413,11 +422,10 @@ flex-direction: row;
   flex-direction: column;
   align-items: center;
   justify-items: center;
-  background-color: rgb(184, 45, 223);
-  width: 90%; 
+  width: 90vw; 
   justify-content: space-around;
- border-radius: none;
- margin: auto;
+  border-radius: none;
+  margin: auto;
 }
 
 .order{
@@ -436,47 +444,74 @@ flex-direction: row;
 }
 
 
+
+
 }
 
-@media screen and (max-width: 700px){
-  .Container-extended {
+@media screen and (max-width: 450px){
+  .Payments{
+    display: none;
+  }
+  .Paymentos div{
     display: flex;
-    width: 100%;
     flex-direction: column;
-    height: 90vh;
-  }
-  .Container-extended div:nth-child(1)
-  {
-   width: 555px;
-   height: 90vh;
- }
- .Container-promo{
-  height: 50vh;
-}
-.categorias .social h1{
-  font-size: 27pt;
-    font-weight: 900;
-    color: rgb(36, 134, 68);
-    letter-spacing: 0.01em; 
-  line-height: 90%;
-}
- 
-}
+    width: 100%;
+    margin: 0;
+   }
+  
+   .Paymentos button{
+    border-radius: 0;
+    background-color: rgb(252, 252, 252);
+    border: 3px solid rgb(224, 224, 224);
+    margin: -3px;
+   }
+  
+  
+   
+   .Paymentos{
+     display: flex;
+     flex-direction: column;
+     background-color: rgb(252, 252, 252);
+     margin: 10px;
+     padding: 15px;
+     border-radius: 10px;
+     min-height: 260px; /* Adiciona uma altura mínima */
+     max-height: 400px; /* Limita a altura para evitar autoscroll */
+     overflow-y: auto;
+     width: 90%;
+   }
 
-@media (max-width: 768px) {
-  .catalog-header h1 {
-    font-size: 25px;
+   
+.Card_paymento .div1{
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
   }
-  .catalog-items {
-    grid-template-columns: repeat(2, 1fr);
+  
+  .Card_paymento div input{
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  
   }
-  .catalog-detail,
-  .catalog-button {
-    font-size: 16px;
+  
+  .Card_paymento .div1 div{
+    display: 'flex'; 
+    flex-Direction: 'column'; 
+    width: 100%; 
+    margin: 0;
+   
+  
   }
-  .catalog-button a {
-    padding: 6px 10px;
+  
+  .div1 div input{
+    width: 100%; 
   }
+
+   .productList{
+    scrollbar-width: none;
+   }
+
+
 }
-
-

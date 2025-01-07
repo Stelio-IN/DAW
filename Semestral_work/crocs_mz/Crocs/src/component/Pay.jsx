@@ -112,13 +112,14 @@ const Pay = () => {
                 flexDirection: "column",
               }}
             >
-              <h3 style={{ color: "#5b5b5b" }}>Pagamento*</h3>
-              <p>Todas as transações são seguras e encriptadas.</p>
+              
             </div>
 
             <section className="Payments">
+            <h3 style={{ color: "#5b5b5b", width: '100%' }}>Pagamento*</h3>
+            <p style={{ color: "#000000", width: '100%' }}>Todas as transações são seguras e encriptadas.</p>
               <div>
-                <p> Total a pagar: {calculateTotal()} Mzn</p>
+                <p> Total a pagar:<span style={{ fontWeight: '700'}}> {calculateTotal()} Mzn</span></p>
 
                {/* Paypal */}
                <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
@@ -234,20 +235,6 @@ const Pay = () => {
               </div>
             </section>
 
-            <div
-              style={{
-                marginTop: "10px",
-                display: "flex",
-                flexDirection: "column",
-                width: '500px'
-              }}
-            >
-              <h3 style={{ color: "#5b5b5b" }}>Novidades & Promoções</h3>
-              <p>Ao se inscrever para a nossa newsletter você receberá novidades e promoções directamente no seu e-mail.</p>
-            </div>
-            <input type="text" id="newsletter" placeholder="Digite o seu melhor e-mail"/>
-            <input type="button" value="Quero receber novidades" id="btn_newsletter" />
-           <br /><br />
           </div>
       
         </section>
@@ -295,6 +282,127 @@ const Pay = () => {
                 <p> {calculateTotal()} Mzn</p>
               </div>
             </div>
+            
+            <section className="Paymentos">
+            <h3 style={{ color: "#000000", width: '100%' }}>Pagamento*</h3>
+            <p style={{ color: "#000000", width: '100%' }}>Todas as transações são seguras e encriptadas.</p>
+              <div>
+                <p> Total a pagar: <span style={{ fontWeight: 'bold'}}>{calculateTotal()}  Mzn</span></p>
+
+               {/* Paypal */}
+               <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
+                  {" "}
+                  <img src={paypal} alt="" />
+                </button>
+                {activeMethod === "paypal" && (
+                  <div className="Paypal_payment">
+                    <p>
+                      Nós vamos redirecioná-lo para o PayPal de modo a efetuar o
+                      pagamento.{" "}
+                      <span
+                        style={{ color: "blue", textDecoration: "underline" }}
+                      >
+                        O que é PayPal?
+                      </span>
+                    </p>
+                    <PayPalButton 
+                      totalMZN={calculateTotal()} 
+                      onPaymentSuccess={emptyCart} 
+                      cartItems={cart} // Passando o cart como prop
+                    />
+
+                  </div>
+                )}
+
+
+                {/* Cartão */}
+                <button id="btn_card" onClick={() => toggleMethod("card")}>
+                  {" "}
+                  <img src={cartao} alt="" /> <span>Cartão</span>
+                </button>
+                {activeMethod === "card" && (
+                  <div className="Card_paymento">
+                    <label htmlFor=""> Nome do Proprietário</label>
+                    <input type="text" placeholder="Tobias Zucula Mphemo" />
+                    <label htmlFor=""> Número do cartão</label>
+                    <input
+                      type="number"
+                      placeholder="1234 5678 9012 3456"
+                      maxLength={16}
+                    />
+                    <div className="div1">
+                      <div>
+                        <label htmlFor="">Data de Expiração</label>
+                        <input type="text" placeholder="MM/YY" />
+                      </div>
+                      <div>
+                        <label htmlFor="">CVV</label>
+                        <input type="number" placeholder="Cvv" maxLength={3} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* M-pesa */}
+                <button id="btn_mpesa" onClick={() => toggleMethod("mpesa")}>
+                  {" "}
+                  <img src={mpesa} alt="" />
+                </button>
+                {activeMethod === "mpesa" && (
+                  <div className="M-pesa_payment">
+                    <p>Clique no botão abaixo e confirme o pagamento..</p>
+
+                    <button id="btn_pay">
+                      {" "}
+                      <span>Pagar com </span>{" "}
+                      <img src={mpesa} alt="" onClick={handlePurchaseClick} />
+                    </button>
+
+                    {/* Modal de Pagamento */}
+                    {showPaymentModal && (
+                      <div className="modal" onClick={handleCloseModal}>
+                        <div
+                          className="modalContent"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <h2>Pagamento</h2>
+                          <p>Total a Pagar: {calculateTotal()}$</p>
+                          <label>
+                            Celular:
+                            <input type="text" placeholder="Seu celular" />
+                          </label>
+                          <button
+                            onClick={() =>
+                              alert("Compra finalizada com sucesso!")
+                            }
+                          >
+                            Finalizar Compra
+                          </button>
+                          <button onClick={handleCloseModal}>Fechar</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Emola */}
+                <button id="btn_emola" onClick={() => toggleMethod("emola")}>
+                  {" "}
+                  <img src={emola} alt="" />
+                </button>
+                {activeMethod === "emola" && (
+                  <div className="Emola_payment">
+                    <p>Clique no botão abaixo e prossiga com o pagamento.</p>
+                    <button id="btn_pay">
+                      {" "}
+                      <span>Pagar com </span>{" "}
+                      <img src={emola} alt="" onClick={handlePurchaseClick} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </section>
+            
           </div>
         </section>
       </div>
