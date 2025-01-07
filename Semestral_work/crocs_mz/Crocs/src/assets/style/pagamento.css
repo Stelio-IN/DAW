@@ -366,6 +366,103 @@ flex-direction: row;
 
 
 
+/*  Responsividade mobile*/
+@media screen and (max-width: 840px){
+  .pagamento{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: rgb(255, 255, 255);
+    justify-content: space-between;
+    width: 100vw;
+    background-color: red;
+    
+}
+
+.catalog-items {
+  width: 100vw;
+  margin: auto;
+  display: flex;
+  grid-template-columns: repeat(3, 1fr);
+  overflow-y: auto;
+  background-color: rgb(203, 228, 42);
+  flex-direction: column;
+  margin: 5px;
+}
+
+
+.Detalhes{
+  width: 100vw;
+  height: 100%;
+  
+}
+
+.delivery{
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(25, 190, 64);
+ 
+
+}
+
+.Order_summary{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  background-color: rgb(184, 45, 223);
+  width: 90%; 
+  justify-content: space-around;
+ border-radius: none;
+ margin: auto;
+}
+
+.order{
+  display: flex;
+  margin-top: 10%;
+  flex-direction: column;
+  align-items: center;
+  justify-items: center;
+  width: 80%;
+  color: rgb(65, 64, 64);
+}
+
+
+.catalog-items::-webkit-scrollbar {
+  display: none;
+}
+
+
+}
+
+@media screen and (max-width: 700px){
+  .Container-extended {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    height: 90vh;
+  }
+  .Container-extended div:nth-child(1)
+  {
+   width: 555px;
+   height: 90vh;
+ }
+ .Container-promo{
+  height: 50vh;
+}
+.categorias .social h1{
+  font-size: 27pt;
+    font-weight: 900;
+    color: rgb(36, 134, 68);
+    letter-spacing: 0.01em; 
+  line-height: 90%;
+}
+ 
+}
+
 @media (max-width: 768px) {
   .catalog-header h1 {
     font-size: 25px;

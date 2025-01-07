@@ -137,10 +137,10 @@ const Pay = () => {
                       </span>
                     </p>
                     <PayPalButton 
-  totalMZN={calculateTotal()} 
-  onPaymentSuccess={emptyCart} 
-  cartItems={cart} // Passando o cart como prop
-/>
+                      totalMZN={calculateTotal()} 
+                      onPaymentSuccess={emptyCart} 
+                      cartItems={cart} // Passando o cart como prop
+                    />
 
                   </div>
                 )}

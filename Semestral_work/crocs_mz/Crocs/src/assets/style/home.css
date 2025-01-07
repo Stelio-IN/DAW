@@ -288,9 +288,9 @@ html, body {
   display: flex;
   background-image: url('../img/template3.webp');
   display: flex;
-    gap: 2rem;
-    width: 1400px;
+    width: 100%;
     margin: auto;
+
 
 }
 
@@ -367,18 +367,19 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 30px;
-  align-items: left;
-  justify-items: left;
+  align-items: center;
+  justify-items: center;
   width: 100%;
   margin-top: 10px;
 }
 .categorias .social h1{
   font-size: 45pt;
     font-weight: 900;
-    color: black;
+    color: rgb(36, 134, 68);
     letter-spacing: 0.01em; 
   line-height: 90%;
   text-transform: uppercase; 
+  text-align: center;
 }
 .categorias .social button{
   border-radius: 40px;
@@ -432,3 +433,209 @@ html, body {
 
 
   
+/* RESPONSIVIDADE MOBILE*/
+@media screen and (max-width: 1240px){
+  .Container-extended {
+    display: flex;
+    width: 100%;
+    margin: auto;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: rgb(253, 253, 253);
+    gap: 10px;
+    height: 90vh;
+  }
+
+  .Container-promo{
+    height: 50vh;
+}
+}
+@media screen and (max-width: 1090px){
+  .Container-extended {
+    display: flex;
+    width: 100%;
+    margin: auto;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: rgb(255, 255, 255);
+    gap: 10px;
+    margin-top:30px;
+    height: 85vh;
+  }
+  
+  .Container-extended div:nth-child(1),
+  .Container-extended div:nth-child(2) {
+    width: 600px;
+    height: 85vh;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+  }
+  .Container-promo{
+    height: 50vh;
+}
+}
+@media screen and (max-width: 960px){
+  .Container-extended {
+    display: flex;
+    width: 100%;
+    margin: auto;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: rgb(255, 255, 255);
+    gap: 10px;
+    margin-top:30px;
+    height: 75vh;
+  }
+  
+  .Container-extended div:nth-child(1),
+  .Container-extended div:nth-child(2) {
+    width: 600px;
+    height: 75vh;
+    border-radius: 10px;
+    background-color: rgb(255, 255, 255);
+    padding: 10px;
+  }
+
+  .Container-promo{
+      height: 50vh;
+  }
+}
+
+@media screen and (max-width: 840px){
+  .Container-extended {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .Container-extended div:nth-child(1)
+   {
+    width: 665px;
+    height: 100vh;
+  }
+  .Container-extended div:nth-child(2) {
+    display: none;
+  }
+  .Container-promo{
+    height: 50vh;
+}
+
+.categorias .social h1{
+  font-size: 35pt;
+    font-weight: 900;
+    color: rgb(36, 134, 68);
+    letter-spacing: 0.01em; 
+  line-height: 90%;
+}
+.categore .categor img{
+  width: 350px;
+  border-radius: 20px;
+  height: 250px;
+}
+}
+
+@media screen and (max-width: 700px){
+  .Container-extended {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    height: 90vh;
+  }
+  .Container-extended div:nth-child(1)
+  {
+   width: 555px;
+   height: 90vh;
+ }
+ .Container-promo{
+  height: 50vh;
+}
+.categorias .social h1{
+  font-size: 27pt;
+    font-weight: 900;
+    color: rgb(36, 134, 68);
+    letter-spacing: 0.01em; 
+  line-height: 90%;
+}
+ 
+}
+@media screen and (max-width: 590px){
+  .Container-extended {
+    height: 85vh;
+  }
+  
+  .Container-extended div:nth-child(1)
+   {
+    width: 465px;
+    height: 85vh;
+  }
+  .Container-extended div:nth-child(2) {
+    display: none;
+  }
+  .Container-promo{
+    height: 40vh;
+}
+}
+@media screen and (max-width: 500px){
+  .Container-extended {
+    height: 75vh;
+    background-color: rgb(255, 255, 255);
+  }
+  
+  .Container-extended div:nth-child(1)
+   {
+    width: 400px;
+    height: 75vh;
+  }
+  .Container-extended div:nth-child(2) {
+    display: none;
+  }
+  .Container-promo{
+    height: 40vh;
+}
+
+.categorias .social h1{
+  font-size: 24pt;
+    font-weight: 900;
+    color: rgb(36, 134, 68);
+    letter-spacing: 0.01em; 
+  line-height: 90%;
+}
+}
+@media screen and (max-width: 420px){
+  .Container-extended {
+    height: 65vh;
+    background-color: rgb(255, 255, 255);
+  }
+  
+  .Container-extended div:nth-child(1)
+   {
+    width: 340px;
+    height: 65vh;
+  }
+  .Container-extended div:nth-child(2) {
+    display: none;
+  }
+  .Container-promo{
+    height: 30vh;
+}
+}
+@media screen and (max-width: 355px){
+  .Container-extended {
+    height: 63vh;
+    background-color: rgb(255, 255, 255);
+  }
+  
+  .Container-extended div:nth-child(1)
+   {
+    width: 300px;
+    height: 63vh;
+  }
+  .Container-extended div:nth-child(2) {
+    display: none;
+  }
+  .Container-promo{
+    height: 30vh;
+}
+}
