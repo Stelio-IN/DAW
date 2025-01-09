@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/style/carrinho.css';
-
+import { FiArrowDown, FiMinus, FiPlus } from 'react-icons/fi';
+import {  } from 'react-icons/fa';
 function Carrinho() {
   const [cart, setCart] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -59,17 +60,17 @@ function Carrinho() {
   };
 
   return (
-    <div className="content-carrinho">
-      <div className="container">
+    <div className="content-carrinho_">
+      <div className="container_">
         {cart.length > 0 ? (
           <>
-            <div className="carrinho">
-              <ul className="productList">
+            <div className="carrinho_">
+              <ul className="productList_">
                 {cart.map((product, index) => (
-                  <li key={index} className="productItem">
-                    <div className="product">
-                      <div className="productDetails">
-                        <div className='productDetails_1'>
+                  <li key={index} className="productItem_">
+                    <div className="product_">
+                      <div className="productDetails_">
+                        <div className='productDetails_1_'>
                           <img
                             src={product.primary_image_url || 'default-image.png'}
                             alt={product.name}
@@ -77,61 +78,56 @@ function Carrinho() {
                         </div>
                         <div className='productDetails_2'>
                           <h3>{product.name}</h3>
-                          <p>Preço: {product.price}$</p>
-                          <p>Quantidade em Estoque: {product.stock_quantity}</p>
-                          <p>Quantidade: {product.quantity} </p>
+                          <p><span>Preço</span><span> {product.price} Mzn</span></p>
+                          <p><span>Quantidade</span><span> {product.quantity}</span> </p>
                         </div>
                       </div>
-                      <div className="buttons">
+                      <div className="buttons_">
                         <button
-                          className="button"
+                          className="button_" id='botao'
                           onClick={() => updateQuantity(index, 1)}
                           disabled={product.quantity >= product.stock_quantity}
-                        >
-                          +
-                        </button>
+                        >  <FiPlus  size={15} style={{margin: 'auto', textAlign: 'center'}} /></button>
                         <button
-                          className="button"
+                          className="button_" id='botao'
                           onClick={() => updateQuantity(index, -1)}
                           disabled={product.quantity <= 1}
                         >
-                          -
+                          <FiMinus  size={15} style={{margin: 'auto', textAlign: 'center'}} />
                         </button>
-                        <button
-                          className="button removeButton"
-                          onClick={() => removeFromCart(index)}
-                        >
-                          Remover
-                        </button>
-                        <button className='button addWishList'>Adicionar favoritos</button>
+                       
+                          <p className="button_ removeButton_"
+                          onClick={() => removeFromCart(index)}>Remover</p>
+                       
+                       <p className='button_ addWishList_'>Favoritar</p>
                       </div>
                     </div>
                   </li>
                 ))}
               </ul>
 
-              <div className="Order_summary">
-                <div className="order">
-                  <h2>Order Summary</h2>
-                  <div className="subtotal">
+              <div className="Order_summary_">
+                <div className="order_">
+                  <h2>RESUMO DO PEDIDO</h2>
+                  <div className="subtotal_">
                     <p>SubTotal</p>
                     <p>0 Mzn</p>
                   </div>
-                  <div className="shipping">
-                    <p>Shipping</p>
-                    <p>Calculated on next step</p>
+                  <div className="shipping_">
+                    <p>Entrega (Delivery)</p>
+                    <p>Sera calculado a seguir</p>
                   </div>
-                  <div className="descounted">
+                  <div className="descounted_">
                     <p>Você Poupou</p>
                     <p> 0 Mzn</p>
                   </div>
-                  <div className="total">
+                  <div className="total_">
                     <p>Total: </p>
                     <p>{calculateTotal()} Mzn</p>
                   </div>
                   <Link to='/pagamento'>
-                    <button className="purchaseButton" onClick={handlePurchaseClick}>
-                      Realizar Compra
+                    <button className="purchaseButton_" onClick={handlePurchaseClick}>
+                      Finalizar Compra
                     </button>
                   </Link>
                 </div>
