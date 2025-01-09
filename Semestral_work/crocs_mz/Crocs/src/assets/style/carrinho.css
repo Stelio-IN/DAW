@@ -40,8 +40,8 @@
     align-items: center;
     justify-items: center;
     background-color: rgb(242, 242, 242);
-    width: 50vw; 
-    border-radius: 20px;
+    width: 40vw; 
+    border-radius: 1px;
 }
 
 .order_{
@@ -50,16 +50,20 @@
     flex-direction: column;
     align-items: center;
     justify-items: center;
-    width: 80%;
+    width: 95%;
     color: rgb(65, 64, 64);
 }
 
 .order_ h2{
-    font-size: 20pt;
-    font-weight: bold;
-    text-align: left;
-    margin-bottom: 10px;
+  border-top: 1px solid rgb(84, 83, 83);
+  font-size: 17pt;
+  font-weight: 900;
+  text-align: left;
+  margin-bottom: 10px;
+  width: 100%;
+  padding-top: 15px;
 }
+
 
 .subtotal_, .shipping_, .descounted_, .total_ {
     display: flex;
@@ -86,8 +90,8 @@
 .productList_ {
     list-style: none;
     padding: 0;
-    width: 50vw;
-    background-color: rgb(162, 56, 56);
+    width: 60vw;
+    background-color: rgb(56, 162, 63);
     max-height: 100vh;
     overflow-y: auto;
     scrollbar-width: none;
@@ -100,7 +104,6 @@
     padding: 10px 0;
     margin: 0;
     background-color: rgb(255, 255, 255);
-
   }
   
   .productDetails_ {
@@ -108,19 +111,33 @@
     display: flex;
     gap: 3px;
     background-color: rgb(255, 255, 255);
-    width: 45%;
+    width: 55%;
+  }
+
+
+  .productDetails_2 {
+    width: 100%;
   }
   
-  .productDetails_1  img{
-    width: 150px;
-   color: #fd8c03;
+  .productDetails_2  p{
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    color: rgb(72, 72, 72);
+    margin-top: 2px;
+   }
+   
+  .productDetails_1_  img{
+    width: 170px;
   }
+
+
   
 
   .buttons_ {
     display: flex;
     background-color: rgb(255, 255, 255);
-    width: 55%;
+    width: 45%;
   }
   
   .button_ {
@@ -151,34 +168,18 @@
   
   .purchaseButton_ {
     margin-top: 20px;
-    width: 90%;
-    padding: 10px 16px;
+    width: 400px;
+    padding: 15px;
     background-color: #000000;
     color: #fff;
     border: none;
-    border-radius: 22px;
+    border-radius: 30px;
     cursor: pointer;
+    font-weight: 900;
+    font-size: 13pt;
   }
   
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modalContent {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
-  }
+ 
   
   @media screen and (max-width: 1100px){
     .carrinho_{

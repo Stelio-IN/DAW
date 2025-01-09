@@ -72,7 +72,7 @@ const Pay = () => {
                 flexDirection: "column",
               }}
             >
-                <Timeline currentStep={currentStep} /> <br />
+               {/*<Timeline currentStep={currentStep} /> <br />*/ } 
               <h3 style={{ color: "#5b5b5b" }}>Endereço de Entrega *</h3>
               <p>Preencha os dados abaixo com o seu endereço.</p>
             </div>
@@ -264,7 +264,7 @@ const Pay = () => {
               ))}
             </ul>
             <div className="order">
-              <h2></h2>
+            <h2>RESUMO DO PEDIDO</h2>
               <div className="subtotal">
                 <p>SubTotal</p>
                 <p>0 Mzn</p>
