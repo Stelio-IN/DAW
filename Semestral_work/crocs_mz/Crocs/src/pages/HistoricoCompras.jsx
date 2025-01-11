@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 //import { useNavigate } from "react-router-dom";
-// import '../assets/style/about.css'
+ import '../assets/style/historico.css'
 const HistoricoCompras= () => {
 
     const [products, setProducts] = useState([]);
@@ -22,16 +22,20 @@ const HistoricoCompras= () => {
           });
     }, []);
   return (
+    
     <div className='content-about'>
-    <div>
-        <h1>Lista de produtos comprados</h1>
-        <section>
+    <div className="Historico">
+        <div className="titulo">
+        <h2>Minhas compras</h2>
+        </div>
+        <div className="container_historico">
             {error ? (  // Exibe o erro, caso exista
                 <p>{error}</p>
             ) : (
                 products.length > 0 ? (
                     products.map((product, index) => (
-                        <div className="product" key={index}>
+                        
+                        <div className="produto" key={index}>
                             <picture>
                                 <img
                                     src={product.primary_image_url}
@@ -39,8 +43,8 @@ const HistoricoCompras= () => {
                                     loading="lazy"
                                 />
                             </picture>
-                            <div className="detail">
-                                <p> Pedido Numero: 
+                            <div className="detalhes_compra">
+                                <p> Nr.Pedido: 
                                     <small>{product.order_id}</small>
                                 </p>
                                 <p> Comprador: 
@@ -49,7 +53,7 @@ const HistoricoCompras= () => {
                                 <p> Nome produto: 
                                     <small>{product.nome_produto}</small>
                                 </p>
-                                <p> quantidade: 
+                                <p> Quantidade: 
                                     <small>{product.quantidade}</small>
                                 </p>
                                 <p> Preco unitario: 
@@ -68,7 +72,7 @@ const HistoricoCompras= () => {
                     <p>Carregando produtos...</p>
                 )
             )}
-        </section>
+        </div>
     </div>
 </div>
   );

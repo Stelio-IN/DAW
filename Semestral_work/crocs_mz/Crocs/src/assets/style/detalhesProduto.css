@@ -21,31 +21,85 @@ html, body {
     height: 100vh;
 }
 
-.box-conteudo {
-    width: 100%;
-    margin: auto;
-
+.container_detalhes{
+    height: 100vh;
+    width: 100vw;
     background-color: rgb(255, 255, 255);
-    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.box-conteudo {
+    width: 98%;
+    margin: auto;
+    height: 100%;
+    background-color: rgb(255, 255, 255);
     display: flex;
+    margin-top: 90px;
 }
 
-.col-esquerda, .col-direita {
-    width: 50%;
+
+
+
+.col-esquerda{
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    width: 42%;
+
 }
 
+.col-direita{
+    background-color: rgb(255, 255, 255);
+    width: 58%;
+    margin-top: 70px;
+}
 .col-direita h1 {
-    font-size: 3rem;
+    font-size: 5rem;
+    width: 70%;
+}
+.alternativas {
+    margin: 10px;
+    display: flex;
+    height: 80px; /* Defina a altura da área visível */
+    width: 100%; /* Garante que a div ocupe toda a largura */
+    background-color: rgb(255, 255, 255); /* Cor de fundo para visualização */
+    overflow-x: auto; /* Permite rolagem horizontal */
+    overflow-y: hidden; /* Remove rolagem vertical */
+    scrollbar-width: none;
 }
 
-.col-direita .botao-carrinho {
-    border-radius: 12px;
+.alternativas div {
+    display: flex;
+    gap: 30px; /* Espaçamento entre as imagens */
+}
+
+.alternativas img {
+    height: 100%; /* Imagens ocupam 100% da altura da div */
+    object-fit: cover; /* Mantém proporção, ajustando o conteúdo */
+   
+}
+
+ .cart, .favor {
+    border-radius: 15px;
     color: white;
     padding: 13px;
     border: none;
-    width: 200px;
-    background: black;
-    box-shadow: 1px 1px 1px black;
+    width: 300px;
+    background: rgb(0, 0, 0);
+    font-weight: 900;
+
+ }
+
+.favor {
+    border-radius: 15px;
+    color: rgb(0, 0, 0);
+    padding: 13px;
+    border: none;
+    width: 300px;
+    background: rgb(255, 255, 255);
+    font-weight: 900;
+    text-decoration: underline;
 }
 
 .informacao-tamanho {
@@ -53,50 +107,71 @@ html, body {
     border-bottom: 1px solid black;
 }
 
-.botao-tamanho, .botao-genero {
+.informacao-tamanho p{
+    margin: 5px;
+}
+
+.botao-tamanho {
     border-radius: 12px;
     color: black;
     padding: 5px;
-    background: rgb(251, 251, 251);
+    background: rgb(109, 20, 20);
     font-weight: bold;
     margin-bottom: 15px;
 }
 
+.botao-genero{
+    background-color: rgb(255, 251, 251);
+    color: rgb(5, 4, 4);
+    font-weight: 900;
+    border-radius: 15px;
+    margin: 5px;
+    border: 1px solid black;
+}
 .imagem-principal {
-    width: 80%;
-    height: 80%;
-    margin: auto;
-}
-
-.col-esquerda{
-    display: flex;
-    flex-direction: row-reverse;
-    background-color: rgb(255, 255, 255);
-}
-
-
-
-.imagem-slide {
-    margin: auto;
     width: 100%;
+    height: 70%;
+    margin: auto;
+    margin-right: auto;
+    margin-left: 0px;
+    margin-top: 70px;
+    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: left;
 }
 
+.principal{
+ background-color: rgb(255, 255, 255);
+ margin: auto;
+ width: 80%;
+ height: 80%;
+ display: flex;
+  }
+
+.principal img{
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+ 
 .opcoes{
     background-color: rgb(255, 255, 255);
     display: flex;
     flex-direction: column;
-    width: 20%;
-   
+    width: 18%;
+    height: 85%;
+    margin-top: 70px;
 }
 
 .opcoes img {
-    margin-top: 60px;
-    width: 55px;
-    height: 55px;
-    padding: 10px;  
-    margin: auto;
+    width: 100%;
+    height: 105px;
     background-color: rgb(255, 255, 255); 
+    margin-bottom: 30px;
 }
+
+
 
 /* Media Queries (Responsividade) */
 @media (max-width: 768px) {

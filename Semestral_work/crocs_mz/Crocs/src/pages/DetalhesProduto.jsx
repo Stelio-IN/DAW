@@ -3,6 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/style/about.css';
 import '../assets/style/detalhesProduto.css';
 import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
+
+import crocs from '../assets/img/sap1.webp';
+import crocs1 from '../assets/img/sap2.webp';
+import crocs2 from '../assets/img/sap3.webp';
+import crocs3 from '../assets/img/sap4.webp';
+import crocs4 from '../assets/img/sap5.webp';
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
   const [product, setProduct] = useState([null]);
@@ -35,92 +41,83 @@ const ProdutoDetalhado = () => {
 
   return (
     <div className="container-detalhes-produto">
-      <section>
+      <section className='container_detalhes'>
         <div className="box-conteudo">
           
         {product ? (
-  <div className="col-esquerda">
-    <div className="imagem-principal">
-      <div key={product.product_id} style={styles.card}>
-        <img
-          src={product.primary_image_url || 'default-image.png'}
-          alt={product.name}
-          style={styles.image}
-        />
-      </div>
-    </div>
-    <div className="opcoes">
-      <img src="rascunho0.webp" alt="Opção 1" />
-      <img src="rascunho1.webp" alt="Opção 2" />
-      <img src="rascunho2.webp" alt="Opção 3" />
-      <img src="rascunho3.webp" alt="Opção 4" />
-    </div>
-  </div>
-) : (
-  <p>Carregando detalhes do produto...</p>
-)}
+        <div className="col-esquerda">
+          <div className="imagem-principal">
+            <div key={product.product_id} className='principal'>
+              <img
+                src={product.primary_image_url || 'default-image.png'}
+                alt={product.name}
+              
+              />
+            </div>
+          </div>
+          <div className="opcoes">
+            <img src={crocs} alt="Opção 1" />
+            <img src={crocs1} alt="Opção 1" />
+            <img src={crocs2} alt="Opção 1" />
+            <img src={crocs3} alt="Opção 1" />
+            <img src={crocs4} alt="Opção 1" />
+          </div>
+        </div>
+          ) : (
+            <p>Carregando detalhes do produto...</p>
+          )}
 
-{product ? (
-  <div className="col-direita">
-    <div className="informacao-tamanho">
-      <h1>{product.name}</h1>
-      <p>Preço: {product.price} Mzn</p>
-      <p style={{ textAlign: 'justify', maxWidth: '500px' }}>
-        Descrição: {product.description}
-      </p>
-      
-    <div className="colors">
-    <span>Cores: </span>
-                        {Array.isArray(product.colors) &&
-                          product.colors.map((color, index) => (
-                            <div
-                              key={index}
-                              className="color-box"
-                              style={{ backgroundColor: color.hex_code }}
-                              title={color.name}
-                            />
-                          ))}
-                      </div>
-      <p style={{ textDecoration: 'underline' }}>Selecione o tamanho:</p>
-      <button className="botao-genero">HOMEM</button>
-      <button className="botao-genero">MULHER</button>
-    </div>
-    <div className="lista-tamanhos">
-      {[7, 10, 15, 16, 19, 23, 25, 30, 31, 34, 36].map((tamanho) => (
-        <button key={tamanho} className="botao-tamanho">
-          {tamanho}
-        </button>
-      ))}
-    </div>
-   
-    <h4>Descrição:</h4>
-    <p style={{ textAlign: 'justify', maxWidth: '500px' }}>
-      {product.description}
-    </p>
-    <button style={styles.button} onClick={() => addToCart(product)}>
-      Adicionar ao Carrinho
-    </button>
-    <button
-  onClick={() => {
-    console.log("Produto favorito clicado:", product);
-    toggleFavorite(product);
-  }}
-  style={{
-    backgroundColor: favorites.some(
-      (item) => item.product_id === product.product_id
-    )
-      ? "red"
-      : "gray",
-  }}
->
-  {favorites.some((item) => item.product_id === product.product_id)
-    ? "Remover Favorito"
-    : "Adicionar aos Favoritos"}
-</button>
-  </div>
-) : (
-  <p>Carregando...</p>
-)}
+          {product ? (
+            <div className="col-direita">
+              <div className="informacao-tamanho">
+                <h1>{product.name}</h1>
+               
+              <div className="alternativas">
+                <div>
+                  <img src={crocs} alt="Opção 1" />
+                  <img src={crocs} alt="Opção 1" />
+                  <img src={crocs} alt="Opção 1" />
+                  <img src={crocs} alt="Opção 1" />
+                  <img src={crocs} alt="Opção 1" />
+          
+                </div>
+              </div>
+              <p style={{fontWeight: 'bold', fontSize: '20pt'}}>  {product.price} Mzn</p>
+              <p style={{ maxWidth: '600px', fontStyle: 'italic' }}>
+                  {product.description}
+                </p>
+                <p style={{ textDecoration: 'underline', fontWeight: '900', fontSize: '13pt' }}>Tamanho</p>
+                <p>Os tamanhos podem variar de acordo com o estilo.</p>
+                <button className="botao-genero">HOMEM</button>
+                <button className="botao-genero">MULHER</button>
+              </div>
+              <div className="lista-tamanhos">
+                {[7, 10, 15, 16, 19, 23, 25, 30, 31, 34, 36].map((tamanho) => (
+                  <button key={tamanho} className="botao-tamanho">
+                    {tamanho}
+                  </button>
+                ))}
+              </div>
+            
+              
+              <button style={styles.button} onClick={() => addToCart(product)} className='cart'>
+                Adicionar ao Carrinho
+              </button>
+              <button
+            onClick={() => {
+              console.log("Produto favorito clicado:", product);
+              toggleFavorite(product);
+            }}
+            className='favor'
+          >
+            {favorites.some((item) => item.product_id === product.product_id)
+              ? "Remover Favorito"
+              : "Adicionar aos Favoritos"}
+          </button>
+            </div>
+          ) : (
+            <p>Carregando...</p>
+          )}
 
         </div>
       </section>
@@ -132,21 +129,7 @@ const ProdutoDetalhado = () => {
 
 const styles = {
   card: {
-    border: '1px solid #ddd',
-    padding: '10px',
-    margin: '10px',
-  },
-  image: {
-    width: '100%',
-    height: 'auto',
-  },
-  button: {
-    backgroundColor: '#007bff',
-    color: '#fff',
-    padding: '10px 20px',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
+   
   },
 };
 

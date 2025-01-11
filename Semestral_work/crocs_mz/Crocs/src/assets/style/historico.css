@@ -1,0 +1,98 @@
+*{
+    margin: 
+    0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.Historico{
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(255, 255, 255);
+    height: 100vh;
+    width: 100vw;
+    margin-top: 100px;
+    margin-left: 25px;
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+
+.titulo{
+    background-color: rgb(255, 255, 255);
+    width: 100%;
+    height: 100px;
+}
+.titulo h2{
+    font-size: 25pt;
+    font-weight: 900;
+    border-bottom: 1px solid black;
+    padding-bottom: 10px;
+}
+.container_historico{
+ display: flex;
+ width: 98%;
+ background-color: rgb(255, 255, 255);
+ padding: 10px;
+ height: 100%;
+ gap: 10px;
+ margin: auto;
+ height: 90vh;
+ overflow-y: auto;
+ scrollbar-width: none;
+}
+
+
+
+.produto{
+background-color: rgb(245, 245, 245);
+width: 320px;
+border-radius: 10px;
+height: 300px;
+margin: 0;
+padding: 5px;
+}
+
+.produto img{
+    width: 100%;
+    height: 100%;
+    background-color: rgb(255, 255, 255);
+}
+
+.detalhes_compra{
+background-color: rgb(255, 255, 255);
+margin: 0;
+padding: 0;
+}
+
+
+@media screen and (max-width: 715px){
+    
+    .Historico{
+        width: 100%;
+        background-color: rgb(255, 255, 255);
+    }
+
+.container_historico {
+    flex-direction: column;
+    width: 100%;
+    margin: auto;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+}
+.produto{
+    margin-bottom: 200px;
+}
+
+}
+
+@media screen and (max-width: 400px){
+    .Historico{
+        background-color: red;
+
+    }
+
+    .produto{
+        width: 90%;
+    }
+}
