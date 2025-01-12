@@ -43,7 +43,6 @@ const ProdutoDetalhado = () => {
     <div className="container-detalhes-produto">
       <section className='container_detalhes'>
         <div className="box-conteudo">
-          
         {product ? (
         <div className="col-esquerda">
           <div className="imagem-principal">
@@ -111,13 +110,16 @@ const ProdutoDetalhado = () => {
             className='favor'
           >
             {favorites.some((item) => item.product_id === product.product_id)
-              ? "Remover Favorito"
+              ? <span style={{color: 'red', textDecoration: 'underline'}}>Remover Favorito</span>
               : "Adicionar aos Favoritos"}
           </button>
             </div>
           ) : (
             <p>Carregando...</p>
           )}
+        </div>
+
+        <div className=''>
 
         </div>
       </section>

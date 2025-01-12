@@ -80,12 +80,12 @@ html, body {
    
 }
 
- .cart, .favor {
-    border-radius: 15px;
+ .cart{
+    border-radius: 35px;
     color: white;
     padding: 13px;
     border: none;
-    width: 300px;
+    width: 240px;
     background: rgb(0, 0, 0);
     font-weight: 900;
 
@@ -96,14 +96,14 @@ html, body {
     color: rgb(0, 0, 0);
     padding: 13px;
     border: none;
-    width: 300px;
+    width: 250px;
     background: rgb(255, 255, 255);
-    font-weight: 900;
+    font-weight: 300;
     text-decoration: underline;
 }
 
 .informacao-tamanho {
-    margin-bottom: 10px;
+    padding-bottom: 20px;
     border-bottom: 1px solid black;
 }
 
@@ -111,13 +111,19 @@ html, body {
     margin: 5px;
 }
 
+.lista-tamanhos{
+    padding: 10px;
+    max-width: 700px;
+}
 .botao-tamanho {
-    border-radius: 12px;
+    border-radius: 7px;
     color: black;
-    padding: 5px;
-    background: rgb(109, 20, 20);
+    padding: 10px;
+    width: 60px;
+    border: 1px solid rgb(109, 107, 107);
+    background: rgba(184, 8, 8, 0);
     font-weight: bold;
-    margin-bottom: 15px;
+    margin: 15px;
 }
 
 .botao-genero{
@@ -174,12 +180,307 @@ html, body {
 
 
 /* Media Queries (Responsividade) */
-@media (max-width: 768px) {
+@media (max-width: 1158px) {
     .box-conteudo {
         flex-direction: column;
     }
 
     .col-esquerda, .col-direita {
         width: 100%;
+    }
+
+    
+.col-esquerda{
+    background-color: rgb(255, 255, 255);
+    height: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+
+}
+
+.col-direita h1 {
+    font-size: 5rem;
+    width: 100%;
+}
+
+.imagem-principal {
+    width: 80%;
+    height: 70%;
+    margin: auto;
+   
+ 
+    padding: 10px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    align-items: left;
+}
+
+.principal{
+ background-color: rgb(255, 255, 255);
+ margin: auto;
+ width: 60%;
+ height: 90%;
+ display: flex;
+  }
+
+.principal img{
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+ 
+.opcoes{
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+    height: 85%;
+    margin-top: 70px;
+}
+
+.opcoes img {
+    width: 100%;
+    height: 105px;
+    background-color: rgb(255, 255, 255); 
+    margin-bottom: 30px;
+}
+
+
+}
+
+@media screen and (max-width: 950px) {
+
+    .imagem-principal {
+        width: 100%;
+        height: 80%;
+        padding: 10px;
+        background-color: rgb(255, 255, 255);
+    }
+    
+    .principal{
+     background-color: rgb(255, 255, 255);
+     width: 70%;
+     height: 90%;
+      }
+    
+    .principal img{
+        width: 100%;
+        height: 100%;
+        margin: auto;
+    }
+     
+    .opcoes{
+        background-color: rgb(255, 255, 255);
+        width: 13%;
+        height: 85%;
+        margin-top: 0px;
+    }
+    
+    
+}
+
+@media screen and (max-width: 768px) {
+    .principal{
+        background-color: rgb(255, 255, 255);
+        width: 80%;
+        height: 90%;
+         }
+
+         .opcoes{
+            background-color: rgb(255, 255, 255);
+            width: 15%;
+          
+        }
+}
+
+@media screen and (max-width: 630px){
+
+    
+    .imagem-principal {
+        width: 100%;
+        height: 80%;
+        padding: 10px;
+        background-color: rgb(255, 255, 255);
+    }
+    .principal{
+        background-color: rgb(255, 254, 254);
+        width: 90%;
+        height: 75%;
+         }
+
+         .opcoes{
+            background-color: rgb(255, 255, 255);
+            width: 17%;
+          
+        }
+}
+
+@media screen and (max-width: 550px){
+
+    
+.col-direita h1 {
+    font-size: 4rem;
+    width: 100%;
+}
+ 
+    .imagem-principal {
+        width: 100%;
+        height: 80%;
+        padding: 10px;
+        background-color: rgb(255, 255, 255);
+    }
+    .principal{
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+        height: 100%;
+         }
+
+
+    .col-esquerda{
+        flex-direction: column;
+        display: flex;
+    }
+    .opcoes{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        overflow-y: auto;
+        scrollbar-width: none;
+        gap: 30px;
+    }
+    .col-direita{
+        width: 100%;
+    }
+
+}
+
+@media screen and (max-width: 412px){
+ 
+   
+    .principal{
+        background-color: rgb(255, 255, 255);
+        width: 90%;
+        height: 95%;
+         }
+
+
+    .col-esquerda{
+        flex-direction: column;
+        display: flex;
+    }
+
+    .opcoes{
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        overflow-y: auto;
+        scrollbar-width: none;
+        gap: 30px;
+        background-color: rgb(255, 255, 255);
+    }
+
+    .botao-genero{
+        font-size: 11pt;
+    }
+     
+    .botao-tamanho {
+        border-radius: 7px;
+        color: rgb(32, 32, 32);
+        padding: 9px;
+        width: 55px;
+        border: 1px solid rgb(109, 107, 107);
+        background: rgba(184, 8, 8, 0);
+        font-weight: bold;
+        margin: 15px;
+    }
+    .lista-tamanhos{
+    width: 100%;
+    }
+    .lista-tamanhos{
+        width: 100%;
+        }
+    .cart{
+        margin: 1px;
+        width: 100%;
+    }
+    .favor{
+        margin: 1px;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 351px){
+
+    
+.col-direita h1 {
+    font-size: 3.4rem;
+    width: 97%;
+}
+
+.botao-genero{
+    font-size: 10pt;
+}
+ 
+.botao-tamanho {
+    border-radius: 7px;
+    color: black;
+    padding: 8px;
+    width: 50px;
+    border: 1px solid rgb(109, 107, 107);
+    background: rgba(184, 8, 8, 0);
+    font-weight: bold;
+    margin: 15px;
+}
+.lista-tamanhos{
+width: 100%;
+}
+
+.cart{
+    margin: 1px;
+    width: 100%;
+}
+.favor{
+    margin: 1px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.informacao-tamanho{
+    width: 100%;
+}
+
+
+
+   .col-direita, .col-esquerda{ 
+    margin: 0;
+   }
+   .col-esquerda{
+    margin-bottom: 10px;
+
+   }
+    .imagem-principal {
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        background-color: rgb(255, 255, 255);
+    }
+    .principal{
+        background-color: rgb(255, 255, 255);
+        width: 100%;
+        height: 100%;
+         }
+
+
+    .col-esquerda{
+        flex-direction: column;
+        display: flex;
+    }
+    .opcoes{
+        gap: 40px;
+    }
+
+    .opcoes img{
+        height: 80px;
     }
 }
