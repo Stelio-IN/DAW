@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../assets/style/loja.css";
-import { FiHeart } from "react-icons/fi";
-import { FaHeart } from "react-icons/fa";
+import { FiFilter, FiHeart } from "react-icons/fi";
+import { FaFilter, FaHeart, FaOptinMonster } from "react-icons/fa";
 import { useFavorites } from "../context/FavoritesContext";
 function Loja() {
   const [activeFilter, setActiveFilter] = useState(null);
@@ -24,6 +24,9 @@ function Loja() {
   const { favorites, toggleFavorite } = useFavorites();
 
 
+   const [filtroOpen, setFiltroOpen] = useState(false);
+  
+    const toggleFiltro = () => setFiltroOpen(!filtroOpen);
   
 
   // Referência para o filtro de tamanho
@@ -324,7 +327,14 @@ function Loja() {
   return (
     <div className="content-loja1">
       <div className="shop_filter_container">
+        <input type="radio" id='filtragem' name="menu_toggle" />
+        <input type="radio" id='cancel_filtragem' name="menu_toggle"/>
+       
+
         <div className="filter_container">
+        <label htmlFor="cancel_filtragem" className="cancel_filtragem" onClick={toggleFiltro} >  
+          <i className="bx bx-x"></i>
+        &times;</label>
           <div className="filtros">
             <h3>Filtros</h3>
 
@@ -464,24 +474,18 @@ function Loja() {
         </div>
 
         <div className="catalog-container1">
+
           <input
             type="text"
+            className="inputpesquisa"
             placeholder="Pesquisar produtos..."
             value={searchTerm}
             onChange={handleSearch}
-            style={{
-              padding: "10px",
-              width: "250px",
-              borderRadius: "5px",
-              backgroundColor: "white",
-              border: "1px solid black",
-              position: "absolute",
-              right: "32%",
-              borderColor: "gray",
-            }}
+          
           />
 
           <div className="sort-by">
+
             <p htmlFor="sort-select">Ordenar por:</p>
             <select
               id="sort-select"
@@ -496,7 +500,13 @@ function Loja() {
             </select>
           </div>
 
-          <header className="catalog-header"></header>
+          <header className="catalog-header"><h3>Homem</h3></header>
+          <label htmlFor="filtragem" className="filtragem" onClick={toggleFiltro} >  
+          <i className="bx bx-x"> Filtros   </i>
+          
+          <p><FiFilter /></p>
+      
+        </label>
           <section className="catalog-items1">
             {products.length > 0 ? (
               products.map((product) => (
@@ -574,6 +584,7 @@ function Loja() {
         </div>
       </div>
       {error && <p style={{ color: "red" }}>{error}</p>}
+      
     </div>
   );
 }

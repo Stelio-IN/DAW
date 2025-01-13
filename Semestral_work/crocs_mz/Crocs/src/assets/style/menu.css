@@ -388,6 +388,7 @@ nav .wrapper{
     #menu-btn:checked ~ .nav-links{
         left: 0%;
     }
+    
     #menu-btn:checked ~ .btn.menu-btn{
         display: none;
     }
