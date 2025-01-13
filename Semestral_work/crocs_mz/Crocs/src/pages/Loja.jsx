@@ -345,7 +345,7 @@ function Loja() {
                   className="filter-options"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h3>Categorias</h3>
+                  <h3></h3>
                   {categories.map((category) => (
                     <label key={category.category_id}>
                       <input
@@ -557,7 +557,7 @@ function Loja() {
                         navigate(`/produto/detalhes/${product.product_id}`)
                       }
                     >
-                      <img src="shopping-cart-solid.svg" alt="" />
+                    Ver mais
                     </button>
                     <button
                       className="btn_favorito"
@@ -575,6 +575,7 @@ function Loja() {
                       )}
                     </button>
                   </div>
+                  
                 </div>
               ))
             ) : (
