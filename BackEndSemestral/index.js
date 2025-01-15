@@ -13,6 +13,11 @@ import routerProductColor from './routes/productColorRoutes.js';
 import routerProductImage from './routes/productImageRoutes.js';
 import routerOrder from './routes/orderRoutes.js';
 import routerOrderItem from './routes/orderItemRoutes.js';
+
+import routerGender from './routes/genderRoutes.js';
+import routerSize from './routes/sizeRoutes.js';
+import routerSizeType from './routes/sizeTypeRoutes.js';
+
 import paymentRoutes from './routes/paymentRoutes.js';
 
 
@@ -39,7 +44,9 @@ app.use('/api/colors', routerColor);
 app.use('/api/product-colors', routerProductColor);
 app.use('/api/product-images', routerProductImage);
 app.use('/api/orders', routerOrder);
-app.use('/api/order-items', routerOrderItem);
+app.use('/api/gender', routerGender);
+app.use('/api/sizes', routerSize);
+app.use('/api/sizesType', routerSizeType);
 app.use('/api', paymentRoutes);
 
 

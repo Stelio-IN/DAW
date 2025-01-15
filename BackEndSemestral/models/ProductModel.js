@@ -10,6 +10,7 @@ export default (sequelize, DataTypes) => {
       price: DataTypes.DECIMAL,
       stock_quantity: DataTypes.INTEGER,
       category_id: DataTypes.INTEGER,
+      gender_id: DataTypes.INTEGER,
     }, { timestamps: true });
   };
   

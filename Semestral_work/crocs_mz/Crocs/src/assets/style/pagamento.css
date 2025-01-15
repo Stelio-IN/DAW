@@ -453,9 +453,7 @@ flex-direction: row;
 }
 
 @media screen and (max-width: 450px){
-  .Payments{
-    display: none;
-  }
+
   .Paymentos div{
     display: flex;
     flex-direction: column;
@@ -473,7 +471,7 @@ flex-direction: row;
   
    
    .Paymentos{
-     display: flex;
+     display: none;
      flex-direction: column;
      background-color: rgb(252, 252, 252);
      margin: 10px;

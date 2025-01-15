@@ -23,11 +23,17 @@ function Loja() {
   const [error, setError] = useState(null);
   const { favorites, toggleFavorite } = useFavorites();
 
+  const [sizesTypes, setSizesTypes] = useState([]);
+  const [activeSizeType, setActiveSizeType] = useState(null); // Tipo de tamanho ativo
+  const [selectedSizeType, setSelectedSizeType] = useState(null);
+  const [gendere, setGendere] = useState([]);
+  const [selectedGender, setSelectedGender] = useState(null);
+  const [sizes, setSizes] = useState([]);
+  const [selectedSize, setSelectedSize] = useState(null);
 
-   const [filtroOpen, setFiltroOpen] = useState(false);
-  
-    const toggleFiltro = () => setFiltroOpen(!filtroOpen);
-  
+  const [filtroOpen, setFiltroOpen] = useState(false);
+
+  const toggleFiltro = () => setFiltroOpen(!filtroOpen);
 
   // Referência para o filtro de tamanho
   const tamanhoRef = useRef();
@@ -211,6 +217,65 @@ function Loja() {
     }
   };
 
+  //Função para buscar produtos por tamanhos e Gênero
+  // Função para buscar produtos por gênero
+  const fetchProductsByGender = async (genderId) => {
+    if (!genderId) {
+      console.error("Gênero inválido");
+      return;
+    } else {
+      console.log("Gênero válido");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/products/pr/byGender/${genderId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data); // Atualiza o estado de produtos no componente pai
+      } else {
+        setError("Erro ao buscar produtos.");
+      }
+    } catch (error) {
+      setError("Erro de conexão.");
+    }
+  };
+
+  // Função para selecionar um gênero
+  const handleGenderSelect = (genderId) => {
+    setSelectedGender(genderId);
+    fetchProductsByGender(genderId); // Busca produtos ao selecionar o gênero
+  };
+
+  // Função para buscar produtos por tamanho
+  const fetchProductsBySize = async (sizeId) => {
+    if (!sizeId) {
+      console.error("Tamanho inválido");
+      return;
+    } else {
+      console.log("Tamanho válido");
+    }
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/products/pr/bySize/${sizeId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data); // Atualiza o estado de produtos no componente pai
+      } else {
+        setError("Erro ao buscar produtos.");
+      }
+    } catch (error) {
+      setError("Erro de conexão.");
+    }
+  };
+
+  // Função para selecionar um tamanho
+  const handleSizeSelect = (sizeId) => {
+    setSelectedSize(sizeId);
+    fetchProductsBySize(sizeId); // Busca produtos ao selecionar o tamanho
+  };
+
   // Função para buscar produtos por cor
   const fetchProductsByColor = async (colorId) => {
     if (!colorId) {
@@ -251,6 +316,63 @@ function Loja() {
     };
 
     fetchCategories();
+  }, []);
+
+  // Buscar Tipos de tamanhos ao carregar o componente
+  useEffect(() => {
+    const fetchSizeTypes = async () => {
+      try {
+        const response = await fetch("http://localhost:3005/api/sizesType");
+        if (response.ok) {
+          const data = await response.json();
+          setSizesTypes(data);
+        } else {
+          console.error("Erro ao buscar tipos tamanhos");
+        }
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    };
+
+    fetchSizeTypes();
+  }, []);
+
+  // Buscar Tipos ao carregar o componente
+  useEffect(() => {
+    const fetchSizes = async () => {
+      try {
+        const response = await fetch("http://localhost:3005/api/sizes");
+        if (response.ok) {
+          const data = await response.json();
+          setSizes(data);
+        } else {
+          console.error("Erro ao buscar tamanhos");
+        }
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    };
+
+    fetchSizes();
+  }, []);
+
+  // Buscar Generos ao carregar o componente
+  useEffect(() => {
+    const fetchGenders = async () => {
+      try {
+        const response = await fetch("http://localhost:3005/api/gender");
+        if (response.ok) {
+          const data = await response.json();
+          setGendere(data);
+        } else {
+          console.error("Erro ao buscar generos");
+        }
+      } catch (error) {
+        console.error("Erro:", error);
+      }
+    };
+
+    fetchGenders();
   }, []);
 
   // Buscar cores ao carregar o componente
@@ -324,17 +446,38 @@ function Loja() {
     }
   };
 
+  const handleSizeTypeClick = async (sizeTypeId) => {
+    setActiveSizeType(sizeTypeId); // Atualiza o tipo selecionado
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/sizes/type/${sizeTypeId}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setSizes(data); // Atualiza os tamanhos associados ao tipo
+      } else {
+        console.error("Erro ao buscar tamanhos associados ao tipo.");
+      }
+    } catch (error) {
+      console.error("Erro de conexão ao buscar tamanhos:", error);
+    }
+  };
+
   return (
     <div className="content-loja1">
       <div className="shop_filter_container">
-        <input type="radio" id='filtragem' name="menu_toggle" />
-        <input type="radio" id='cancel_filtragem' name="menu_toggle"/>
-       
+        <input type="radio" id="filtragem" name="menu_toggle" />
+        <input type="radio" id="cancel_filtragem" name="menu_toggle" />
 
         <div className="filter_container">
-        <label htmlFor="cancel_filtragem" className="cancel_filtragem" onClick={toggleFiltro} >  
-          <i className="bx bx-x"></i>
-        &times;</label>
+          <label
+            htmlFor="cancel_filtragem"
+            className="cancel_filtragem"
+            onClick={toggleFiltro}
+          >
+            <i className="bx bx-x"></i>
+            &times;
+          </label>
           <div className="filtros">
             <h3>Filtros</h3>
 
@@ -391,6 +534,75 @@ function Loja() {
               {activeFilter === "tamanho" && (
                 <div
                   className="filter-options"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {/* Exibe os tipos de tamanhos */}
+                  {sizesTypes.map((sizeType) => (
+                    <div key={sizeType.size_type_id}>
+                      <label
+                        onClick={() =>
+                          handleSizeTypeClick(sizeType.size_type_id)
+                        }
+                      >
+                        {sizeType.name}
+                      </label>
+
+                      {/* Exibe os tamanhos associados ao tipo selecionado */}
+                      {activeSizeType === sizeType.size_type_id && (
+                        <div className="nested-options">
+                          {sizes
+                            .filter(
+                              (size) =>
+                                size.size_type_id === sizeType.size_type_id
+                            )
+                            .map((size) => (
+                              <label key={size.size_id}>
+                                <input
+                                  type="checkbox"
+                                  value={size.size_id}
+                                  checked={selectedSize === size.size_id}
+                                  onChange={() =>
+                                    handleSizeSelect(size.size_id)
+                                  }
+                                />
+                                {size.size}
+                              </label>
+                            ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div onClick={() => handleFilterClick("genero")}>
+              <h4>Gênero</h4>
+              {activeFilter === "genero" && (
+                <div
+                  className="filter-options"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {gendere.map((gender) => (
+                    <label key={gender.name}>
+                      <input
+                        type="checkbox"
+                        value={gender.name}
+                        checked={selectedGender === gender.gender_id}
+                        onChange={() => handleGenderSelect(gender.gender_id)}
+                      />
+                      {gender.name}
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/*<div onClick={() => handleFilterClick("tamanho")}>
+              <h4>Tamanho</h4>
+              {activeFilter === "tamanho" && (
+                <div
+                  className="filter-options"
                   ref={tamanhoRef}
                   onClick={(e) => e.stopPropagation()}
                 >
@@ -438,7 +650,7 @@ function Loja() {
                   )}
                 </div>
               )}
-            </div>
+            </div>*/}
 
             <div onClick={() => handleFilterClick("preco")}>
               <h4>Preço</h4>
@@ -474,18 +686,15 @@ function Loja() {
         </div>
 
         <div className="catalog-container1">
-
           <input
             type="text"
             className="inputpesquisa"
             placeholder="Pesquisar produtos..."
             value={searchTerm}
             onChange={handleSearch}
-          
           />
 
           <div className="sort-by">
-
             <p htmlFor="sort-select">Ordenar por:</p>
             <select
               id="sort-select"
@@ -500,13 +709,20 @@ function Loja() {
             </select>
           </div>
 
-          <header className="catalog-header"><h3>Homem</h3></header>
-          <label htmlFor="filtragem" className="filtragem" onClick={toggleFiltro} >  
-          <i className="bx bx-x"> Filtros   </i>
-          
-          <p><FiFilter /></p>
-      
-        </label>
+          <header className="catalog-header">
+            <h3>Homem</h3>
+          </header>
+          <label
+            htmlFor="filtragem"
+            className="filtragem"
+            onClick={toggleFiltro}
+          >
+            <i className="bx bx-x"> Filtros </i>
+
+            <p>
+              <FiFilter />
+            </p>
+          </label>
           <section className="catalog-items1">
             {products.length > 0 ? (
               products.map((product) => (
@@ -557,7 +773,7 @@ function Loja() {
                         navigate(`/produto/detalhes/${product.product_id}`)
                       }
                     >
-                    Ver mais
+                      Ver mais
                     </button>
                     <button
                       className="btn_favorito"
@@ -575,7 +791,6 @@ function Loja() {
                       )}
                     </button>
                   </div>
-                  
                 </div>
               ))
             ) : (
@@ -585,7 +800,6 @@ function Loja() {
         </div>
       </div>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      
     </div>
   );
 }

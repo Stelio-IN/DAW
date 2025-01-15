@@ -8,6 +8,9 @@ import productColorModel from './ProductColorModel.js';
 import productImageModel from './ProductImageModel.js';
 import orderModel from './OrderModel.js';
 import orderItemModel from './OrderItemModel.js';
+import genderModel from './GenderModel.js';
+import sizeTypeModel from "./SizeTypeModel.js";
+import size from "./SizeModel.js";
 
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
@@ -27,6 +30,10 @@ const db = {
   ProductImage: productImageModel(sequelize, DataTypes),
   Order: orderModel(sequelize, DataTypes),
   OrderItem: orderItemModel(sequelize, DataTypes),
+  Gender: genderModel(sequelize, DataTypes),
+  Size_Types: sizeTypeModel(sequelize, DataTypes),
+  Size: size(sequelize, DataTypes),
+
 };
 
 // Associações
@@ -51,6 +58,14 @@ db.OrderItem.belongsTo(db.Product, { foreignKey: 'product_id' });
 db.Color.hasMany(db.OrderItem, { foreignKey: 'color_id' });
 db.OrderItem.belongsTo(db.Color, { foreignKey: 'color_id' });
 
+db.Gender.hasMany(db.Product, { foreignKey: 'gender_id' });
+db.Product.belongsTo(db.Gender, { foreignKey: 'gender_id' });
+
+
+
+
+db.Size.associate(db);
+db.Size_Types.associate(db);
 // Função para autenticar e sincronizar com o banco de dados
 (async () => {
 // No arquivo onde você está configurando a conexão com o banco de dados
