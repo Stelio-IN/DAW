@@ -17,7 +17,6 @@ router.get('/pr/byCategory/:categoryId', productController.getProductsByCategory
 router.get('/pr/byColor/:colorId', productController.getProductsByColor);
 router.get('/pr/byPrice/:min/:max', productController.getProductsByPrice);
 router.get('/pr/bySize/:sizeId', productController.getProductsBySize);
-//router.get('/pr/byTypeSize/:TypesizeId', productController.getProductsByTypeSize);
 router.get('/pr/byGender/:genderId', productController.getProductsByGender);
 
 

@@ -243,8 +243,13 @@ function Loja() {
 
   // Função para selecionar um gênero
   const handleGenderSelect = (genderId) => {
-    setSelectedGender(genderId);
-    fetchProductsByGender(genderId); // Busca produtos ao selecionar o gênero
+    if (selectedGender === genderId) {
+      setSelectedGender(null);
+      fetchProducts(); // Busca todos os produtos sem filtro
+    } else {
+      setSelectedGender(genderId);
+      fetchProductsByGender(genderId);
+    }
   };
 
   // Função para buscar produtos por tamanho
@@ -272,9 +277,17 @@ function Loja() {
 
   // Função para selecionar um tamanho
   const handleSizeSelect = (sizeId) => {
-    setSelectedSize(sizeId);
-    fetchProductsBySize(sizeId); // Busca produtos ao selecionar o tamanho
+    if (selectedSize === sizeId) {
+      // Se o tamanho já estiver selecionado, desmarque-o
+      setSelectedSize(null);
+      fetchProducts(); // Chama a função que busca todos os produtos sem filtro
+    } else {
+      // Se o tamanho não estiver selecionado, marque-o
+      setSelectedSize(sizeId);
+      fetchProductsBySize(sizeId); // Chama a função para buscar produtos com o filtro de tamanho
+    }
   };
+  
 
   // Função para buscar produtos por cor
   const fetchProductsByColor = async (colorId) => {
@@ -396,16 +409,25 @@ function Loja() {
 
   // Função para selecionar uma categoria
   const handleColorSelect = (colorId) => {
-    setSelectedColor(colorId);
-    fetchProductsByColor(colorId); // Busca produtos ao selecionar a categoria
+    if (selectedColor === colorId) {
+      setSelectedColor(null);
+      fetchProducts(); // Busca todos os produtos sem filtro
+    } else {
+      setSelectedColor(colorId);
+      fetchProductsByColor(colorId);
+    }
   };
-
+  
   // Função para selecionar uma categoria
   const handleCategorySelect = (categoryId) => {
-    setSelectedCategory(categoryId);
-    fetchProductsByCategory(categoryId); // Busca produtos ao selecionar a categoria
+    if (selectedCategory === categoryId) {
+      setSelectedCategory(null);
+      fetchProducts(); // Busca todos os produtos sem filtro
+    } else {
+      setSelectedCategory(categoryId);
+      fetchProductsByCategory(categoryId);
+    }
   };
-
   // Busca pelo preco do produto
   const handlePriceChange = (field, value) => {
     const newPriceRange = {
@@ -598,59 +620,7 @@ function Loja() {
               )}
             </div>
 
-            {/*<div onClick={() => handleFilterClick("tamanho")}>
-              <h4>Tamanho</h4>
-              {activeFilter === "tamanho" && (
-                <div
-                  className="filter-options"
-                  ref={tamanhoRef}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div>
-                    <p onClick={() => setGender("masculino")}>Homem</p>
-                    <p onClick={() => setGender("feminino")}>Mulher</p>
-                  </div>
-                  {gender && (
-                    <div>
-                      <h4>
-                        Tamanhos{" "}
-                        {gender === "masculino" ? "Masculino" : "Femininos"}
-                      </h4>
-                      <div className="size-options">
-                        {gender === "masculino" && (
-                          <>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="G"
-                                onChange={(e) =>
-                                  handleCheckboxChange(e, setSelectedSizes)
-                                }
-                              />
-                              G
-                            </label>
-                          </>
-                        )}
-                        {gender === "feminino" && (
-                          <>
-                            <label>
-                              <input
-                                type="checkbox"
-                                value="GG"
-                                onChange={(e) =>
-                                  handleCheckboxChange(e, setSelectedSizes)
-                                }
-                              />
-                              GG
-                            </label>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>*/}
+            
 
             <div onClick={() => handleFilterClick("preco")}>
               <h4>Preço</h4>

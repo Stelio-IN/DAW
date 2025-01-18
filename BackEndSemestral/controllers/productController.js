@@ -426,12 +426,13 @@ const getProductsByGender = async (req, res) => {
 
 // Controller para obter produtos por tamanho
 const getProductsBySize  = async (req, res) => {
-  const { SizeId } = req.params;
+  const { sizeId } = req.params;
   
   try {
     // Verifique se o genderId foi passado corretamente
-    if (!SizeId) {
-      return res.status(400).json({ message: "Genero não fornecido." });
+    if (!sizeId) {
+      console.log( 'o tamanho = ' + sizeId);
+      return res.status(400).json({ message: "tamanho não fornecido." });
     }
 
     // Ajuste na consulta para usar o Sequelize com o método replacements
@@ -457,17 +458,18 @@ const getProductsBySize  = async (req, res) => {
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE p.gender_id = :SizeId
+   LEFT JOIN ProductSizes ps ON p.product_id = ps.product_id
+WHERE ps.size_id = :sizeId
       GROUP BY p.product_id
     `, // Usando :genderId como parâmetro nomeado
       {
-        replacements: { SizeId }, // Substituindo :categoryId com o valor real
+        replacements: { sizeId }, // Substituindo :categoryId com o valor real
         type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
       }
     );
     
     if (products.length === 0) {
-      return res.status(404).json({ message: "Nenhum produto encontrado para este genero." });
+      return res.status(404).json({ message: "Nenhum produto encontrado para este tamanho." });
     }
 
     res.status(200).json(products);
