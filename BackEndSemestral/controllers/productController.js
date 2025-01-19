@@ -200,7 +200,7 @@ ORDER BY p.order_id;  -- Ordena pelos order_id
 // Controller para obter produtos por categoria
 const getProductsByCategories = async (req, res) => {
   const { categoryIds } = req.params;
-
+  
 
 
   console.log("Received categoryIds:", categoryIds);

@@ -44,6 +44,8 @@ function Loja() {
   const [appliedFilters, setAppliedFilters] = useState([]);
 
 
+  
+
   // Referência para o filtro de tamanho
   const tamanhoRef = useRef();
 
