@@ -13,10 +13,10 @@ router.delete('/:id', productController.deleteProduct);
 router.get('/pr', productController.products);
 router.get('/pr/:id', productController.getProductsEspecific);
 router.get('/compras', productController.ProductHistory);
-router.get('/pr/byCategory/:categoryId', productController.getProductsByCategory);
+router.get('/pr/byCategories/:categoryIds', productController.getProductsByCategories);
 router.get('/pr/byColor/:colorId', productController.getProductsByColor);
 router.get('/pr/byPrice/:min/:max', productController.getProductsByPrice);
-router.get('/pr/bySize/:sizeId', productController.getProductsBySize);
+router.get('/pr/bySizes/:sizeIds', productController.getProductsBySize);
 router.get('/pr/byGender/:genderId', productController.getProductsByGender);
 
 

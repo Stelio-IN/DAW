@@ -198,16 +198,22 @@ ORDER BY p.order_id;  -- Ordena pelos order_id
 };
 
 // Controller para obter produtos por categoria
-const getProductsByCategory = async (req, res) => {
-  const { categoryId } = req.params;
-  
-  try {
-    // Verifique se o categoryId foi passado corretamente
-    if (!categoryId) {
-      return res.status(400).json({ message: "Categoria não fornecida." });
-    }
+const getProductsByCategories = async (req, res) => {
+  const { categoryIds } = req.params;
 
-    // Ajuste na consulta para usar o Sequelize com o método replacements
+
+
+  console.log("Received categoryIds:", categoryIds);
+  // Verifica se os IDs de categoria foram passados corretamente
+  if (!categoryIds) {
+    console.log("Error: No categoryIds provided.");
+    return res.status(400).json({ message: "Estilos não fornecidos." });
+  }
+
+  const categoryIdsArray = categoryIds.split(','); // Transforma a string em um array
+  console.log("Converted categoryIdsArray:", categoryIdsArray); 
+  try {
+    // Ajuste na consulta para usar o Sequelize com múltiplos valores para category_id
     const products = await db.sequelize.query(
       `
       SELECT 
@@ -230,25 +236,28 @@ const getProductsByCategory = async (req, res) => {
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE p.category_id = :categoryId
+      WHERE p.category_id IN (:categoryIds)
       GROUP BY p.product_id
-    `, // Usando :categoryId como parâmetro nomeado
+    `,
       {
-        replacements: { categoryId }, // Substituindo :categoryId com o valor real
-        type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
+        replacements: { categoryIds: categoryIdsArray }, // Passa o array de IDs de categoria
+        type: db.sequelize.QueryTypes.SELECT
       }
     );
     
     if (products.length === 0) {
-      return res.status(404).json({ message: "Nenhum produto encontrado para esta categoria." });
+      console.log("No products found for the provided categories.");
+      return res.status(404).json({ message: "Nenhum produto encontrado para as categorias selecionadas." });
     }
 
+    console.log("Found products:", products); 
     res.status(200).json(products);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
     res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
+
 
 // Controller para obter produtos por categoria
 const getProductsByColor = async (req, res) => {
@@ -260,6 +269,9 @@ const getProductsByColor = async (req, res) => {
       return res.status(400).json({ message: "Cor não fornecida." });
     }
 
+
+    const colorArray = colorId.split(",");
+
     // Ajuste na consulta para usar o Sequelize com o método replacements
     const products = await db.sequelize.query(
       `
@@ -283,11 +295,11 @@ const getProductsByColor = async (req, res) => {
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE c.color_id = :colorId
+      WHERE c.color_id IN (:colorId)
       GROUP BY p.product_id
     `, // Usando :categoryId como parâmetro nomeado
       {
-        replacements: { colorId }, // Substituindo :categoryId com o valor real
+        replacements: { colorId: colorArray }, // Substituindo :categoryId com o valor real
         type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
       }
     );
@@ -369,8 +381,6 @@ const getProductsByPrice = async (req, res) => {
 };
 
 
-
-
 // Controller para obter produtos por Genero
 const getProductsByGender = async (req, res) => {
   const { genderId } = req.params;
@@ -381,6 +391,8 @@ const getProductsByGender = async (req, res) => {
       return res.status(400).json({ message: "Genero não fornecido." });
     }
 
+
+    const genderArray = genderId.split(',');
     // Ajuste na consulta para usar o Sequelize com o método replacements
     const products = await db.sequelize.query(
       `
@@ -404,11 +416,11 @@ const getProductsByGender = async (req, res) => {
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE p.gender_id = :genderId
+      WHERE p.gender_id IN (:genderId)
       GROUP BY p.product_id
     `, // Usando :genderId como parâmetro nomeado
       {
-        replacements: { genderId }, // Substituindo :categoryId com o valor real
+        replacements: { genderId: genderArray }, // Substituindo :categoryId com o valor real
         type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
       }
     );
@@ -426,15 +438,17 @@ const getProductsByGender = async (req, res) => {
 
 // Controller para obter produtos por tamanho
 const getProductsBySize  = async (req, res) => {
-  const { sizeId } = req.params;
+  const { sizeIds } = req.params;
   
   try {
     // Verifique se o genderId foi passado corretamente
-    if (!sizeId) {
-      console.log( 'o tamanho = ' + sizeId);
+    if (!sizeIds) {
+      console.log( 'o tamanho = ' + sizeIds);
       return res.status(400).json({ message: "tamanho não fornecido." });
     }
 
+
+    const sizeArray = sizeIds.split(',');
     // Ajuste na consulta para usar o Sequelize com o método replacements
     const products = await db.sequelize.query(
       `
@@ -459,11 +473,11 @@ const getProductsBySize  = async (req, res) => {
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
    LEFT JOIN ProductSizes ps ON p.product_id = ps.product_id
-WHERE ps.size_id = :sizeId
+WHERE ps.size_id IN (:sizeIds)
       GROUP BY p.product_id
     `, // Usando :genderId como parâmetro nomeado
       {
-        replacements: { sizeId }, // Substituindo :categoryId com o valor real
+        replacements: { sizeIds: sizeArray }, // Substituindo :categoryId com o valor real
         type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
       }
     );
@@ -494,7 +508,7 @@ export default {
     products,
     getProductsEspecific,
     ProductHistory,
-    getProductsByCategory, 
+    getProductsByCategories, 
     getProductsByColor, 
     getProductsByPrice,
     getProductsBySize, 

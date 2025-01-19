@@ -79,26 +79,22 @@ const Navbar = () => {
           </li>
 
           <li id="li">
-            <Link to="#" className="desktop-item">
-              Novo
-            </Link>
-            <input type="checkbox" id="showDrop" />
-            <label htmlFor="showDrop" className="mobile-item">
-              Novo
-            </label>
-            <ul className="drop-menu">
-              <li>
-                <Link to="/sobre-nos">Homem</Link>
-              </li>
-              <li>
-                <Link to="#">Mulher</Link>
-              </li>
-              <li>
-                <Link to="#">Crianças</Link>
-              </li>
-            </ul>
-          </li>
-
+      <Link to="#" className="desktop-item">Novo</Link>
+      <input type="checkbox" id="showDrop" />
+      <label htmlFor="showDrop" className="mobile-item">Novo</label>
+      <ul className="drop-menu">
+        <li>
+          {/* Link para "Homem", passando o gênero via URL */}
+          <Link to="/loja?gender=2">Homem</Link>
+        </li>
+        <li>
+          <Link to="/loja?gender=3">Mulher</Link>
+        </li>
+        <li>
+          <Link to="/loja?gender=4">Unissex</Link>
+        </li>
+      </ul>
+    </li>
           <li id="li">
             <Link to="#" className="desktop-item">
               Homem

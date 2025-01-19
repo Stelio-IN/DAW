@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import "../assets/style/loja.css";
 import { FiFilter, FiHeart } from "react-icons/fi";
-import { FaFilter, FaHeart, FaOptinMonster } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import { useFavorites } from "../context/FavoritesContext";
 function Loja() {
   const [activeFilter, setActiveFilter] = useState(null);
+
   const [gender, setGender] = useState(null);
-  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [genders, setGendere] = useState([]);
+
+  const [selectedGender, setSelectedGender] = useState([]);
+
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const [selectedPriceRange, setSelectedPriceRange] = React.useState({
@@ -16,24 +21,28 @@ function Loja() {
   });
   const [sortOption, setSortOption] = useState("a-z");
   const [searchTerm, setSearchTerm] = useState(""); // Termo de pesquisa
-  const [categories, setCategories] = useState([]);
+
   const [colors, setColors] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedColor, setSelectedColor] = useState(null);
+
+  const [selectedColor, setSelectedColor] = useState([]);
   const [error, setError] = useState(null);
   const { favorites, toggleFavorite } = useFavorites();
 
   const [sizesTypes, setSizesTypes] = useState([]);
   const [activeSizeType, setActiveSizeType] = useState(null); // Tipo de tamanho ativo
-  const [selectedSizeType, setSelectedSizeType] = useState(null);
-  const [gendere, setGendere] = useState([]);
-  const [selectedGender, setSelectedGender] = useState(null);
+
+  const [categories, setCategories] = useState([]);
+
   const [sizes, setSizes] = useState([]);
-  const [selectedSize, setSelectedSize] = useState(null);
+  const [selectedSizes, setSelectedSizes] = useState([]);
 
   const [filtroOpen, setFiltroOpen] = useState(false);
 
   const toggleFiltro = () => setFiltroOpen(!filtroOpen);
+  const [selectedCategories, setSelectedCategories] = useState([]); // Inicializando como um array vazio
+
+  const [appliedFilters, setAppliedFilters] = useState([]);
+
 
   // Referência para o filtro de tamanho
   const tamanhoRef = useRef();
@@ -91,7 +100,9 @@ function Loja() {
   // Load filter state from localStorage
   const loadFiltersFromLocalStorage = () => {
     const storedActiveFilter = localStorage.getItem("activeFilter");
-    const storedGender = localStorage.getItem("gender");
+    const storedGender = JSON.parse(
+      localStorage.getItem("selectedGender") || "[]"
+    );
     const storedSelectedSizes = JSON.parse(
       localStorage.getItem("selectedSizes") || "[]"
     );
@@ -100,7 +111,7 @@ function Loja() {
     );
 
     if (storedActiveFilter) setActiveFilter(storedActiveFilter);
-    if (storedGender) setGender(storedGender);
+    if (storedGender.length > 0) setSelectedGender(storedGender); // Certifique-se de tratar como array
     if (storedSelectedSizes.length > 0) setSelectedSizes(storedSelectedSizes);
     if (storedSelectedPriceRange)
       setSelectedPriceRange(storedSelectedPriceRange);
@@ -125,14 +136,6 @@ function Loja() {
     );
   };
 
-  const handleGenderChange = (selectedGender) => {
-    setGender(selectedGender); // Define o gênero selecionado
-  };
-
-  const handleSizeChange = (size) => {
-    setSelectedSize(size); // Atualiza o tamanho selecionado
-  };
-
   // Busca os produtos ao carregar o componente
   useEffect(() => {
     fetchProducts(); // Busca sem filtro inicialmente
@@ -144,6 +147,25 @@ function Loja() {
     setSearchTerm(value);
     fetchProducts(value); // Faz a busca conforme o termo
   };
+
+
+  const updateAppliedFilters = (filterType, filterLabel) => {
+    let updatedFilters = [...appliedFilters];
+    const filterIndex = updatedFilters.findIndex((filter) => filter.label === filterLabel);
+  
+    if (filterIndex === -1) {
+      // Se o filtro ainda não está na lista, adicione-o
+      updatedFilters.push({ type: filterType, label: filterLabel });
+    } else {
+      // Se o filtro já está na lista, remova-o
+      updatedFilters = updatedFilters.filter((filter) => filter.label !== filterLabel);
+    }
+  
+    setAppliedFilters(updatedFilters);
+  };
+
+  
+  
 
   // moeda conversao
 
@@ -194,18 +216,19 @@ function Loja() {
   };
 
   // Função para buscar produtos por categoria
-  const fetchProductsByCategory = async (categoryId) => {
-    if (!categoryId) {
-      console.error("Categoria inválida");
+  const fetchProductsByCategories = async (categoryIds) => {
+    if (!categoryIds || categoryIds.length === 0) {
+      setError("Selecione pelo menos uma categoria.");
       return;
-    } else {
-      console.log("categoria valida");
     }
-
+    console.log("Sending categoryIds to API:", categoryIds);
     try {
       const response = await fetch(
-        `http://localhost:3005/api/products/pr/byCategory/${categoryId}`
+        `http://localhost:3005/api/products/pr/byCategories/${categoryIds.join(
+          ","
+        )}`
       );
+      console.log("API response:", response);
       if (response.ok) {
         const data = await response.json();
         setProducts(data); // Atualiza o estado de produtos no componente pai
@@ -220,15 +243,13 @@ function Loja() {
   //Função para buscar produtos por tamanhos e Gênero
   // Função para buscar produtos por gênero
   const fetchProductsByGender = async (genderId) => {
-    if (!genderId) {
-      console.error("Gênero inválido");
+    if (!genderId || genderId.length === 0) {
+      setError("Selecione pelo menos um gênero.");
       return;
-    } else {
-      console.log("Gênero válido");
     }
     try {
       const response = await fetch(
-        `http://localhost:3005/api/products/pr/byGender/${genderId}`
+        `http://localhost:3005/api/products/pr/byGender/${genderId.join(",")}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -241,65 +262,141 @@ function Loja() {
     }
   };
 
-  // Função para selecionar um gênero
-  const handleGenderSelect = (genderId) => {
-    if (selectedGender === genderId) {
-      setSelectedGender(null);
+  // Função para obter o parâmetro de gênero da URL
+
+  const location = useLocation();
+  
+ // Mapeamento entre ids e nomes de gênero
+ const genderMap = {
+  2: "Homem",
+  3: "Mulher",
+  4: "Unissex",
+};
+
+  
+  
+
+
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search); // Aqui pegamos diretamente da URL
+    const genderFromQuery = queryParams.get("gender");
+
+    if (genderFromQuery) {
+      setGender(genderMap[genderFromQuery]); // Define o nome do gênero baseado no id
+      setSelectedGender([genderFromQuery]);
+      fetchProductsByGender([genderFromQuery]);
+    } else {
+      setGender(null); // Caso não haja gênero, exibe o padrão
       fetchProducts(); // Busca todos os produtos sem filtro
+    }
+  }, [location.search]); // Recarrega quando a URL mudar // Recarrega quando a URL mudar
+
+
+
+
+
+  const handleGenderSelect = (genderId) => {
+    let updatedGender = [...selectedGender];
+  
+    if (updatedGender.includes(genderId)) {
+      updatedGender = updatedGender.filter((id) => id !== genderId);
     } else {
-      setSelectedGender(genderId);
-      fetchProductsByGender(genderId);
+      updatedGender.push(genderId);
+    }
+  
+    console.log("Updated gender:", updatedGender);
+    setSelectedGender(updatedGender);
+  
+    const genderLabel = genders.find((gender) => gender.gender_id === genderId)?.name;
+    updateAppliedFilters("Gender", genderLabel);
+  
+    if (updatedGender.length > 0) {
+      fetchProductsByGender(updatedGender);
+    } else {
+      fetchProducts(); // Busca todos os produtos sem filtro
     }
   };
+  
 
-  // Função para buscar produtos por tamanho
-  const fetchProductsBySize = async (sizeId) => {
-    if (!sizeId) {
-      console.error("Tamanho inválido");
+  // Função para buscar produtos por tamanhos
+  const fetchProductsBySizes = async (sizeIds) => {
+    if (!sizeIds || sizeIds.length === 0) {
+      setError("Selecione pelo menos um tamanho.");
       return;
-    } else {
-      console.log("Tamanho válido");
     }
+
     try {
       const response = await fetch(
-        `http://localhost:3005/api/products/pr/bySize/${sizeId}`
+        `http://localhost:3005/api/products/pr/bySizes/${sizeIds.join(",")}`
       );
+
       if (response.ok) {
         const data = await response.json();
         setProducts(data); // Atualiza o estado de produtos no componente pai
+        setError(null); // Limpa o erro caso a busca seja bem-sucedida
       } else {
         setError("Erro ao buscar produtos.");
       }
     } catch (error) {
-      setError("Erro de conexão.");
+      setError("Erro de conexão ao buscar produtos.");
+      console.error(error);
     }
   };
 
-  // Função para selecionar um tamanho
+  // Lógica para selecionar ou desmarcar tamanhos
   const handleSizeSelect = (sizeId) => {
-    if (selectedSize === sizeId) {
-      // Se o tamanho já estiver selecionado, desmarque-o
-      setSelectedSize(null);
-      fetchProducts(); // Chama a função que busca todos os produtos sem filtro
+    const updatedSizes = selectedSizes.includes(sizeId)
+      ? selectedSizes.filter((id) => id !== sizeId) // Remove o tamanho
+      : [...selectedSizes, sizeId]; // Adiciona o tamanho
+  
+    console.log("Updated sizes:", updatedSizes);
+    setSelectedSizes(updatedSizes);
+  
+    // Atualize os filtros aplicados
+    const sizeLabel = sizes.find((size) => size.size_id === sizeId)?.size;
+    updateAppliedFilters("Size", sizeLabel);
+  
+    if (updatedSizes.length > 0) {
+      fetchProductsBySizes(updatedSizes); // Busca produtos com os tamanhos selecionados
     } else {
-      // Se o tamanho não estiver selecionado, marque-o
-      setSelectedSize(sizeId);
-      fetchProductsBySize(sizeId); // Chama a função para buscar produtos com o filtro de tamanho
+      fetchProducts(); // Busca todos os produtos sem filtros
     }
   };
   
 
   // Função para buscar produtos por cor
-  const fetchProductsByColor = async (colorId) => {
-    if (!colorId) {
-      console.error("Cor  inválida");
-      return;
+  const handleColorSelect = (colorId) => {
+    let updatedColors = [...selectedColor];
+  
+    if (updatedColors.includes(colorId)) {
+      updatedColors = updatedColors.filter((id) => id !== colorId);
     } else {
-      console.log("cor valida");
+      updatedColors.push(colorId);
+    }
+  
+    console.log("Updated colors:", updatedColors);
+    setSelectedColor(updatedColors);
+  
+    const colorLabel = colors.find((color) => color.color_id === colorId)?.name;
+    updateAppliedFilters("Color", colorLabel);
+  
+    if (updatedColors.length > 0) {
+      fetchProductsByColor(updatedColors);
+    } else {
+      fetchProducts(); // Busca todos os produtos sem filtro
+    }
+  };
+  
+
+  const fetchProductsByColor = async (colorId) => {
+    if (!colorId || colorId.length === 0) {
+      setError("Selecione pelo menos uma cor.");
+      return;
     }
     try {
       const response = await fetch(
-        `http://localhost:3005/api/products/pr/byColor/${colorId}`
+        `http://localhost:3005/api/products/pr/byColor/${colorId.join(",")}`
       );
       if (response.ok) {
         const data = await response.json();
@@ -369,7 +466,8 @@ function Loja() {
     fetchSizes();
   }, []);
 
-  // Buscar Generos ao carregar o componente
+  // Buscar Generos ao carregar o componentecd backendsemestral
+
   useEffect(() => {
     const fetchGenders = async () => {
       try {
@@ -408,26 +506,30 @@ function Loja() {
   }, []);
 
   // Função para selecionar uma categoria
-  const handleColorSelect = (colorId) => {
-    if (selectedColor === colorId) {
-      setSelectedColor(null);
-      fetchProducts(); // Busca todos os produtos sem filtro
+  // Função para selecionar uma categoria
+  const handleCategorySelect = (categoryId) => {
+    let updatedCategories = [...selectedCategories];
+  
+    if (updatedCategories.includes(categoryId)) {
+      updatedCategories = updatedCategories.filter((id) => id !== categoryId);
     } else {
-      setSelectedColor(colorId);
-      fetchProductsByColor(colorId);
+      updatedCategories.push(categoryId);
+    }
+  
+    console.log("Updated categories:", updatedCategories);
+    setSelectedCategories(updatedCategories);
+  
+    const categoryLabel = categories.find((category) => category.category_id === categoryId)?.name;
+    updateAppliedFilters("Category", categoryLabel);
+  
+    if (updatedCategories.length > 0) {
+      fetchProductsByCategories(updatedCategories);
+    } else {
+      fetchProducts(); // Busca todos os produtos sem filtro
     }
   };
   
-  // Função para selecionar uma categoria
-  const handleCategorySelect = (categoryId) => {
-    if (selectedCategory === categoryId) {
-      setSelectedCategory(null);
-      fetchProducts(); // Busca todos os produtos sem filtro
-    } else {
-      setSelectedCategory(categoryId);
-      fetchProductsByCategory(categoryId);
-    }
-  };
+
   // Busca pelo preco do produto
   const handlePriceChange = (field, value) => {
     const newPriceRange = {
@@ -468,12 +570,15 @@ function Loja() {
     }
   };
 
+  // Função para buscar tamanhos associados a um tipo
   const handleSizeTypeClick = async (sizeTypeId) => {
-    setActiveSizeType(sizeTypeId); // Atualiza o tipo selecionado
+    setActiveSizeType(sizeTypeId); // Define o tipo de tamanho ativo
+
     try {
       const response = await fetch(
         `http://localhost:3005/api/sizes/type/${sizeTypeId}`
       );
+
       if (response.ok) {
         const data = await response.json();
         setSizes(data); // Atualiza os tamanhos associados ao tipo
@@ -500,8 +605,18 @@ function Loja() {
             <i className="bx bx-x"></i>
             &times;
           </label>
+
           <div className="filtros">
             <h3>Filtros</h3>
+
+            <div className="applied-filters">
+  {appliedFilters.map((filter, index) => (
+    <div key={index} className="filter-tag">
+      <span>{filter.label}</span>
+    </div>
+  ))}
+</div>
+
 
             <div onClick={() => handleFilterClick("estilo")}>
               <h4>Estilo</h4>
@@ -510,14 +625,15 @@ function Loja() {
                   className="filter-options"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  <h3></h3>
                   {categories.map((category) => (
                     <label key={category.category_id}>
                       <input
                         type="checkbox"
                         name="category"
                         value={category.category_id}
-                        checked={selectedCategory === category.category_id}
+                        checked={selectedCategories.includes(
+                          category.category_id
+                        )}
                         onChange={() =>
                           handleCategorySelect(category.category_id)
                         }
@@ -536,15 +652,15 @@ function Loja() {
                   className="filter-options"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {colors.map((colors) => (
-                    <label key={colors.name}>
+                  {colors.map((color) => (
+                    <label key={color.name}>
                       <input
                         type="checkbox"
-                        value={colors.name}
-                        checked={selectedColor === colors.color_id}
-                        onChange={() => handleColorSelect(colors.color_id)}
+                        value={color.name}
+                        checked={selectedColor.includes(color.color_id)}
+                        onChange={() => handleColorSelect(color.color_id)}
                       />
-                      {colors.name}
+                      {color.name}
                     </label>
                   ))}
                 </div>
@@ -558,7 +674,6 @@ function Loja() {
                   className="filter-options"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {/* Exibe os tipos de tamanhos */}
                   {sizesTypes.map((sizeType) => (
                     <div key={sizeType.size_type_id}>
                       <label
@@ -569,7 +684,6 @@ function Loja() {
                         {sizeType.name}
                       </label>
 
-                      {/* Exibe os tamanhos associados ao tipo selecionado */}
                       {activeSizeType === sizeType.size_type_id && (
                         <div className="nested-options">
                           {sizes
@@ -582,7 +696,7 @@ function Loja() {
                                 <input
                                   type="checkbox"
                                   value={size.size_id}
-                                  checked={selectedSize === size.size_id}
+                                  checked={selectedSizes.includes(size.size_id)}
                                   onChange={() =>
                                     handleSizeSelect(size.size_id)
                                   }
@@ -596,6 +710,8 @@ function Loja() {
                   ))}
                 </div>
               )}
+              {error && <p className="error-message">{error}</p>}{" "}
+              {/* Exibe erros */}
             </div>
 
             <div onClick={() => handleFilterClick("genero")}>
@@ -605,12 +721,12 @@ function Loja() {
                   className="filter-options"
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {gendere.map((gender) => (
+                  {genders.map((gender) => (
                     <label key={gender.name}>
                       <input
                         type="checkbox"
                         value={gender.name}
-                        checked={selectedGender === gender.gender_id}
+                        checked={selectedGender.includes(gender.gender_id)}
                         onChange={() => handleGenderSelect(gender.gender_id)}
                       />
                       {gender.name}
@@ -619,8 +735,6 @@ function Loja() {
                 </div>
               )}
             </div>
-
-            
 
             <div onClick={() => handleFilterClick("preco")}>
               <h4>Preço</h4>
@@ -680,7 +794,7 @@ function Loja() {
           </div>
 
           <header className="catalog-header">
-            <h3>Homem</h3>
+          <h3>{gender || "Todos os Produtos"}</h3>
           </header>
           <label
             htmlFor="filtragem"

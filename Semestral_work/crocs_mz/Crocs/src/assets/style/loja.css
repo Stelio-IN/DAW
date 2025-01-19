@@ -36,6 +36,7 @@ margin-top: 90px;
   flex-direction: column;
   align-items: left;
   height: 100vh;
+  background-color: rgb(255, 255, 255);
 }
 
 
@@ -48,6 +49,9 @@ margin: 10px;
 
 .filtros {
   background-color: rgb(255, 255, 255);
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 
@@ -268,6 +272,29 @@ margin: 5px 0;
 }
 
 
+.applied-filters {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 0px;
+  flex-wrap: wrap;
+}
+
+.filter-tag {
+  background-color: #ffffff6b;
+  border-radius: 10px;
+  border: 2px solid black;
+  color: black;
+  padding: 7px;
+  font-weight: 600;
+  font-size: 11pt;
+  display: flex;
+  align-items: center;
+}
+
+
+
+
+
 /*catalogo */
 
 .catalog-container1 {
@@ -422,6 +449,8 @@ color: #673232;
   background: rgb(255, 255, 255);
   
 }
+
+
 
 
 @media screen and (max-width: 1250px) {
