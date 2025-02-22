@@ -8,7 +8,7 @@ import Footer from './component/Footer';
 import Nav from './component/Nav'; 
 import Carrinho from './component/Carrinho';
 import Home from './pages/Home'; 
-import Login from './pages/LoginRegister'; 
+import Login from './pages/Login.jsx'; 
 import SobreNos from './pages/About'; 
 import Loja from './pages/Loja'; 
 import Detalhes from './pages/DetalhesProduto'; 
