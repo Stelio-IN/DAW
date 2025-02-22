@@ -7,24 +7,36 @@ const LoginRegister = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [name, setName] = useState('');
+  const [username, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [userName, setUserName] = useState(null); // Estado para o nome do usuário
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Estado para verificar se o usuário está logado
-  useEffect(() => {
-    setIsLoggedIn(false);
-  }, []);
   
 
   // Carregar informações do usuário ao montar o componente
   useEffect(() => {
     const storedName = localStorage.getItem('userName');
     const token = localStorage.getItem('token');
+
+    console.log('LocalStorage userName:', storedName); // Debug
+    console.log('LocalStorage token:', token); // Debug
+
     if (storedName && token) {
       setUserName(storedName);
       setIsLoggedIn(true);
     }
   }, []);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserName(localStorage.getItem("userName"));
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+  
   const navigate = useNavigate(); // Para redirecionamento de rotas
 
   const handleTermsChange = (e) => {
@@ -52,7 +64,7 @@ const handleLogin = async (e) => {
     return;
   }
 
-  const loginData = { email, password };
+  const loginData = { email, password, username };
 
   try {
     const response = await fetch('http://localhost:3005/api/users/Entrar', {
@@ -62,17 +74,19 @@ const handleLogin = async (e) => {
     });
 
     const data = await response.json();
+    console.log('API Response:', data); // Debug
 
     if (response.ok) {
       // Armazene os dados do usuário no localStorage
       localStorage.setItem('token', data.token); // Salva o token
       localStorage.setItem('userType', data.user.tipo_usuario); // Tipo de usuário (comum ou admin)
       localStorage.setItem('userId', data.user.id); // ID do usuário
-
-      // Armazenar dados adicionais (exemplo: nome do usuário)
-      localStorage.setItem('userName', data.user.nome); // Salva o nome do usuário
-  
-      setUserName(data.user.nome); // Atualiza o estado com o nome do usuário
+      // Usa `username` se existir, senão usa `email`
+      const userName = data.user.username || data.user.email;
+      localStorage.setItem('userName', userName);
+      setUserName(userName);
+ // Atualiza o estado com o nome do usuário
+      
       setIsLoggedIn(true);
 
 
@@ -104,7 +118,7 @@ const handleLogout = () => {
   const handleRegister = async (e) => {
     e.preventDefault(); // Previne o comportamento padrão do formulário
 
-    if (!name || !email || !password || !confirmPassword) {
+    if (!username || !email || !password || !confirmPassword) {
       setErrorMessage('Por favor, preencha todos os campos.');
       return;
     }
@@ -119,7 +133,7 @@ const handleLogout = () => {
       return;
     }
 
-    const registerData = { name, email, password };
+    const registerData = { username, email, password };
 
     try {
       const response = await fetch('http://localhost:3005/api/users', {
@@ -142,11 +156,13 @@ const handleLogout = () => {
       setErrorMessage('Erro de conexão. Tente novamente mais tarde.');
     }
   };
+
+  
   return (
     <div className="container">
 {isLoggedIn ? (
         <div className="logged_in_area">
-          <p>Bem-vindo, {userName}!</p>
+              <p>Bem-vindo, {userName || 'Usuário'}!</p>
           <button onClick={handleLogout}>Logout</button>
         </div>
       ) : (

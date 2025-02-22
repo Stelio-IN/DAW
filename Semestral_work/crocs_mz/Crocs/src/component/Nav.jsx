@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import "../assets/style/menu.css";
 import LogoCrocs from "../assets/img/crocs_logo.webp";
@@ -15,15 +16,38 @@ const Navbar = () => {
   const [cartItemCount, setCartItemCount] = useState(0);
   const [userName, setUserName] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
-    if (storedName) {
+    const token = localStorage.getItem("token");
+    if (storedName && token) {
       setUserName(storedName);
+      setIsLoggedIn(true);
     }
+
+    
   }, []);
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserName(localStorage.getItem("userName"));
+      setIsLoggedIn(!!localStorage.getItem("token"));
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setUserName(null);
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
 
   // Atualiza a contagem do carrinho com base no localStorage
   useEffect(() => {
@@ -296,9 +320,16 @@ const Navbar = () => {
 
 
         <div className="Componentes">
-          <Link to="/login">
-            <input type="button" className="btn_login" value="Login" />
-          </Link>
+        {isLoggedIn ? (
+        <>
+          <span>{userName}!</span>
+          <button className="btn_logout" onClick={handleLogout}>Logout</button>
+        </>
+      ) : (
+        <Link to="/login">
+          <input type="button" className="btn_login" value="Login" />
+        </Link>
+      )}
          
           <Link to="/favoritos">
             <FaHeart
