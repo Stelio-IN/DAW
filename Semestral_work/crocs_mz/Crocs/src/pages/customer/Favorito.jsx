@@ -1,5 +1,5 @@
 import React from "react";
-import { useFavorites } from "../context/FavoritesContext.jsx";
+import { useFavorites } from "../../context/FavoritesContext.jsx";
 import '../assets/style/favorito.css'
 const Favoritos = () => {
   const { favorites, toggleFavorite } = useFavorites();

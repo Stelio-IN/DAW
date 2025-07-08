@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../assets/style/about.css';
 import '../assets/style/detalhesProduto.css';
-import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
+import { useFavorites } from "../../context/FavoritesContext"; // Importa o contexto
 
 import crocs from '../assets/img/sap1.webp';
 import crocs1 from '../assets/img/sap2.webp';

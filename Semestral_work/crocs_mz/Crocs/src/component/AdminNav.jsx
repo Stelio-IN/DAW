@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LayoutDashboard, Layers, Package, Palette, Menu } from 'lucide-react';
-import '../assets/style/admindashboard.css';
+import '../assets/style/adminMenu.css';// This should style the sidebar
 
-const AdminNavigation = () => {
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+const AdminNav = () => {
+  const [collapsed, setCollapsed] = useState(false);
 
-  const menuItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', path: '/admin/dashboard' },
-    { id: 'category', icon: Layers, label: 'Categoria', path: '/admin/categoria' },
-    { id: 'product', icon: Package, label: 'Produto', path: '/admin/produto' },
-    { id: 'productColor', icon: Palette, label: 'Produto Cor', path: '/admin/produto-color' },
+  const items = [
+    { label: 'Dashboard', path: 'dashboard', icon: LayoutDashboard },
+    { label: 'Categoria', path: 'categoria', icon: Layers },
+    { label: 'Produto', path: 'produto', icon: Package },
+    { label: 'Produto Cor', path: 'produto-color', icon: Palette },
   ];
 
   return (
-    <div className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+    <div className={`admin-sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
-        <div className="logo">Admin</div>
-        <button className="toggle-btn" onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}>
+        <span>Admin</span>
+        <button onClick={() => setCollapsed(!collapsed)} className="toggle-btn">
           <Menu size={20} />
         </button>
       </div>
       <nav>
-        {menuItems.map((item) => (
-          <Link key={item.id} to={item.path} className="menu-item">
-            <item.icon size={20} className="icon" />
-            {!isSidebarCollapsed && <span>{item.label}</span>}
+        {items.map(({ path, label, icon: Icon }) => (
+          <Link to={path} key={path} className="menu-link">
+            <Icon size={20} />
+            {!collapsed && <span>{label}</span>}
           </Link>
         ))}
       </nav>
@@ -33,4 +33,4 @@ const AdminNavigation = () => {
   );
 };
 
-export default AdminNavigation;
+export default AdminNav;

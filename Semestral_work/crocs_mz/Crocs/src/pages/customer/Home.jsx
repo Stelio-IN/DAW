@@ -19,7 +19,7 @@ import template3 from "../assets/img/template3.webp";
 import template4 from "../assets/img/template6.webp";
 import template5 from "../assets/img/template7.webp";
 //import crocs1 from '../assets/img/imgTeste.PNG';
-import { useFavorites } from "../context/FavoritesContext"; // Importa o contexto
+import { useFavorites } from "../../context/FavoritesContext"; // Importa o contexto
 const Home = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();

@@ -1,31 +1,32 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import './app.css'; 
-import { FavoritesProvider } from "./context/FavoritesContext.jsx";
+import './src/index.css'; 
+import { FavoritesProvider } from "./src/context/FavoritesContext.jsx";
 
 // Componentes gerais
-import Footer from './component/Footer'; 
-import Nav from './component/Nav'; 
-import Carrinho from './component/Carrinho';
-import Home from './pages/Home'; 
-import Login from './pages/Login.jsx'; 
-import SobreNos from './pages/About'; 
-import Loja from './pages/Loja'; 
-import Detalhes from './pages/DetalhesProduto'; 
-import Pesquisa from './pages/ProdutoDetalhado'; 
-import Pagamento from './component/Pay'; 
-import Favorito from './pages/Favorito'; 
-import Historico from './pages/HistoricoCompras.jsx'; 
+import Footer from './src/component/Footer.jsx'; 
+import Nav from './src/component/Nav.jsx'; 
+import AdminLayout from './src/component/AdminLayout.jsx'; 
+import Carrinho from './src/pages/customer/Carrinho.jsx';
+import Home from './src/pages/customer/Home.jsx'; 
+import Login from './src/pages/customer/Login.jsx'; 
+import SobreNos from './src/pages/customer/About.jsx'; 
+import Loja from './src/pages/customer/Loja.jsx'; 
+import Detalhes from './src/pages/customer/DetalhesProduto.jsx'; 
+import Pesquisa from './src/pages/customer/ProdutoDetalhado.jsx'; 
+import Pagamento from './src/pages/customer/Pay.jsx'; 
+import Favorito from './src/pages/customer/Favorito.jsx'; 
+import Historico from './src/pages/customer/HistoricoCompras.jsx'; 
 //import Detalhes from './pages/Produto'; 
 
 
 // Componentes para Admin
-import AdminNav from './component/AdminNav';
-import AdminCategoria from './pages/AdminCategoria';
-import AdminColorProduto from './pages/AdminColorProduto';
-import AdminDashBoard from './pages/AdminDashBoard';
-import AdminImagemProduto from './pages/AdminImagemProduto';
-import AdminProduto from './pages/AdminProduto';
+import AdminNav from './src/component/AdminNav.jsx';
+import AdminCategoria from './src/pages/admin/AdminCategoria.jsx';
+import AdminColorProduto from './src/pages/admin/AdminColorProduto.jsx';
+import AdminDashBoard from './src/pages/admin/AdminDashBoard.jsx';
+import AdminImagemProduto from './src/pages/admin/AdminImagemProduto.jsx';
+import AdminProduto from './src/pages/admin/AdminProduto.jsx';
 
 
 
@@ -36,13 +37,13 @@ function MainApp() {
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <div className="App" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="App">
       {/* Renderiza Nav e Footer apenas se não estiver em uma rota Admin */}
       {!isAdminRoute && <Nav />}
 
       <div style={{ display: 'flex', flexGrow: 1 }}>
         {/* Renderiza AdminNav apenas para rotas de Admin */}
-        {isAdminRoute && <AdminNav />}
+      
 
         <main style={{ flexGrow: 1 }}>
           <Routes> 
@@ -61,11 +62,14 @@ function MainApp() {
            
 
             {/* Rotas específicas para admin */}
-            <Route path="/admin/dashboard" element={<AdminDashBoard />} />
-            <Route path="/admin/categoria" element={<AdminCategoria />} />
-            <Route path="/admin/produto" element={<AdminProduto />} />
-            <Route path="/admin/produto-image" element={<AdminImagemProduto />} />
-            <Route path="/admin/produto-color" element={<AdminColorProduto />} />
+
+          <Route path="/admin" element={<AdminLayout />} >
+            <Route path="dashboard" element={<AdminDashBoard />} />
+            <Route path="categoria" element={<AdminCategoria />} />
+            <Route path="produto" element={<AdminProduto />} />
+            <Route path="produto-image" element={<AdminImagemProduto />} />
+            <Route path="produto-color" element={<AdminColorProduto />} />
+          </Route>
           </Routes>
         </main>
       </div>

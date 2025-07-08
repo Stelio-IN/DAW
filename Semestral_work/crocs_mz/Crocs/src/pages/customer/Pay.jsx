@@ -5,7 +5,7 @@ import paypal from "../assets/img/paypal-logo.png";
 import cartao from "../assets/img/card.svg";
 import mpesa from "../assets/img/mpesa.png";
 import emola from "../assets/img/emola.png";
-import Timeline from "../component/TimeLine";
+import Timeline from "../../component/TimeLine";
 import PayPalButton from '../component/Paypal';
 
 const Pay = () => {

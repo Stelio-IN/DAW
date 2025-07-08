@@ -1,0 +1,18 @@
+.menu-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  color: #64b5f6; /* Light Blue */
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.menu-link:hover {
+  background-color: #2f2f44;
+  border-radius: 8px;
+  color: #90caf9; /* Lighter on hover */
+}
+.menu-link svg {
+  color: #64b5f6; /* Same as label */
+}

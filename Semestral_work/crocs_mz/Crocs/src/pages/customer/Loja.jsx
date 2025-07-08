@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import "../assets/style/loja.css";
 import { FiFilter, FiHeart } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
-import { useFavorites } from "../context/FavoritesContext";
+import { useFavorites } from "../../context/FavoritesContext";
 function Loja() {
   const [activeFilter, setActiveFilter] = useState(null);
 
