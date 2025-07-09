@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import '../assets/style/about.css';
-import '../assets/style/detalhesProduto.css';
+import '../../assets/style/about.css';
+import '../../assets/style/detalhesProduto.css';
 import { useFavorites } from "../../context/FavoritesContext"; // Importa o contexto
 
-import crocs from '../assets/img/sap1.webp';
-import crocs1 from '../assets/img/sap2.webp';
-import crocs2 from '../assets/img/sap3.webp';
-import crocs3 from '../assets/img/sap4.webp';
-import crocs4 from '../assets/img/sap5.webp';
+import crocs from '../../assets/img/sap1.webp';
+import crocs1 from '../../assets/img/sap2.webp';
+import crocs2 from '../../assets/img/sap3.webp';
+import crocs3 from '../../assets/img/sap4.webp';
+import crocs4 from '../../assets/img/sap5.webp';
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
   const [product, setProduct] = useState([null]);

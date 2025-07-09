@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
-import "../assets/style/loja.css";
+import "../../assets/style/loja.css";
 import { FiFilter, FiHeart } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import { useFavorites } from "../../context/FavoritesContext";

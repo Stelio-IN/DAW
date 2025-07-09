@@ -1,0 +1,132 @@
+.admin-dashboard {
+  min-height: 100vh;
+  background-color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  padding-top: 4rem;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.admin-container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+/* KPI Cards */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kpi-icon {
+  padding: 8px;
+  border-radius: 8px;
+  background-color: rgba(78, 245, 95, 0.2); /* default color */
+  color: #4ef55f;
+}
+
+.kpi-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-title {
+  font-size: 14px;
+  color: #3d4b3eaa;
+}
+
+.kpi-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3d4b3e;
+}
+
+/* Chart cards */
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(61, 75, 62, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.chart-title {
+  font-weight: 600;
+  color: #3d4b3e;
+  margin-bottom: 16px;
+}
+
+/* Tabela */
+.table-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(61, 75, 62, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.table-title {
+  font-weight: 600;
+  font-size: 20px;
+  margin-bottom: 24px;
+  color: #3d4b3e;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+
+thead {
+  background-color: #3d4b3e;
+  color: white;
+  text-transform: uppercase;
+}
+
+th, td {
+  padding: 16px;
+  text-align: left;
+  font-size: 14px;
+}
+
+tbody tr:nth-child(even) {
+  background-color: rgba(61, 75, 62, 0.05);
+}
+
+tbody tr:hover {
+  background-color: rgba(78, 245, 95, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+td {
+  color: #3d4b3e;
+}
+
+td:nth-child(2), td:nth-child(3) {
+  color: #3d4b3ebb;
+}

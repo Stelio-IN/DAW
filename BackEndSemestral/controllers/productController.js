@@ -197,6 +197,74 @@ ORDER BY p.order_id;  -- Ordena pelos order_id
   }
 };
 
+const ProductHistoryByOrderId = async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const result = await db.sequelize.query(
+      `
+      SELECT 
+        p.order_id, 
+        p.payer_name, 
+        p.created_at, 
+
+        c.nome_produto, 
+        c.quantidade, 
+        c.preco_unitario, 
+        c.preco_total,
+
+        pr.product_id,
+        pr.description,
+        pr.price,
+        pr.gender_id,
+
+        g.name AS gender_name,
+
+        pc.product_color_id,
+        col.name AS color_name,
+        col.hex_code,
+        pc.stock_quantity,
+
+        MAX(pi.image_url) AS primary_image_url
+      
+      FROM paymentos p
+      INNER JOIN compras c ON c.pagamento_id = p.id
+      INNER JOIN products pr ON c.produto_id = pr.product_id
+      LEFT JOIN genders g ON pr.gender_id = g.gender_id
+      LEFT JOIN productcolors pc ON pr.product_id = pc.product_id
+      LEFT JOIN colors col ON pc.color_id = col.color_id
+      LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      
+      WHERE p.order_id = :orderId
+
+      GROUP BY 
+        p.order_id, p.payer_name, p.created_at,
+        c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total,
+        pr.product_id, pr.description, pr.price, pr.gender_id,
+        g.name,
+        pc.product_color_id, pc.stock_quantity,
+        col.name, col.hex_code
+
+      ORDER BY c.nome_produto
+      `,
+      {
+        replacements: { orderId },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Nenhum produto encontrado para esse pedido.' });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error('Erro ao buscar os produtos do pedido:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 // Controller para obter produtos por categoria
 const getProductsByCategories = async (req, res) => {
   const { categoryIds } = req.params;
@@ -512,5 +580,6 @@ export default {
     getProductsByColor, 
     getProductsByPrice,
     getProductsBySize, 
-    getProductsByGender 
+    getProductsByGender,
+    ProductHistoryByOrderId 
 };

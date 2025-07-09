@@ -17,16 +17,20 @@ import Pesquisa from './src/pages/customer/ProdutoDetalhado.jsx';
 import Pagamento from './src/pages/customer/Pay.jsx'; 
 import Favorito from './src/pages/customer/Favorito.jsx'; 
 import Historico from './src/pages/customer/HistoricoCompras.jsx'; 
+
 //import Detalhes from './pages/Produto'; 
 
 
 // Componentes para Admin
 import AdminNav from './src/component/AdminNav.jsx';
-import AdminCategoria from './src/pages/admin/AdminCategoria.jsx';
-import AdminColorProduto from './src/pages/admin/AdminColorProduto.jsx';
+import AdminDetalheProduto from './src/pages/admin/AdminDetalheProduto.jsx';
+import AdminPedidos from './src/pages/admin/AdminPedidos.jsx';
 import AdminDashBoard from './src/pages/admin/AdminDashBoard.jsx';
-import AdminImagemProduto from './src/pages/admin/AdminImagemProduto.jsx';
-import AdminProduto from './src/pages/admin/AdminProduto.jsx';
+import AdminDetalhePedido from './src/pages/admin/AdminDetalhePedido.jsx';
+import AdminProduto from './src/pages/admin/AdminProdutos.jsx';
+import AdminUsuarios from './src/pages/admin/AdminUsuarios.jsx';
+import AdminDetalheUsuario from './src/pages/admin/AdminDetalheUsuario.jsx';
+import AdminAdicionarProduto from './src/pages/admin/AdminAdicionarProduto.jsx'; 
 
 
 
@@ -65,10 +69,13 @@ function MainApp() {
 
           <Route path="/admin" element={<AdminLayout />} >
             <Route path="dashboard" element={<AdminDashBoard />} />
-            <Route path="categoria" element={<AdminCategoria />} />
-            <Route path="produto" element={<AdminProduto />} />
-            <Route path="produto-image" element={<AdminImagemProduto />} />
-            <Route path="produto-color" element={<AdminColorProduto />} />
+            <Route path="Pedidos" element={<AdminPedidos />} />
+            <Route path="pedido/detalhe/:IdPedido?" element={<AdminDetalhePedido />} />
+            <Route path="produtos" element={<AdminProduto />} />
+            <Route path="produto/adicionar" element={< AdminAdicionarProduto/>} />
+            <Route path="produto/detalhe" element={<AdminDetalheProduto />} />
+            <Route path="usuarios" element={<AdminUsuarios />} />
+            <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />
           </Route>
           </Routes>
         </main>

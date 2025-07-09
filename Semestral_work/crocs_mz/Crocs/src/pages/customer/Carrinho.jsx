@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../assets/style/carrinho.css';
+import '../../assets/style/carrinho.css';
 import { FiArrowDown, FiMinus, FiPlus } from 'react-icons/fi';
 import {  } from 'react-icons/fa';
 function Carrinho() {

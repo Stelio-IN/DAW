@@ -1,0 +1,210 @@
+.add-product-container {
+  display: flex;
+  gap: 40px;
+  padding: 30px;
+  background-color: #f7f9fc;
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+  z-index: 0;
+}
+
+.upload-section {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  background-color: green;
+  min-width: 0;
+}
+
+.form-section {
+  margin-top: 250px;
+  flex: 1; /* largura igual, sem encolher abaixo disso */
+  min-width: 0;
+  position: relative;
+  z-index: 2;
+  background-color: yellow;
+}
+
+.upload-section h2,
+.form-section h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.dropzone {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  background-color: #fff;
+  padding: 40px;
+  width: 400px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.dropzone input[type='file'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+  width: 400px;
+}
+
+.dropzone span {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+
+.upload-icon {
+  color: #1a73e8;
+  margin-bottom: 10px;
+}
+
+.uploaded-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.file-item {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.file-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-name img {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background-color: #e0e0e0;
+  margin: 0 10px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-bar div {
+  height: 100%;
+  background-color: #4caf50;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #e53935;
+}
+
+.form-section label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 15px;
+  display: block;
+  color: #333;
+}
+
+.form-section input,
+.form-section select,
+.form-section textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+  font-size: 14px;
+  background-color: white;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tag {
+  background-color: #f0f0f0;
+  color: #333;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.publish-btn {
+  background-color: #1a73e8;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  margin-top: 20px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.publish-btn:hover {
+  background-color: #1558b0;
+}
+
+/* 🔽 Estilos para nova categoria */
+.categoria-inserir {
+  margin-top: 15px;
+}
+
+.categoria-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.categoria-form input {
+  flex: 1;
+}
+
+.categoria-form button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.categoria-form button:hover {
+  background-color: #388e3c;
+}
+
+.categorias-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.categoria-tag {
+  background-color: #e0f2f1;
+  color: #00796b;
+  padding: 5px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+}

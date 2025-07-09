@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 //import { useNavigate } from "react-router-dom";
- import '../assets/style/historico.css'
+ import '../../assets/style/historico.css'
 const HistoricoCompras= () => {
 
     const [products, setProducts] = useState([]);

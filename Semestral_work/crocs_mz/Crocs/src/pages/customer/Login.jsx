@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../assets/style/login.css';
+import '../../assets/style/login.css';
 const LoginRegister = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);

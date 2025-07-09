@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import "../assets/style/pagamento.css";
-import "../assets/style/loja.css";
-import paypal from "../assets/img/paypal-logo.png";
-import cartao from "../assets/img/card.svg";
-import mpesa from "../assets/img/mpesa.png";
-import emola from "../assets/img/emola.png";
+import "../../assets/style/pagamento.css";
+import "../../assets/style/loja.css";
+import paypal from "../../assets/img/paypal-logo.png";
+import cartao from "../../assets/img/card.svg";
+import mpesa from "../../assets/img/mpesa.png";
+import emola from "../../assets/img/emola.png";
 import Timeline from "../../component/TimeLine";
-import PayPalButton from '../component/Paypal';
+import PayPalButton from '../customer/Paypal';
 
 const Pay = () => {
   //const [selectedSize, setSelectedSize] = useState(null);
