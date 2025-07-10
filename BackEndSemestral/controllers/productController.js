@@ -72,6 +72,9 @@ const products = async (req, res) => {
         p.product_id, 
         p.name AS product_name, 
         p.price, 
+        p.description,
+        p.stock_quantity,
+        g.name,
         (
           SELECT COUNT(DISTINCT pc_inner.color_id)
           FROM ProductColors pc_inner
@@ -84,7 +87,7 @@ const products = async (req, res) => {
           )
         ) AS colors,
         MAX(pi.image_url) AS primary_image_url
-      FROM Products p
+      FROM Products p Inner JOIN categories g on g.category_id = p.category_id
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
       LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
@@ -111,55 +114,63 @@ const products = async (req, res) => {
 
 
 const getProductsEspecific = async (req, res) => {
-  const id = req.params.id;  // Acessando o parâmetro da URL
-  
+  const id = req.params.id;
+
   try {
-    // Consulta SQL adaptada para pegar um único produto com cores e imagens
     const product = await db.sequelize.query(`
       SELECT 
         p.product_id, 
         p.name AS product_name, 
-        p.price, 
+        p.price,
+        g.name AS category_name, 
         p.description,
-        pc.stock_quantity,
-        MAX(pi.image_url) AS primary_image_url,  -- A imagem principal
-        JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'name', c.name
+        p.stock_quantity AS estoque,
+        MAX(pi.image_url) AS primary_image_url,
+        (
+          SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'name', c.name,
+              'hex_code', c.hex_code,
+              'stock_quantity', pc.stock_quantity
+            )
           )
-        ) AS colors  -- Agrupa as cores em um array
+          FROM ProductColors pc
+          JOIN Colors c ON pc.color_id = c.color_id
+          WHERE pc.product_id = p.product_id
+        ) AS colors
       FROM Products p
+      INNER JOIN categories g ON g.category_id = p.category_id
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
-      LEFT JOIN Colors c ON pc.color_id = c.color_id
       LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE p.product_id = :id  -- Filtra pelo product_id recebido como parâmetro
-      GROUP BY p.product_id  -- Agrupa pelo product_id para garantir um único resultado
+      WHERE p.product_id = :id
+      GROUP BY p.product_id
     `, {
-      replacements: { id },  // Passa o id dinamicamente
-      type: db.sequelize.QueryTypes.SELECT,  // Tipo de consulta
+      replacements: { id },
+      type: db.sequelize.QueryTypes.SELECT,
     });
 
     if (product.length === 0) {
       return res.status(404).json({ error: 'Produto não encontrado' });
     }
 
-    // Organiza os dados para enviar de forma mais clara
     const productDetails = {
       product_id: product[0].product_id,
       name: product[0].product_name,
       price: product[0].price,
+      stock_quantity: product[0].estoque,
       description: product[0].description,
-      stock_quantity: product[0].stock_quantity,
+      category_name: product[0].category_name,
       primary_image_url: product[0].primary_image_url,
-      colors: product[0].colors || [],  // Se a consulta já retornar um array, não é necessário JSON.parse
+       colors: product[0].colors || [],
     };
 
-    res.status(200).json(productDetails);  // Retorna o produto com as cores e imagem
+    res.status(200).json(productDetails);
   } catch (error) {
     console.error('Erro ao buscar produto específico:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const ProductHistory = async (req, res) => {
   try {
@@ -561,6 +572,184 @@ WHERE ps.size_id IN (:sizeIds)
   }
 };
 
+// Faturamento Mensal
+const getFaturamentoMesAtual = async (req, res) => {
+  try {
+    const [faturamento] = await db.sequelize.query(`
+      SELECT 
+        SUM(c.preco_total) AS total_faturado
+      FROM paymentos p
+      JOIN compras c ON c.pagamento_id = p.id
+      WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE())
+        AND YEAR(p.created_at) = YEAR(CURRENT_DATE());
+    `, {
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    res.status(200).json(faturamento || { total_faturado: 0 });
+  } catch (error) {
+    console.error('Erro ao calcular faturamento do mês atual:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Pedidos Mensal
+const getTotalPedidosMensais = async (req, res) => {
+  try {
+    const pedidos = await db.sequelize.query(`
+      SELECT COUNT(*) AS total_pedidos
+      FROM paymentos
+      WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
+        AND YEAR(created_at) = YEAR(CURRENT_DATE())
+    `, {
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    res.status(200).json(pedidos[0]);
+  } catch (error) {
+    console.error("Erro ao buscar total de pedidos:", error);
+    res.status(500).json({ error: "Erro ao buscar total de pedidos" });
+  }
+};
+
+//Faturamento diario
+const getFaturamentoPorDia = async (req, res) => {
+  try {
+    const resultados = await db.sequelize.query(`
+      SELECT 
+        DATE(p.created_at) AS data,
+        SUM(c.preco_total) AS faturamento_diario
+      FROM paymentos p
+      INNER JOIN compras c ON c.pagamento_id = p.id
+      WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE())
+        AND YEAR(p.created_at) = YEAR(CURRENT_DATE())
+      GROUP BY DATE(p.created_at)
+      ORDER BY DATE(p.created_at)
+    `, {
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    res.status(200).json(resultados);
+  } catch (error) {
+    console.error("Erro ao buscar faturamento diário:", error);
+    res.status(500).json({ error: "Erro ao buscar faturamento diário" });
+  }
+};
+
+// Vendas por Categoria (deve ser eliminada) 
+const getCategoriasMaisVendidas = async (req, res) => {
+  try {
+    const resultado = await db.sequelize.query(`
+      SELECT 
+        cat.name AS category,
+        SUM(c.quantidade) AS total_vendido
+      FROM compras c
+      INNER JOIN products p ON c.produto_id = p.product_id
+      INNER JOIN categories cat ON p.category_id = cat.category_id
+      GROUP BY cat.name
+      ORDER BY total_vendido DESC
+    `, {
+      type: db.sequelize.QueryTypes.SELECT
+    });
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Erro ao buscar categorias mais vendidas:", error);
+    res.status(500).json({ error: "Erro interno ao buscar categorias." });
+  }
+};
+
+// Categorias Vendidas por mes
+ const getCategoriasVendidasPorMes = async (req, res) => {
+  try {
+    const resultado = await db.sequelize.query(`
+      SELECT 
+        DATE_FORMAT(p.created_at, '%Y-%m') AS mes,
+        cat.name AS categoria,
+        SUM(c.quantidade) AS total_vendido
+      FROM compras c
+      INNER JOIN paymentos p ON c.pagamento_id = p.id
+      INNER JOIN products pr ON c.produto_id = pr.product_id
+      INNER JOIN categories cat ON pr.category_id = cat.category_id
+      GROUP BY mes, categoria
+      ORDER BY mes DESC, total_vendido DESC
+    `, {
+      type: db.sequelize.QueryTypes.SELECT
+    });
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Erro ao buscar vendas por categoria/mês:", error);
+    res.status(500).json({ error: "Erro ao gerar gráfico por categoria e mês." });
+  }
+};
+
+// Produtos mais vendidos
+export const getProdutosMaisVendidosPorMes = async (req, res) => {
+  const { mes } = req.query; // Formato: YYYY-MM
+
+  try {
+    const results = await db.sequelize.query(`
+      SELECT 
+        p.product_id,
+        p.name AS nome_produto,
+        SUM(c.quantidade) AS total_vendas,
+        SUM(c.preco_total) AS total_faturado,
+        MAX(pi.image_url) AS imagem_principal
+      FROM compras c
+      INNER JOIN paymentos pay ON c.pagamento_id = pay.id
+      INNER JOIN products p ON c.produto_id = p.product_id
+      LEFT JOIN productcolors pc ON p.product_id = pc.product_id
+      LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      WHERE DATE_FORMAT(pay.created_at, '%Y-%m') = :mes
+      GROUP BY p.product_id, p.name
+      ORDER BY total_faturado DESC;
+    `, {
+      replacements: { mes }, // Ex: '2025-07'
+      type: db.sequelize.QueryTypes.SELECT
+    });
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Erro ao buscar produtos mais vendidos:", error);
+    res.status(500).json({ error: "Erro ao obter ranking de produtos." });
+  }
+};
+
+// Faturamento + Pedido por hora
+// controllers/analyticsController.js
+
+const getpedidosEReceitaPorHora = async (req, res) => {
+  try {
+    const { data } = req.query;
+
+    const dataFiltro = data || new Date().toISOString().split('T')[0]; // ex: "2025-07-10"
+
+    const resultados = await db.sequelize.query(`
+      SELECT 
+        HOUR(p.created_at) AS hora,
+        COUNT(DISTINCT p.id) AS total_pedidos,
+        SUM(c.preco_total) AS total_receita
+      FROM paymentos p
+      JOIN compras c ON c.pagamento_id = p.id
+      WHERE DATE(p.created_at) = :dataFiltro
+      GROUP BY hora
+      ORDER BY hora ASC
+    `, {
+      replacements: { dataFiltro },
+      type: db.sequelize.QueryTypes.SELECT
+    });
+
+    res.status(200).json(resultados);
+  } catch (error) {
+    console.error("Erro ao buscar dados por hora:", error);
+    res.status(500).json({ error: "Erro interno ao processar dados" });
+  }
+};
+
+
+
+
 
 
 
@@ -581,5 +770,12 @@ export default {
     getProductsByPrice,
     getProductsBySize, 
     getProductsByGender,
-    ProductHistoryByOrderId 
+    ProductHistoryByOrderId,
+    getFaturamentoMesAtual,
+    getTotalPedidosMensais,
+    getFaturamentoPorDia,
+    getCategoriasMaisVendidas,
+    getCategoriasVendidasPorMes,
+    getProdutosMaisVendidosPorMes,
+    getpedidosEReceitaPorHora  
 };

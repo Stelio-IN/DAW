@@ -19,6 +19,13 @@ router.get('/pr/byColor/:colorId', productController.getProductsByColor);
 router.get('/pr/byPrice/:min/:max', productController.getProductsByPrice);
 router.get('/pr/bySizes/:sizeIds', productController.getProductsBySize);
 router.get('/pr/byGender/:genderId', productController.getProductsByGender);
+router.get('/faturamento/mensal', productController.getFaturamentoMesAtual);
+router.get('/pedido/mensal', productController.getTotalPedidosMensais);
+router.get('/faturamento/diario', productController.getFaturamentoPorDia);
+router.get('/categorias/mais-vendidas', productController.getCategoriasMaisVendidas);
+router.get('/categorias/mais-vendidas-mensal', productController.getCategoriasVendidasPorMes);
+router.get('/produto/mais-vendidos-mensal', productController.getProdutosMaisVendidosPorMes );
+router.get('/faturamento/por-hora', productController.getpedidosEReceitaPorHora);
 
 
 

@@ -73,7 +73,7 @@ function MainApp() {
             <Route path="pedido/detalhe/:IdPedido?" element={<AdminDetalhePedido />} />
             <Route path="produtos" element={<AdminProduto />} />
             <Route path="produto/adicionar" element={< AdminAdicionarProduto/>} />
-            <Route path="produto/detalhe" element={<AdminDetalheProduto />} />
+            <Route path="produto/detalhe/:IdProduto?" element={<AdminDetalheProduto />} />
             <Route path="usuarios" element={<AdminUsuarios />} />
             <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />
           </Route>
