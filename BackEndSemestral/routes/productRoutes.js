@@ -26,6 +26,9 @@ router.get('/categorias/mais-vendidas', productController.getCategoriasMaisVendi
 router.get('/categorias/mais-vendidas-mensal', productController.getCategoriasVendidasPorMes);
 router.get('/produto/mais-vendidos-mensal', productController.getProdutosMaisVendidosPorMes );
 router.get('/faturamento/por-hora', productController.getpedidosEReceitaPorHora);
+router.get('/estoque/total', productController.estoqueTotal);
+router.get('/estoque/zero', productController.Semestoque);
+router.get('/Produto/SemEstoque', productController.ProdutosSemEstoqueDetalhado);
 
 
 

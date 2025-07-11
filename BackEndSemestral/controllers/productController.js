@@ -685,7 +685,7 @@ const getCategoriasMaisVendidas = async (req, res) => {
 };
 
 // Produtos mais vendidos
-export const getProdutosMaisVendidosPorMes = async (req, res) => {
+const getProdutosMaisVendidosPorMes = async (req, res) => {
   const { mes } = req.query; // Formato: YYYY-MM
 
   try {
@@ -717,8 +717,6 @@ export const getProdutosMaisVendidosPorMes = async (req, res) => {
 };
 
 // Faturamento + Pedido por hora
-// controllers/analyticsController.js
-
 const getpedidosEReceitaPorHora = async (req, res) => {
   try {
     const { data } = req.query;
@@ -747,6 +745,62 @@ const getpedidosEReceitaPorHora = async (req, res) => {
   }
 };
 
+// Estoque total 
+const estoqueTotal = async (req, res) => {
+  try {
+    const [resultado] = await db.sequelize.query(`
+      SELECT SUM(stock_quantity) AS total_estoque FROM ProductColors
+    `);
+
+    res.status(200).json({ totalEstoque: resultado[0].total_estoque });
+  } catch (error) {
+    console.error("Erro ao calcular estoque total:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+// Produtos Sem Estoque 
+const Semestoque = async (req, res) => {
+  try {
+    const [resultado] = await db.sequelize.query(`
+      SELECT COUNT(*) AS sem_estoque FROM ProductColors where stock_quantity = 0
+    `);
+
+    res.status(200).json({ semEstoque: resultado[0].sem_estoque });
+  } catch (error) {
+    console.error("Erro ao calcular produtos sem estoque :", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Produtos (cores) sem estoque
+const ProdutosSemEstoqueDetalhado = async (req, res) => {
+  try {
+    const [resultado] = await db.sequelize.query(`
+      SELECT 
+        p.product_id,
+        p.name AS product_name,
+        p.price,
+        pi.image_url AS primary_image_url,
+        c.name AS color_name,
+        pc.stock_quantity
+      FROM ProductColors pc
+      INNER JOIN Products p ON pc.product_id = p.product_id
+      LEFT JOIN ProductImages pi ON pi.product_color_id = pc.product_color_id AND pi.is_primary = true
+      LEFT JOIN Colors c ON pc.color_id = c.color_id
+      WHERE pc.stock_quantity <= 10
+      ORDER BY p.name
+    `);
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Erro ao buscar produtos sem estoque:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
 
 
 
@@ -763,6 +817,8 @@ export default {
     updateProduct,
     deleteProduct,
     products,
+    estoqueTotal,
+    Semestoque,
     getProductsEspecific,
     ProductHistory,
     getProductsByCategories, 
@@ -777,5 +833,6 @@ export default {
     getCategoriasMaisVendidas,
     getCategoriasVendidasPorMes,
     getProdutosMaisVendidosPorMes,
-    getpedidosEReceitaPorHora  
+    getpedidosEReceitaPorHora,
+    ProdutosSemEstoqueDetalhado  
 };
