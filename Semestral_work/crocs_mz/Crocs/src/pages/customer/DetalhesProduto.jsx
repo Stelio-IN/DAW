@@ -12,6 +12,12 @@ import crocs4 from '../../assets/img/sap5.webp';
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
   const [product, setProduct] = useState([null]);
+  const [corSelecionada, setCorSelecionada] = useState(null);
+const [imagemPrincipal, setImagemPrincipal] = useState(null);
+
+
+
+
   const navigate = useNavigate();
  const { favorites, toggleFavorite } = useFavorites();
   useEffect(() => {
@@ -32,6 +38,23 @@ const ProdutoDetalhado = () => {
     }
   }, [productID]);
 
+  
+useEffect(() => {
+  if (product && product.colors && product.colors.length > 0) {
+    setCorSelecionada(product.colors[0]);
+  }
+}, [product]);
+
+useEffect(() => {
+  if (corSelecionada && corSelecionada.images && corSelecionada.images.length > 0) {
+    // Busca a principal ou a primeira imagem da cor
+    const imagem = corSelecionada.images.find((img) => img.is_primary) || corSelecionada.images[0];
+    setImagemPrincipal(imagem?.image_url);
+  }
+}, [corSelecionada]);
+
+
+
   const addToCart = (product) => {
     const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
     const updatedCart = [...currentCart, product];
@@ -48,19 +71,33 @@ const ProdutoDetalhado = () => {
           <div className="imagem-principal">
             <div key={product.product_id} className='principal'>
               <img
-                src={product.primary_image_url || 'default-image.png'}
+                 src={imagemPrincipal || 'Sem Imagem Principal'}
                 alt={product.name}
               
               />
             </div>
           </div>
-          <div className="opcoes">
-            <img src={crocs} alt="Opção 1" />
-            <img src={crocs1} alt="Opção 1" />
-            <img src={crocs2} alt="Opção 1" />
-            <img src={crocs3} alt="Opção 1" />
-            <img src={crocs4} alt="Opção 1" />
-          </div>
+       <div className="opcoes">
+  {corSelecionada?.images?.map((img, idx) => (
+    <img
+      key={idx}
+      src={img.image_url}
+      alt={`Variação ${idx}`}
+      onClick={() => setImagemPrincipal(img.image_url)}
+      style={{
+        cursor: 'pointer',
+        border: imagemPrincipal === img.image_url ? '2px solid black' : '1px solid transparent',
+        borderRadius: '6px',
+        marginRight: '8px',
+        width: '60px',
+        height: '60px',
+        objectFit: 'cover'
+      }}
+    />
+  ))}
+</div>
+
+
         </div>
           ) : (
             <p>Carregando detalhes do produto...</p>
@@ -71,16 +108,34 @@ const ProdutoDetalhado = () => {
               <div className="informacao-tamanho">
                 <h1>{product.name}</h1>
                
-              <div className="alternativas">
-                <div>
-                  <img src={crocs} alt="Opção 1" />
-                  <img src={crocs} alt="Opção 1" />
-                  <img src={crocs} alt="Opção 1" />
-                  <img src={crocs} alt="Opção 1" />
-                  <img src={crocs} alt="Opção 1" />
-          
-                </div>
-              </div>
+             <div className="alternativas">
+  <div>
+    {product.colors
+  ?.filter((cor) => cor.stock_quantity > 0)
+  .map((cor, idx) => {
+    const imagem = cor.images?.find((img) => img.is_primary) || cor.images?.[0];
+    return (
+      <img
+        key={idx}
+        src={imagem?.image_url || 'default.png'}
+        alt={cor.name}
+        onClick={() => setCorSelecionada(cor)}
+        style={{
+          cursor: 'pointer',
+          border: corSelecionada?.product_color_id === cor.product_color_id ? '2px solid black' : 'none',
+          borderRadius: '6px',
+          marginRight: '8px',
+          width: '60px',
+          height: '60px',
+          objectFit: 'cover'
+        }}
+      />
+    );
+  })}
+
+  </div>
+</div>
+
               <p style={{fontWeight: 'bold', fontSize: '20pt'}}>  {product.price} Mzn</p>
               <p style={{ maxWidth: '600px', fontStyle: 'italic' }}>
                   {product.description}

@@ -18,7 +18,7 @@ const AdminNav = () => {
   const toggleExpand = (label) => {
     setExpanded((prev) => ({ ...prev, [label]: !prev[label] }));
   };
-
+ 
   const items = [
     {
       label: 'Dashboard', path: 'dashboard', icon: LayoutDashboard,
@@ -46,6 +46,14 @@ const AdminNav = () => {
       children: [
         { label: 'Todos os usuários', path: 'usuarios' },
         { label: 'Detalhe do Usuario', path: 'usuario/detalhe' },
+      ],
+    },
+    {
+      label: 'Gestão de Estoque',
+      icon: Palette,
+      children: [
+        { label: 'Visão Geral', path: 'produto/estoque-visao-geral' },
+        { label: 'Estoque do Produto', path: 'produto/estoque-produto' },
       ],
     },
   ];

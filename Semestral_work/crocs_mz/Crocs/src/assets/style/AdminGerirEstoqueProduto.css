@@ -1,0 +1,252 @@
+.produto-detalhe-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.produto-detalhe {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.produto-img {
+  max-width: 200px;
+  border-radius: 12px;
+}
+
+.produto-info h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.produto-info p {
+  margin: 4px 0;
+}
+
+.cores-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cores-table th,
+.cores-table td {
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.cores-table input[type="number"] {
+  width: 80px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.cores-table button {
+  padding: 6px 12px;
+  border: none;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.cores-table button:hover {
+  background-color: #1d4ed8;
+}
+.produto-pesquisa-container {
+  max-width: 960px;
+  margin: 40px auto;
+  padding: 24px;
+  background: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.search-section {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.search-section input {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.search-section button {
+  padding: 12px 20px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease;
+}
+
+.search-section button:hover {
+  background-color: #1d4ed8;
+}
+
+.produto-detalhes {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.produto-detalhes img {
+  width: 180px;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.info {
+  flex: 1;
+}
+
+.info h3 {
+  margin-top: 0;
+  font-size: 24px;
+}
+
+.info p {
+  margin: 6px 0;
+  font-size: 16px;
+}
+
+.info h4 {
+  margin-top: 24px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+table input[type="number"] {
+  width: 80px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+table input[type="file"] {
+  border: none;
+  font-size: 14px;
+}
+
+table button {
+  padding: 6px 12px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.3s ease;
+}
+
+table button:hover {
+  background-color: #1d4ed8;
+}
+
+.cor-box {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  vertical-align: middle;
+}
+
+td img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 6px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+td img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
+}
+
+/* Upload button and input inline */
+td > input[type="file"] {
+  display: block;
+  margin: 0 auto 6px auto;
+  cursor: pointer;
+}
+
+td > button {
+  width: 100%;
+  font-size: 14px;
+}
+
+/* Responsividade simples */
+@media (max-width: 768px) {
+  .produto-detalhes {
+    flex-direction: column;
+  }
+
+  table th, table td {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  td img {
+    width: 40px;
+    height: 40px;
+  }
+
+  table input[type="number"] {
+    width: 60px;
+  }
+}

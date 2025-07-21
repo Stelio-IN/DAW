@@ -63,10 +63,42 @@ const deleteProductImage = async (req, res) => {
   }
 };
 
+// Define a imagem como principal 
+const setPrimaryImage = async (req, res) => {
+  const { imageId } = req.params;
+
+  try {
+    // 1. Buscar imagem pelo ID
+    const selectedImage = await ProductImage.findByPk(imageId);
+    if (!selectedImage) {
+      return res.status(404).json({ error: 'Imagem não encontrada' });
+    }
+
+    const { product_color_id } = selectedImage;
+
+    // 2. Resetar todas as imagens dessa cor para `is_primary = false`
+    await ProductImage.update(
+      { is_primary: false },
+      { where: { product_color_id } }
+    );
+
+    // 3. Definir imagem selecionada como `is_primary = true`
+    await selectedImage.update({ is_primary: true });
+
+    res.json({ message: 'Imagem definida como principal com sucesso' });
+  } catch (error) {
+    console.error('Erro ao definir imagem principal:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
 export default {
     createProductImage,
     getAllProductImages,
     getProductImageById,
     updateProductImage,
-    deleteProductImage
+    deleteProductImage,
+      setPrimaryImage
 }

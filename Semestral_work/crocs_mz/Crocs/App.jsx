@@ -31,6 +31,8 @@ import AdminProduto from './src/pages/admin/AdminProdutos.jsx';
 import AdminUsuarios from './src/pages/admin/AdminUsuarios.jsx';
 import AdminDetalheUsuario from './src/pages/admin/AdminDetalheUsuario.jsx';
 import AdminAdicionarProduto from './src/pages/admin/AdminAdicionarProduto.jsx'; 
+import AdminGestaoEstoque from './src/pages/admin/AdminGestaoEstoque.jsx'; 
+import AdminGerirEstoqueProduto from './src/pages/admin/AdminGerirEstoqueProduto.jsx'; 
 
 
 
@@ -76,6 +78,8 @@ function MainApp() {
             <Route path="produto/detalhe/:IdProduto?" element={<AdminDetalheProduto />} />
             <Route path="usuarios" element={<AdminUsuarios />} />
             <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />
+            <Route path="produto/estoque-visao-geral" element={<AdminGestaoEstoque />} />
+            <Route path="produto/estoque-produto" element={<AdminGerirEstoqueProduto />} />
           </Route>
           </Routes>
         </main>

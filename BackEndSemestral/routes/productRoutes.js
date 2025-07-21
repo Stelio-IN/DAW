@@ -29,6 +29,8 @@ router.get('/faturamento/por-hora', productController.getpedidosEReceitaPorHora)
 router.get('/estoque/total', productController.estoqueTotal);
 router.get('/estoque/zero', productController.Semestoque);
 router.get('/Produto/SemEstoque', productController.ProdutosSemEstoqueDetalhado);
+router.get('/Produto/estoque-por-cor', productController.ProdutosComEstoquePorCor);
+router.get('/Produto/buscar-nome', productController.getProductByName);
 
 
 

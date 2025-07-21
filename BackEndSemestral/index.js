@@ -20,6 +20,8 @@ import routerSizeType from './routes/sizeTypeRoutes.js';
 
 import paymentRoutes from './routes/paymentRoutes.js';
 
+import imageUploadRoutes from './routes/imageUpload.js';
+
 
 
 const app = express();
@@ -48,7 +50,7 @@ app.use('/api/gender', routerGender);
 app.use('/api/sizes', routerSize);
 app.use('/api/sizesType', routerSizeType);
 app.use('/api', paymentRoutes);
-
+app.use('/api/images', imageUploadRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {

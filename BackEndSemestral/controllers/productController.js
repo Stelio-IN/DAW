@@ -117,7 +117,7 @@ const getProductsEspecific = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const product = await db.sequelize.query(`
+    const [produto] = await db.sequelize.query(`
       SELECT 
         p.product_id, 
         p.name AS product_name, 
@@ -127,17 +127,30 @@ const getProductsEspecific = async (req, res) => {
         p.stock_quantity AS estoque,
         MAX(pi.image_url) AS primary_image_url,
         (
-          SELECT JSON_ARRAYAGG(
-            JSON_OBJECT(
-              'name', c.name,
-              'hex_code', c.hex_code,
-              'stock_quantity', pc.stock_quantity
-            )
+  SELECT JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'product_color_id', pc.product_color_id,
+      'name', c.name,
+      'hex_code', c.hex_code,
+      'stock_quantity', pc.stock_quantity,
+      'images', (
+        SELECT JSON_ARRAYAGG(
+          JSON_OBJECT(
+            'image_id', pi.image_id,
+            'image_url', pi.image_url,
+            'is_primary', pi.is_primary
           )
-          FROM ProductColors pc
-          JOIN Colors c ON pc.color_id = c.color_id
-          WHERE pc.product_id = p.product_id
-        ) AS colors
+        )
+        FROM ProductImages pi
+        WHERE pi.product_color_id = pc.product_color_id
+      )
+    )
+  )
+  FROM ProductColors pc
+  JOIN Colors c ON pc.color_id = c.color_id
+  WHERE pc.product_id = p.product_id
+) AS colors
+
       FROM Products p
       INNER JOIN categories g ON g.category_id = p.category_id
       LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
@@ -149,27 +162,89 @@ const getProductsEspecific = async (req, res) => {
       type: db.sequelize.QueryTypes.SELECT,
     });
 
-    if (product.length === 0) {
+    if (!produto) {
       return res.status(404).json({ error: 'Produto não encontrado' });
     }
 
-    const productDetails = {
-      product_id: product[0].product_id,
-      name: product[0].product_name,
-      price: product[0].price,
-      stock_quantity: product[0].estoque,
-      description: product[0].description,
-      category_name: product[0].category_name,
-      primary_image_url: product[0].primary_image_url,
-       colors: product[0].colors || [],
-    };
-
-    res.status(200).json(productDetails);
+    res.json({
+      product_id: produto.product_id,
+      name: produto.product_name,
+      price: produto.price,
+      stock_quantity: produto.estoque,
+      description: produto.description,
+      category_name: produto.category_name,
+      primary_image_url: produto.primary_image_url,
+      colors: produto.colors || [],
+    });
   } catch (error) {
     console.error('Erro ao buscar produto específico:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
+const getProductByName = async (req, res) => {
+  const { nome } = req.query;
+
+  try {
+    const [produto] = await db.sequelize.query(`
+      SELECT 
+        p.product_id, 
+        p.name AS product_name, 
+        p.price,
+        g.name AS category_name, 
+        p.description,
+        p.stock_quantity AS estoque,
+        MAX(pi.image_url) AS primary_image_url,
+        (
+  SELECT JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'product_color_id', pc.product_color_id,
+      'name', c.name,
+      'hex_code', c.hex_code,
+      'stock_quantity', pc.stock_quantity,
+      'images', (
+        SELECT JSON_ARRAYAGG(pi.image_url)
+        FROM ProductImages pi
+        WHERE pi.product_color_id = pc.product_color_id
+      )
+    )
+  )
+  FROM ProductColors pc
+  JOIN Colors c ON pc.color_id = c.color_id
+  WHERE pc.product_id = p.product_id
+) AS colors
+
+      FROM Products p
+      INNER JOIN categories g ON g.category_id = p.category_id
+      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
+      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      WHERE p.name LIKE :nome
+      GROUP BY p.product_id
+      LIMIT 1;
+    `, {
+      replacements: { nome: `%${nome}%` },
+      type: db.sequelize.QueryTypes.SELECT
+    });
+
+    if (!produto) return res.status(404).json({ error: "Produto não encontrado" });
+
+    res.json({
+      product_id: produto.product_id,
+      name: produto.product_name,
+      price: produto.price,
+      description: produto.description,
+      category_name: produto.category_name,
+      stock_quantity: produto.estoque,
+      primary_image_url: produto.primary_image_url,
+      colors: produto.colors,
+    });
+  } catch (err) {
+    console.error("Erro ao buscar produto:", err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 
 
 const ProductHistory = async (req, res) => {
@@ -798,6 +873,34 @@ const ProdutosSemEstoqueDetalhado = async (req, res) => {
   }
 };
 
+// Estoque por produto cor
+const ProdutosComEstoquePorCor = async (req, res) => {
+  try {
+    const resultado = await db.sequelize.query(`
+      SELECT 
+        p.product_id,
+        p.name AS product_name,
+        c.name AS color_name,
+        pc.stock_quantity,
+        MAX(pi.image_url) AS primary_image_url
+      FROM ProductColors pc
+      INNER JOIN Products p ON p.product_id = pc.product_id
+      LEFT JOIN Colors c ON c.color_id = pc.color_id
+      LEFT JOIN ProductImages pi ON pi.product_color_id = pc.product_color_id AND pi.is_primary = true
+      GROUP BY p.product_id, pc.product_color_id, c.name, pc.stock_quantity
+      ORDER BY p.product_id ASC, c.name ASC;
+    `, {
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    res.status(200).json(resultado);
+  } catch (error) {
+    console.error("Erro ao buscar estoque por cor:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 
 
 
@@ -834,5 +937,7 @@ export default {
     getCategoriasVendidasPorMes,
     getProdutosMaisVendidosPorMes,
     getpedidosEReceitaPorHora,
-    ProdutosSemEstoqueDetalhado  
+    ProdutosSemEstoqueDetalhado,
+    ProdutosComEstoquePorCor,
+    getProductByName  
 };

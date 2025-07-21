@@ -1,103 +1,296 @@
-import React, { useState } from 'react';
-import '../../assets/style/AdminUsuario.css';
+// src/screens/ProdutoPesquisa.tsx
+import React, { useState } from "react";
+import "../../assets/style/AdminGerirEstoqueProduto.css";
 
-const CustomersScreen = () => {
-  const [activeTab, setActiveTab] = useState('All');
-  const [users] = useState([
-    { id: 1, name: "Ananda Harvey", email: "amanda@site.com", country: "United Kingdom", orders: 3, totalSpent: "$3,511.01" },
-    { id: 2, name: "Anne Richard", email: "anne@site.com", country: "United States", orders: 1, totalSpent: "$235.00" },
-    { id: 3, name: "David Harrison", email: "david@site.com", country: "United States", orders: 53, totalSpent: "$346,410.12" },
-    { id: 4, name: "Finch Hoot", email: "finch@site.com", country: "Argentina", orders: 12, totalSpent: "$1,350.04" },
-    { id: 5, name: "Bob Dean", email: "bob@site.com", country: "Austria", orders: 8, totalSpent: "$912.13" },
-    { id: 6, name: "Ella Lauda", email: "ella@site.com", country: "United Kingdom", orders: 5, totalSpent: "$451.66" },
-    { id: 7, name: "Lori Hunter", email: "hunter@site.com", country: "Estonia", orders: 11, totalSpent: "$3,582.46" },
-  ]);
+export default function ProdutoPesquisa() {
+  const [nome, setNome] = useState("");
+  const [produto, setProduto] = useState({
+    colors: [],
+  });
+  const [estoquesAtualizados, setEstoquesAtualizados] = useState({});
+  const [imagensSelecionadas, setImagensSelecionadas] = useState({});
 
-  // Agrupar usuários por letra inicial
-  const groupedUsers = users.reduce((acc, user) => {
-    const firstLetter = user.name[0].toUpperCase();
-    if (!acc[firstLetter]) {
-      acc[firstLetter] = [];
+  const handleUploadImagem = async (cor) => {
+    const file = imagensSelecionadas[cor.product_color_id];
+    if (!file) return alert("Selecione uma imagem primeiro.");
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await fetch(
+        `http://localhost:3005/api/images/upload/${cor.product_color_id}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+      if (data.image?.image_url) {
+        alert("✅ Imagem enviada com sucesso!");
+
+        // Atualiza localmente a lista de imagens dessa cor para mostrar a nova
+        const coresAtualizadas = produto.colors.map((c) =>
+          c.product_color_id === cor.product_color_id
+            ? {
+                ...c,
+                images: c.images
+                  ? [...c.images, data.image.image_url]
+                  : [data.image.image_url],
+              }
+            : c
+        );
+        setProduto({ ...produto, colors: coresAtualizadas });
+
+        // Limpa o input file para essa cor
+        setImagensSelecionadas((prev) => ({
+          ...prev,
+          [cor.product_color_id]: null,
+        }));
+      } else {
+        alert("❌ Falha no upload");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao enviar imagem");
     }
-    acc[firstLetter].push(user);
-    return acc;
-  }, {});
+  };
+
+  const buscarProduto = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:3005/api/products/Produto/buscar-nome?nome=${nome}`
+      );
+      const data = await res.json();
+
+      // Certifica-se de que cada cor tenha product_color_id (mock caso contrário)
+      const coresComId = (data.colors || []).map((cor, index) => ({
+        ...cor,
+        product_color_id: cor.product_color_id || index + 1,
+      }));
+
+      setProduto({ ...data, colors: coresComId });
+    } catch (err) {
+      console.error("Erro ao buscar produto:", err);
+    }
+  };
+
+  const atualizarEstoque = async (cor) => {
+    const novoEstoque = estoquesAtualizados[cor.product_color_id];
+    if (novoEstoque === undefined || novoEstoque === "") {
+      return alert("Insira o novo valor antes de atualizar.");
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:3005/api/product-colors/${cor.product_color_id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stock_quantity: parseInt(novoEstoque),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Falha ao atualizar o estoque");
+      }
+
+      alert("✅ Estoque atualizado com sucesso!");
+
+      // Atualiza visualmente a UI
+      const coresAtualizadas = produto.colors.map((c) =>
+        c.product_color_id === cor.product_color_id
+          ? { ...c, stock_quantity: parseInt(novoEstoque) }
+          : c
+      );
+      setProduto({ ...produto, colors: coresAtualizadas });
+
+      // Limpa o valor do campo
+      setEstoquesAtualizados((prev) => ({
+        ...prev,
+        [cor.product_color_id]: "",
+      }));
+    } catch (err) {
+      console.error("Erro ao atualizar estoque:", err);
+      alert("❌ Erro ao atualizar estoque!");
+    }
+  };
 
   return (
-    <div className="customers-screen">
-      <header className="customers-header">
-        <h1>Customers</h1>
-        <div className="tabs">
-          <div className="tab-group">
-            <span>All</span>
-            <div className="tab-items">
-              <button 
-                className={activeTab === 'New' ? 'active' : ''}
-                onClick={() => setActiveTab('New')}
-              >
-                New
-              </button>
-              <button 
-                className={activeTab === 'Active' ? 'active' : ''}
-                onClick={() => setActiveTab('Active')}
-              >
-                Active
-              </button>
-              <button 
-                className={activeTab === 'Inactive' ? 'active' : ''}
-                onClick={() => setActiveTab('Inactive')}
-              >
-                Inactive
-              </button>
-            </div>
+    <div className="produto-pesquisa-container">
+      <h2>🔍 Pesquisar Produto</h2>
+      <div className="search-section">
+        <input
+          type="text"
+          placeholder="Digite o nome do produto"
+          value={nome}
+          onChange={(e) => setNome(e.target.value)}
+        />
+        <button onClick={buscarProduto}>Buscar</button>
+      </div>
+
+      {produto && produto.name && (
+        <div className="produto-detalhes">
+          <img
+            src={produto.primary_image_url}
+            alt={produto.name}
+            style={{ maxWidth: "300px", marginBottom: "20px" }}
+          />
+          <div className="info">
+            <h3>{produto.name}</h3>
+            <p>
+              <strong>Categoria:</strong> {produto.category_name}
+            </p>
+            <p>
+              <strong>Preço:</strong> MZN {produto.price}
+            </p>
+            <p>
+              <strong>Descrição:</strong> {produto.description}
+            </p>
+
+            <h4>Cores e Estoques:</h4>
+            <table>
+              <thead>
+                <tr>
+                  <th>Cor</th>
+                  <th>Imagens</th>
+                  <th>Estoque Atual</th>
+                  <th>Novo Estoque</th>
+                  <th>Upload Imagem</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {produto.colors?.map((cor, i) => (
+                  <tr key={i}>
+                    <td>
+                      <span
+                        className="cor-box"
+                        style={{ backgroundColor: cor.hex_code }}
+                      />
+                      {cor.name}
+                    </td>
+
+                    <td>
+                      {cor.images && cor.images.length > 0 ? (
+                        cor.images.map((img, idx) => (
+                          <div key={idx} style={{ marginBottom: "8px" }}>
+                            <img
+                              src={img.image_url}
+                              alt={`Cor ${cor.name}`}
+                              style={{
+                                width: "60px",
+                                height: "60px",
+                                objectFit: "cover",
+                                border: img.is_primary
+                                  ? "2px solid gold"
+                                  : "1px solid #ccc",
+                                borderRadius: "6px",
+                                marginRight: "8px",
+                              }}
+                            />
+                            {img.is_primary && (
+                              <span
+                                style={{
+                                  fontSize: "12px",
+                                  color: "green",
+                                  fontWeight: "bold",
+                                }}
+                              >
+                                ⭐ Principal
+                              </span>
+                            )}
+                            <br />
+                            <button
+                              onClick={async () => {
+                                try {
+                                  console.log("Imagem:", img); // 👈 veja se image_id aparece
+                                  const res = await fetch(
+                                    `http://localhost:3005/api/product-images/set-primary/${img.image_id}`,
+                                    { method: "PUT" }
+                                  );
+                                  if (res.ok) {
+                                    alert("✅ Definido como imagem principal!");
+                                    buscarProduto(); // Recarrega
+                                  } else {
+                                    alert(
+                                      "❌ Falha ao definir imagem principal"
+                                    );
+                                  }
+                                } catch (err) {
+                                  console.error(err);
+                                  alert("Erro ao definir imagem principal");
+                                }
+                              }}
+                            >
+                              Definir como Principal
+                            </button>
+                          </div>
+                        ))
+                      ) : (
+                        <span>Sem imagens</span>
+                      )}
+                    </td>
+
+                    <td>{cor.stock_quantity}</td>
+
+                    <td>
+                      <input
+                        type="number"
+                        min="0"
+                        value={estoquesAtualizados[cor.product_color_id] || ""}
+                        onChange={(e) =>
+                          setEstoquesAtualizados((prev) => ({
+                            ...prev,
+                            [cor.product_color_id]: e.target.value,
+                          }))
+                        }
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) =>
+                          setImagensSelecionadas((prev) => ({
+                            ...prev,
+                            [cor.product_color_id]: e.target.files[0],
+                          }))
+                        }
+                      />
+                      <button
+                        onClick={() => handleUploadImagem(cor)}
+                        style={{
+                          marginTop: 6,
+                          padding: "4px 8px",
+                          fontSize: "12px",
+                          background: "#10b981",
+                          color: "white",
+                          border: "none",
+                          borderRadius: "4px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        Upload
+                      </button>
+                    </td>
+
+                    <td>
+                      <button onClick={() => atualizarEstoque(cor)}>
+                        Atualizar
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      </header>
-
-      <div className="search-container">
-        <div className="search-input">
-          <input type="text" placeholder="Search by name, email" />
-        </div>
-        <div className="actions">
-          <button className="sort-btn">Sort by</button>
-          <button className="filter-btn">Filter</button>
-        </div>
-      </div>
-
-      <div className="divider"></div>
-
-      <div className="customers-grid">
-        <div className="grid-header">
-          <div>NAME</div>
-          <div>E-MAIL</div>
-          <div>COUNTRY</div>
-          <div>ORDERS</div>
-          <div>TOTAL SPENT</div>
-        </div>
-
-        {Object.entries(groupedUsers).map(([letter, usersInGroup]) => (
-          <React.Fragment key={letter}>
-            <div className="group-header">{letter}</div>
-            {usersInGroup.map(user => (
-              <div key={user.id} className="customer-item">
-                <div className="customer-name">
-                  <div className="name">{user.name}</div>
-                  <div className="email">{user.email}</div>
-                </div>
-                <div className="customer-country">{user.country}</div>
-                <div className="customer-orders">{user.orders}</div>
-                <div className="customer-total">{user.totalSpent}</div>
-              </div>
-            ))}
-          </React.Fragment>
-        ))}
-      </div>
-
-      <div className="pagination">
-        Showing 1-07 of 220 entries
-      </div>
+      )}
     </div>
   );
-};
-
-export default CustomersScreen;
+}
