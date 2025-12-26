@@ -33,53 +33,39 @@ const db = {
   Gender: genderModel(sequelize, DataTypes),
   Size_Types: sizeTypeModel(sequelize, DataTypes),
   Size: size(sequelize, DataTypes),
-
 };
 
-// Associações
+// Relações
 db.Category.hasMany(db.Product, { foreignKey: 'category_id' });
 db.Product.belongsTo(db.Category, { foreignKey: 'category_id' });
-
 db.Product.belongsToMany(db.Color, { through: db.ProductColor, foreignKey: 'product_id' });
 db.Color.belongsToMany(db.Product, { through: db.ProductColor, foreignKey: 'color_id' });
-
 db.ProductColor.hasMany(db.ProductImage, { foreignKey: 'product_color_id' });
 db.ProductImage.belongsTo(db.ProductColor, { foreignKey: 'product_color_id' });
-
 db.User.hasMany(db.Order, { foreignKey: 'user_id' });
 db.Order.belongsTo(db.User, { foreignKey: 'user_id' });
-
 db.Order.hasMany(db.OrderItem, { foreignKey: 'order_id' });
 db.OrderItem.belongsTo(db.Order, { foreignKey: 'order_id' });
-
 db.Product.hasMany(db.OrderItem, { foreignKey: 'product_id' });
 db.OrderItem.belongsTo(db.Product, { foreignKey: 'product_id' });
-
 db.Color.hasMany(db.OrderItem, { foreignKey: 'color_id' });
 db.OrderItem.belongsTo(db.Color, { foreignKey: 'color_id' });
-
 db.Gender.hasMany(db.Product, { foreignKey: 'gender_id' });
 db.Product.belongsTo(db.Gender, { foreignKey: 'gender_id' });
 
-
-
-
 db.Size.associate(db);
 db.Size_Types.associate(db);
-// Função para autenticar e sincronizar com o banco de dados
+
 (async () => {
-// No arquivo onde você está configurando a conexão com o banco de dados
-try {
-  await sequelize.authenticate();
-  console.log('Conexão bem-sucedida com o banco de dados.');
-
-  // Sincroniza todas as tabelas, se não existirem
-  await sequelize.sync({ force: false }); // Use 'force: true' para recriar as tabelas. Cuidado: isso exclui dados existentes.
-  console.log('Tabelas sincronizadas com sucesso.');
-} catch (error) {
-  console.error('Erro ao conectar ao banco de dados:', error);
-}
-
+  try {
+    await sequelize.authenticate();
+    console.log('Conexão com o banco de dados estabelecida.');
+    
+    await sequelize.sync({ force: false }); // force:true recria tabelas
+    console.log('Tabelas sincronizadas com sucesso.');
+  } catch (error) {
+    console.error('Erro ao conectar ao banco de dados:', error);
+  }
 })();
 
 export default db;

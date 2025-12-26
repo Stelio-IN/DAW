@@ -1,29 +1,35 @@
-// UserModel.js
 export default (sequelize, DataTypes) => {
-  return sequelize.define('User', {
-    user_id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
+  return sequelize.define(
+    'User',
+    {
+      user_id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      tipo_usuario: {
+        type: DataTypes.STRING, // Alterado de ENUM para STRING
+        allowNull: false,
+        defaultValue: 'comum',
+      },
     },
-    username: {
-      type: DataTypes.STRING,
-    },
-    password: {
-      type: DataTypes.STRING,
-   
-    },
-    email: {
-      type: DataTypes.STRING,
-      unique: true,
-    },
-    tipo_usuario: {
-      type: DataTypes.ENUM('comum', 'admin'),
-      allowNull: false,
-    },
-  }, {
-    tableName: 'User',
-    timestamps: true, // Ative timestamps para gerenciar createdAt e updatedAt automaticamente
-    underscored: true // Isso irá usar snake_case para os nomes das colunas
-  });
+    {
+      tableName: 'users',
+      underscored: true,
+      timestamps: true,
+    }
+  );
 };

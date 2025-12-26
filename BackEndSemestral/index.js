@@ -28,9 +28,10 @@ const app = express();
 
 // Opções de CORS
 const corsOptions = {
-    origin: '*', // Permite requisições de qualquer origem
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'], // Cabeçalhos permitidos
+  origin: 'http://localhost:5173', // frontend (Vite)
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
 };
 
 // Middleware
