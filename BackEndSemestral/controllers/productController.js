@@ -283,6 +283,51 @@ ORDER BY p.order_id;  -- Ordena pelos order_id
   }
 };
 
+const UsuarioProductHistory = async (req, res) => {
+  try {
+    // Certifique-se de que o middleware autentica o usuário
+    if (!req.user) {
+      return res.status(401).json({ error: 'Usuário não autenticado' });
+    }
+
+    const userId = req.user.user_id; // pega o ID do usuário logado
+
+    const productHistory = await db.sequelize.query(`
+      SELECT 
+        o.order_id,
+        o.order_date,
+        o.status,
+        c.nome_produto,
+        c.quantidade,
+        c.preco_unitario,
+        c.preco_total,
+        MAX(pi.image_url) AS primary_image_url
+      FROM orders o
+      INNER JOIN compras c ON c.pagamento_id = o.order_id
+      INNER JOIN products pr ON c.produto_id = pr.product_id
+      LEFT JOIN productcolors pc ON pr.product_id = pc.product_id
+      LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      WHERE o.user_id = :userId
+      GROUP BY o.order_id, o.order_date, o.status, c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total
+      ORDER BY o.order_id;
+    `, {
+      replacements: { userId },
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    if (productHistory.length === 0) {
+      return res.status(404).json({ error: 'Nenhum histórico de compras encontrado para este usuário.' });
+    }
+
+    res.status(200).json(productHistory);
+  } catch (error) {
+    console.error('Erro ao buscar histórico de compras:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
 const ProductHistoryByOrderId = async (req, res) => {
   const { orderId } = req.params;
 
@@ -924,6 +969,7 @@ export default {
     Semestoque,
     getProductsEspecific,
     ProductHistory,
+    UsuarioProductHistory,
     getProductsByCategories, 
     getProductsByColor, 
     getProductsByPrice,

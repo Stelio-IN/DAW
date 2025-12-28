@@ -60,8 +60,9 @@ const LoginRegister = () => {
         return;
       }
 
+      // GUARDA NO LOCALSTORAGE
       localStorage.setItem('token', data.token);
-      localStorage.setItem('userId', data.user.id);
+      localStorage.setItem('userId', data.user.user_id); // Corrigido
       localStorage.setItem('userType', data.user.tipo_usuario);
 
       const name = data.user.username || data.user.email;
@@ -70,6 +71,7 @@ const LoginRegister = () => {
       setUserName(name);
       setIsLoggedIn(true);
 
+      // REDIRECIONA CONFORME TIPO DE USUÁRIO
       navigate(data.user.tipo_usuario === 'admin' ? '/admin' : '/');
     } catch (error) {
       setErrorMessage('Erro de conexão com o servidor.');
@@ -145,7 +147,6 @@ const LoginRegister = () => {
         </div>
       ) : (
         <div className="form">
-
           {/* LOGIN */}
           <div className="login_area">
             <p><b>Login into your account</b></p>
