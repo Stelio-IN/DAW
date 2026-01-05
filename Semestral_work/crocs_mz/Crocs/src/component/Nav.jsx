@@ -9,6 +9,7 @@ import navImg3 from "../assets/img/pose2.webp";
 import { FiArrowLeft, FiHeart } from "react-icons/fi";
 import { FaHeart, FaShoppingBag, FaShoppingCart } from "react-icons/fa";
 import { useFavorites } from "../context/FavoritesContext.jsx";
+import { getUser, clearUser } from "../services/userStorage.js";
 
 const Navbar = () => {
   const { favorites } = useFavorites(); // Hook para acessar favoritos
@@ -24,22 +25,21 @@ const Navbar = () => {
   // ===========================
   // Puxar usuário logado e atualizar carrinho
   // ===========================
-  useEffect(() => {
-    const storedName = localStorage.getItem("userName");
-    const token = localStorage.getItem("token");
-    if (storedName && token) {
-      setUserName(storedName);
-      setIsLoggedIn(true);
-    }
-  }, []);
+  
 
   // Atualiza usuário logado e carrinho sempre que muda de rota
   useEffect(() => {
-    const storedName = localStorage.getItem("userName");
-    const token = localStorage.getItem("token");
-    setUserName(storedName);
-    setIsLoggedIn(!!token);
+    const user = getUser();
 
+    if (user) {
+      setUserName(user.username || user.email);
+      setIsLoggedIn(true);
+    } else {
+      setUserName(null);
+      setIsLoggedIn(false);
+    }
+
+    // Carrinho (mantém igual)
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
     const itemCount = storedCart.reduce(
       (total, item) => total + (item.quantity || 1),
@@ -48,13 +48,14 @@ const Navbar = () => {
     setCartItemCount(itemCount);
   }, [location]);
 
-  const handleLogout = () => {
-    localStorage.clear();
+
+
+ const handleLogout = () => {
+    clearUser();
     setUserName(null);
     setIsLoggedIn(false);
     navigate("/login");
   };
-
   return (
     <nav>
       <div className="wrapper">

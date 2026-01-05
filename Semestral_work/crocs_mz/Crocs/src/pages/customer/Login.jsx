@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../assets/style/login.css';
+import { saveUser, getUser, clearUser } from "../../services/userStorage";
 
 const LoginRegister = () => {
   const navigate = useNavigate();
@@ -23,15 +24,16 @@ const LoginRegister = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   // VERIFICA LOGIN SALVO
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const name = localStorage.getItem('userName');
+  
 
-    if (token && name) {
-      setIsLoggedIn(true);
-      setUserName(name);
-    }
-  }, []);
+  useEffect(() => {
+  const user = getUser();
+  if (user?.token) {
+    setIsLoggedIn(true);
+    setUserName(user.username);
+  }
+}, []);
+
 
   // LOGIN
   const handleLogin = async (e) => {
@@ -60,19 +62,19 @@ const LoginRegister = () => {
         return;
       }
 
-      // GUARDA NO LOCALSTORAGE
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userId', data.user.user_id); // Corrigido
-      localStorage.setItem('userType', data.user.tipo_usuario);
+     saveUser({
+  token: data.token,
+  user_id: data.user.user_id,
+  username: data.user.username,
+  email: data.user.email,
+  tipo_usuario: data.user.tipo_usuario,
+});
 
-      const name = data.user.username || data.user.email;
-      localStorage.setItem('userName', name);
+setUserName(data.user.username);
+setIsLoggedIn(true);
 
-      setUserName(name);
-      setIsLoggedIn(true);
+navigate(data.user.tipo_usuario === "admin" ? "/admin" : "/");
 
-      // REDIRECIONA CONFORME TIPO DE USUÁRIO
-      navigate(data.user.tipo_usuario === 'admin' ? '/admin' : '/');
     } catch (error) {
       setErrorMessage('Erro de conexão com o servidor.');
     }
@@ -80,7 +82,7 @@ const LoginRegister = () => {
 
   // LOGOUT
   const handleLogout = () => {
-    localStorage.clear();
+     clearUser();
     setIsLoggedIn(false);
     setUserName(null);
     navigate('/login');
