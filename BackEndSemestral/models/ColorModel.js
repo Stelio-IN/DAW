@@ -1,5 +1,7 @@
 export default (sequelize, DataTypes) => {
-    return sequelize.define('Color', {
+  return sequelize.define(
+    'Color',
+    {
       color_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -7,6 +9,7 @@ export default (sequelize, DataTypes) => {
       },
       name: DataTypes.STRING,
       hex_code: DataTypes.STRING,
-    }, { timestamps: false });
-  };
-  
+    },
+    { timestamps: false }
+  );
+};

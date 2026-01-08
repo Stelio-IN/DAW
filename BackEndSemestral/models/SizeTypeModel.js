@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
   const Size_Types = sequelize.define(
-    "size_types",
+    'Size_Types',
     {
       size_type_id: {
         type: DataTypes.INTEGER,
@@ -16,7 +16,7 @@ export default (sequelize, DataTypes) => {
   );
 
   Size_Types.associate = (models) => {
-    Size_Types.hasMany(models.Size, { foreignKey: "size_type_id" });
+    Size_Types.hasMany(models.Size, { foreignKey: 'size_type_id' });
   };
 
   return Size_Types;

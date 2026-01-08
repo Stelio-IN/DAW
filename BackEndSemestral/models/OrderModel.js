@@ -1,5 +1,7 @@
 export default (sequelize, DataTypes) => {
-    return sequelize.define('Order', {
+  return sequelize.define(
+    'Order',
+    {
       order_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -9,7 +11,7 @@ export default (sequelize, DataTypes) => {
       order_date: DataTypes.DATE,
       status: DataTypes.STRING,
       total_amount: DataTypes.DECIMAL,
-
-    }, { timestamps: true });
-  };
-  
+    },
+    { timestamps: true }
+  );
+};

@@ -73,7 +73,7 @@ const products = async (req, res) => {
         p.name AS product_name, 
         p.price, 
         p.description,
-        p.stock_quantity,
+
         g.name,
         (
           SELECT COUNT(DISTINCT pc_inner.color_id)
@@ -124,7 +124,6 @@ const getProductsEspecific = async (req, res) => {
         p.price,
         g.name AS category_name, 
         p.description,
-        p.stock_quantity AS estoque,
         MAX(pi.image_url) AS primary_image_url,
         (
   SELECT JSON_ARRAYAGG(
@@ -170,7 +169,6 @@ const getProductsEspecific = async (req, res) => {
       product_id: produto.product_id,
       name: produto.product_name,
       price: produto.price,
-      stock_quantity: produto.estoque,
       description: produto.description,
       category_name: produto.category_name,
       primary_image_url: produto.primary_image_url,
