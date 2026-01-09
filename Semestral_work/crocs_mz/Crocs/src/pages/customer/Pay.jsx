@@ -37,13 +37,22 @@ const Pay = () => {
   const [cart, setCart] = useState([]);
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
+  const loadCart = () => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const cartWithQuantities = storedCart.map((product) => ({
-      ...product,
-      quantity: 1,
-    }));
-    setCart(cartWithQuantities);
-  }, []);
+    setCart(storedCart);
+  };
+
+  // Carrega ao abrir
+  loadCart();
+
+  // Escuta mudanças do localStorage
+  window.addEventListener("storage", loadCart);
+
+  return () => {
+    window.removeEventListener("storage", loadCart);
+  };
+}, []);
+
 
   const emptyCart = () => {
     setCart([]); // Esvazia o estado do carrinho
@@ -243,20 +252,23 @@ const Pay = () => {
         <section className="Detalhes">
           <div className="Order_summary">
             <ul className="productList">
-              {cart.map((product, index) => (
-                <li key={index} className="productItem">
+              {cart.map((product) => (
+                 <li key={product.product_color_id} className="productItem">
                   <div className="product">
                     <div className="productDetails">
                       <div className="productDetails_1">
                         <img
-                          src={product.primary_image_url || "default-image.png"}
+                         src={product.primary_image_url || product.image_url || "default.png"}
                           alt={product.name}
                         />
                       </div>
                       <div className="productDetails_2">
                         <h3>{product.name}</h3>
-                        <p>Preço: {product.price}$</p>
-                        <p>Quantidade: {product.quantity}</p>
+                       <p>Preço: {product.price} Mzn</p>
+<p>Quantidade: {product.quantity}</p>
+<p>Cor: {product.color}</p>
+<p>Tamanho: {product.size} ({product.size_type})</p>
+
                       </div>
                     </div>
                   </div>
