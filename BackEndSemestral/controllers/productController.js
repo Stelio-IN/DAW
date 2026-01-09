@@ -65,43 +65,45 @@ const Product = db.Product;
 
 const products = async (req, res) => {
   try {
-    const { search } = req.query; // Termo de pesquisa enviado pelo cliente
+    const { search } = req.query; // Termo de pesquisa
 
     let query = `
       SELECT 
         p.product_id, 
-        p.name AS product_name, 
-        p.price, 
+        p.name AS product_name,
+        p.price,
         p.description,
-
-        g.name,
+        p.status,
+        g.name AS category_name,
         (
-          SELECT COUNT(DISTINCT pc_inner.color_id)
-          FROM ProductColors pc_inner
-          WHERE pc_inner.product_id = p.product_id
-        ) AS color_count, 
+          SELECT COUNT(DISTINCT pc.color_id)
+          FROM productcolors pc
+          WHERE pc.product_id = p.product_id
+        ) AS color_count,
         JSON_ARRAYAGG(
           JSON_OBJECT(
-            'name', c.name, 
+            'name', c.name,
             'hex_code', c.hex_code
           )
         ) AS colors,
         MAX(pi.image_url) AS primary_image_url
-      FROM Products p Inner JOIN categories g on g.category_id = p.category_id
-      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
-      LEFT JOIN Colors c ON pc.color_id = c.color_id
-      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      FROM products p
+      INNER JOIN categories g ON g.category_id = p.category_id
+      LEFT JOIN productcolors pc ON p.product_id = pc.product_id
+      LEFT JOIN colors c ON pc.color_id = c.color_id
+      LEFT JOIN productimages pi 
+        ON (pc.product_color_id = pi.product_color_id AND pi.is_primary = 1)
     `;
 
-    // Se houver um termo de pesquisa, adiciona o filtro
+    // Filtro de busca, se existir
     if (search) {
       query += ` WHERE p.name LIKE :search OR p.description LIKE :search `;
     }
 
-    query += ` GROUP BY p.product_id `;
+    query += ` GROUP BY p.product_id, p.name, p.price, p.description, p.status, g.name `;
 
     const products = await db.sequelize.query(query, {
-      replacements: { search: `%${search}%` }, // Adiciona '%' para busca parcial
+      replacements: { search: `%${search || ''}%` },
       type: db.sequelize.QueryTypes.SELECT,
     });
 
@@ -119,43 +121,66 @@ const getProductsEspecific = async (req, res) => {
   try {
     const [produto] = await db.sequelize.query(`
       SELECT 
-        p.product_id, 
-        p.name AS product_name, 
-        p.price,
-        g.name AS category_name, 
+        p.product_id,
+        p.name AS product_name,
+        p.price AS base_price,
+        g.name AS category_name,
         p.description,
+        p.status,
         MAX(pi.image_url) AS primary_image_url,
         (
-  SELECT JSON_ARRAYAGG(
-    JSON_OBJECT(
-      'product_color_id', pc.product_color_id,
-      'name', c.name,
-      'hex_code', c.hex_code,
-      'stock_quantity', pc.stock_quantity,
-      'images', (
-        SELECT JSON_ARRAYAGG(
-          JSON_OBJECT(
-            'image_id', pi.image_id,
-            'image_url', pi.image_url,
-            'is_primary', pi.is_primary
+          SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'product_color_id', pc.product_color_id,
+              'name', c.name,
+              'hex_code', c.hex_code,
+              'stock_quantity', pc.stock_quantity,
+              'images', (
+                SELECT JSON_ARRAYAGG(
+                  JSON_OBJECT(
+                    'image_id', pi2.image_id,
+                    'image_url', pi2.image_url,
+                    'is_primary', pi2.is_primary
+                  )
+                )
+                FROM productimages pi2
+                WHERE pi2.product_color_id = pc.product_color_id
+              ),
+              'sizes', (
+                SELECT JSON_ARRAYAGG(
+                  JSON_OBJECT(
+                    'product_color_size_id', pcs.product_color_size_id,
+                    'size_id', pcs.size_id,
+                    'size', s.size,
+                    'size_type', st.name,
+                    'stock_quantity', pcs.stock_quantity,
+                    'price', IFNULL(pcs.price_override, p.price),
+                    'sku', pcs.sku
+                  )
+                )
+                FROM product_color_sizes pcs
+                INNER JOIN sizes s ON pcs.size_id = s.size_id
+                INNER JOIN size_types st ON s.size_type_id = st.size_type_id
+                WHERE pcs.product_color_id = pc.product_color_id
+                ORDER BY
+                  CASE 
+                    WHEN s.size REGEXP '^[0-9]+$' THEN CAST(s.size AS UNSIGNED)
+                    ELSE s.size
+                  END ASC
+              )
+            )
           )
-        )
-        FROM ProductImages pi
-        WHERE pi.product_color_id = pc.product_color_id
-      )
-    )
-  )
-  FROM ProductColors pc
-  JOIN Colors c ON pc.color_id = c.color_id
-  WHERE pc.product_id = p.product_id
-) AS colors
-
-      FROM Products p
+          FROM productcolors pc
+          JOIN colors c ON pc.color_id = c.color_id
+          WHERE pc.product_id = p.product_id
+        ) AS colors
+      FROM products p
       INNER JOIN categories g ON g.category_id = p.category_id
-      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
-      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
+      LEFT JOIN productcolors pc ON p.product_id = pc.product_id
+      LEFT JOIN productimages pi 
+        ON pc.product_color_id = pi.product_color_id AND pi.is_primary = 1
       WHERE p.product_id = :id
-      GROUP BY p.product_id
+      GROUP BY p.product_id, p.name, p.price, p.description, g.name, p.status
     `, {
       replacements: { id },
       type: db.sequelize.QueryTypes.SELECT,
@@ -168,12 +193,14 @@ const getProductsEspecific = async (req, res) => {
     res.json({
       product_id: produto.product_id,
       name: produto.product_name,
-      price: produto.price,
+      base_price: produto.base_price,
       description: produto.description,
+      status: produto.status,
       category_name: produto.category_name,
       primary_image_url: produto.primary_image_url,
       colors: produto.colors || [],
     });
+
   } catch (error) {
     console.error('Erro ao buscar produto específico:', error);
     res.status(500).json({ error: error.message });
@@ -323,7 +350,6 @@ const UsuarioProductHistory = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 
 const ProductHistoryByOrderId = async (req, res) => {

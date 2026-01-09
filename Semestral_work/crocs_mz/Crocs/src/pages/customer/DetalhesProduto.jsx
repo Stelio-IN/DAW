@@ -1,193 +1,237 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import '../../assets/style/about.css';
 import '../../assets/style/detalhesProduto.css';
-import { useFavorites } from "../../context/FavoritesContext"; // Importa o contexto
+import { useFavorites } from "../../context/FavoritesContext";
 
-import crocs from '../../assets/img/sap1.webp';
-import crocs1 from '../../assets/img/sap2.webp';
-import crocs2 from '../../assets/img/sap3.webp';
-import crocs3 from '../../assets/img/sap4.webp';
-import crocs4 from '../../assets/img/sap5.webp';
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
-  const [product, setProduct] = useState([null]);
+  const [product, setProduct] = useState(null);
   const [corSelecionada, setCorSelecionada] = useState(null);
-const [imagemPrincipal, setImagemPrincipal] = useState(null);
+  const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
+  const [imagemPrincipal, setImagemPrincipal] = useState(null);
+
+  const { favorites, toggleFavorite } = useFavorites();
 
 
+// Ordena tamanhos
+  const ordenarTamanhos = (sizes = []) => {
+  return [...sizes].sort((a, b) => {
+    const aNum = parseInt(a.size);
+    const bNum = parseInt(b.size);
+
+    // Se ambos forem números → ordena numericamente
+    if (!isNaN(aNum) && !isNaN(bNum)) {
+      return aNum - bNum;
+    }
+
+    // Caso contrário → ordena como texto (S, M, L, XL)
+    return a.size.localeCompare(b.size);
+  });
+};
 
 
-  const navigate = useNavigate();
- const { favorites, toggleFavorite } = useFavorites();
   useEffect(() => {
     if (productID) {
-      console.log(`O parâmetro productID foi capturado: ${productID}`);
       fetch(`http://localhost:3005/api/products/pr/${productID}`)
-        .then((response) => response.json())
+        .then((res) => res.json())
         .then((data) => {
           if (data && data.product_id) {
             setProduct(data);
-          } else {
-            console.error('Dados recebidos não são um array:', data);
           }
         })
-        .catch((error) =>
-          console.error('Erro ao buscar detalhes do produto:', error)
-        );
+        .catch((err) => console.error('Erro ao buscar detalhes do produto:', err));
     }
   }, [productID]);
 
-  
-useEffect(() => {
-  if (product && product.colors && product.colors.length > 0) {
-    setCorSelecionada(product.colors[0]);
-  }
-}, [product]);
+  // Primeira cor por padrão
+  useEffect(() => {
+    if (product?.colors?.length > 0) {
+      setCorSelecionada(product.colors[0]);
+    }
+  }, [product]);
 
+  // Atualiza imagem quando muda cor
+  useEffect(() => {
+    if (corSelecionada?.images?.length > 0) {
+      const imagem = corSelecionada.images.find(img => img.is_primary) || corSelecionada.images[0];
+      setImagemPrincipal(imagem?.image_url);
+    }
+  }, [corSelecionada]);
+
+  // Primeiro tamanho disponível por padrão
 useEffect(() => {
-  if (corSelecionada && corSelecionada.images && corSelecionada.images.length > 0) {
-    // Busca a principal ou a primeira imagem da cor
-    const imagem = corSelecionada.images.find((img) => img.is_primary) || corSelecionada.images[0];
-    setImagemPrincipal(imagem?.image_url);
+  if (corSelecionada?.sizes?.length > 0) {
+    const sizesOrdenados = ordenarTamanhos(corSelecionada.sizes);
+    const firstAvailable = sizesOrdenados.find(s => s.stock_quantity > 0);
+    setTamanhoSelecionado(firstAvailable || null);
   }
 }, [corSelecionada]);
 
+  const addToCart = () => {
+    if (!product || !corSelecionada || !tamanhoSelecionado) {
+      alert("Selecione cor e tamanho");
+      return;
+    }
 
-
-  const addToCart = (product) => {
     const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
-    const updatedCart = [...currentCart, product];
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    console.log('Produto adicionado ao carrinho:', product);
+
+
+
+
+    const itemToAdd = {
+  product_id: product.product_id,
+  product_color_id: corSelecionada.product_color_id,
+  product_color_size_id: tamanhoSelecionado.product_color_size_id,
+  name: product.name,
+  color: corSelecionada.name,
+  hex_code: corSelecionada.hex_code,
+  size: tamanhoSelecionado.size,
+  size_type: tamanhoSelecionado.size_type,
+  sku: tamanhoSelecionado.sku,
+  price: tamanhoSelecionado.price,
+  stock_quantity: tamanhoSelecionado.stock_quantity, // 🔥 ESSENCIAL
+  quantity: 1,
+  image_url: imagemPrincipal
+};
+
+
+    const existingIndex = currentCart.findIndex(item =>
+  item.product_color_size_id === itemToAdd.product_color_size_id
+);
+
+if (existingIndex >= 0) {
+  const existing = currentCart[existingIndex];
+
+  if (existing.quantity < existing.stock_quantity) {
+    existing.quantity += 1;
+  }
+} else {
+  currentCart.push(itemToAdd);
+}
+
+    localStorage.setItem('cart', JSON.stringify(currentCart));
+    alert("Produto adicionado ao carrinho");
   };
+
+  if (!product) return <p>Carregando detalhes do produto...</p>;
 
   return (
     <div className="container-detalhes-produto">
-      <section className='container_detalhes'>
-        <div className="box-conteudo">
-        {product ? (
+      <section className="container_detalhes">
+
+        {/* COLUNA ESQUERDA */}
         <div className="col-esquerda">
           <div className="imagem-principal">
-            <div key={product.product_id} className='principal'>
-              <img
-                 src={imagemPrincipal || 'Sem Imagem Principal'}
-                alt={product.name}
-              
-              />
-            </div>
+            <img
+              src={imagemPrincipal || "default.png"}
+              alt={product.name}
+              className="principal"
+            />
           </div>
-       <div className="opcoes">
-  {corSelecionada?.images?.map((img, idx) => (
-    <img
-      key={idx}
-      src={img.image_url}
-      alt={`Variação ${idx}`}
-      onClick={() => setImagemPrincipal(img.image_url)}
-      style={{
-        cursor: 'pointer',
-        border: imagemPrincipal === img.image_url ? '2px solid black' : '1px solid transparent',
-        borderRadius: '6px',
-        marginRight: '8px',
-        width: '60px',
-        height: '60px',
-        objectFit: 'cover'
-      }}
-    />
-  ))}
-</div>
 
-
+          <div className="opcoes">
+            {corSelecionada?.images?.map((img, idx) => (
+              <img
+                key={idx}
+                src={img.image_url}
+                alt="thumb"
+                onClick={() => setImagemPrincipal(img.image_url)}
+                style={{
+                  cursor: 'pointer',
+                  border: imagemPrincipal === img.image_url ? '2px solid black' : '1px solid #ddd',
+                  borderRadius: '6px',
+                  marginRight: '8px',
+                  width: '60px',
+                  height: '60px',
+                  objectFit: 'cover'
+                }}
+              />
+            ))}
+          </div>
         </div>
-          ) : (
-            <p>Carregando detalhes do produto...</p>
-          )}
 
-          {product ? (
-            <div className="col-direita">
-              <div className="informacao-tamanho">
-                <h1>{product.name}</h1>
-               
-             <div className="alternativas">
-  <div>
-    {product.colors
-  ?.filter((cor) => cor.stock_quantity > 0)
-  .map((cor, idx) => {
-    const imagem = cor.images?.find((img) => img.is_primary) || cor.images?.[0];
-    return (
-      <img
-        key={idx}
-        src={imagem?.image_url || 'default.png'}
-        alt={cor.name}
-        onClick={() => setCorSelecionada(cor)}
-        style={{
-          cursor: 'pointer',
-          border: corSelecionada?.product_color_id === cor.product_color_id ? '2px solid black' : 'none',
-          borderRadius: '6px',
-          marginRight: '8px',
-          width: '60px',
-          height: '60px',
-          objectFit: 'cover'
-        }}
-      />
-    );
-  })}
+        {/* COLUNA DIREITA */}
+        <div className="col-direita">
+          <h1>{product.name}</h1>
 
-  </div>
-</div>
+          <p style={{ fontWeight: 'bold', fontSize: '20pt' }}>
+            {(tamanhoSelecionado?.price || product.base_price)
+              ?.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
+          </p>
 
-              <p style={{fontWeight: 'bold', fontSize: '20pt'}}>  {product.price} Mzn</p>
-              <p style={{ maxWidth: '600px', fontStyle: 'italic' }}>
-                  {product.description}
-                </p>
-                <p style={{ textDecoration: 'underline', fontWeight: '900', fontSize: '13pt' }}>Tamanho</p>
-                <p>Os tamanhos podem variar de acordo com o estilo.</p>
-                <button className="botao-genero">HOMEM</button>
-                <button className="botao-genero">MULHER</button>
-              </div>
-              <div className="lista-tamanhos">
-                {[7, 10, 15, 16, 19, 23, 25, 30, 31, 34, 36].map((tamanho) => (
-                  <button key={tamanho} className="botao-tamanho">
-                    {tamanho}
-                  </button>
-                ))}
-              </div>
-            
-              
-              <button style={styles.button} onClick={() => addToCart(product)} className='cart'>
-                Adicionar ao Carrinho
-              </button>
-              <button
-            onClick={() => {
-              console.log("Produto favorito clicado:", product);
-              toggleFavorite(product);
-            }}
-            className='favor'
-          >
-            {favorites.some((item) => item.product_id === product.product_id)
-              ? <span style={{color: 'red', textDecoration: 'underline'}}>Remover Favorito</span>
+          <p style={{ maxWidth: '600px', fontStyle: 'italic' }}>
+            {product.description}
+          </p>
+
+          {/* CORES */}
+          <p className="label">Cores disponíveis</p>
+          <div className="alternativas">
+            {product.colors
+              ?.filter(c => c.stock_quantity > 0)
+              .map((cor) => {
+                const imagem = cor.images?.find(i => i.is_primary) || cor.images?.[0];
+                return (
+                  <img
+                    key={cor.product_color_id}
+                    src={imagem?.image_url}
+                    alt={cor.name}
+                    onClick={() => setCorSelecionada(cor)}
+                    style={{
+                      cursor: 'pointer',
+                      border: corSelecionada?.product_color_id === cor.product_color_id ? '2px solid black' : '1px solid #ccc',
+                      borderRadius: '6px',
+                      marginRight: '8px',
+                      width: '60px',
+                      height: '60px',
+                      objectFit: 'cover'
+                    }}
+                  />
+                );
+              })}
+          </div>
+
+          {/* TAMANHOS */}
+          <p className="label">Tamanhos ({tamanhoSelecionado?.size_type})</p>
+          <div className="lista-tamanhos">
+            {ordenarTamanhos(corSelecionada?.sizes || [])
+              .filter(t => t.stock_quantity > 0)
+              .map(t => (
+                <button
+                  key={t.product_color_size_id}
+                  className="botao-tamanho"
+                  onClick={() => setTamanhoSelecionado(t)}
+                  style={{
+                    border: tamanhoSelecionado?.product_color_size_id === t.product_color_size_id
+                      ? '2px solid black'
+                      : '1px solid #aaa',
+                    background: tamanhoSelecionado?.product_color_size_id === t.product_color_size_id
+                      ? '#000'
+                      : '#fff',
+                    color: tamanhoSelecionado?.product_color_size_id === t.product_color_size_id
+                      ? '#fff'
+                      : '#000'
+                  }}
+                >
+                  {t.size}
+                </button>
+              ))}
+          </div>
+
+          <button className="cart" onClick={addToCart}>
+            Adicionar ao Carrinho
+          </button>
+
+          <button onClick={() => toggleFavorite(product)} className="favor">
+            {favorites.some(f => f.product_id === product.product_id)
+              ? <span style={{ color: 'red' }}>Remover dos Favoritos</span>
               : "Adicionar aos Favoritos"}
           </button>
-            </div>
-          ) : (
-            <p>Carregando...</p>
-          )}
-        </div>
-
-        <div className=''>
 
         </div>
       </section>
-
-      
     </div>
   );
-};
-
-const styles = {
-  card: {
-   
-  },
 };
 
 export default ProdutoDetalhado;

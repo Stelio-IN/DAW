@@ -131,7 +131,7 @@ function Carrinho() {
               <li key={index} style={styles.productItem}>
                 <div style={styles.productDetails}>
                   <h3>{product.name}</h3>
-                  <p>Preço: {product.price}$</p>
+                  <p>Preçooooooooooo: {product.price}$</p>
                   <p>Quantidade em Estoque: {product.stock_quantity}</p>
                   <p>Quantidade: {product.quantity}</p>
                 </div>

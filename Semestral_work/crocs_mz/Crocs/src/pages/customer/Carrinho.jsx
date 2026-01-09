@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../assets/style/carrinho.css';
-import { FiArrowDown, FiMinus, FiPlus } from 'react-icons/fi';
-import {  } from 'react-icons/fa';
+import { FiMinus, FiPlus } from 'react-icons/fi';
+
 function Carrinho() {
   const [cart, setCart] = useState([]);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -10,37 +10,40 @@ function Carrinho() {
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-    // Ajeitar a quantidade corretamente ao carregar o carrinho
     const cartWithQuantities = storedCart.map(product => ({
       ...product,
-      quantity: product.quantity  || 1, // Se não existir quantity, define 1
+      quantity: product.quantity || 1, // Se não existir quantity, define 1
     }));
     setCart(cartWithQuantities);
   }, []);
 
-  // Atualiza a quantidade de um produto
-  const updateQuantity = (index, delta) => {
+  // Atualiza a quantidade de um produto específico (considerando cor)
+  const updateQuantity = (productColorId, delta) => {
     setCart(prevCart => {
-      const updatedCart = [...prevCart];
-      const item = updatedCart[index];
-
-      // Ajusta a quantidade para aumentar ou diminuir em 1 unidade
-      const newQuantity = item.quantity + delta;
-      if (newQuantity >= 1 && newQuantity <= item.stock_quantity) {
-        item.quantity = newQuantity;
-      }
-
-      // Atualiza o carrinho no localStorage
+      const updatedCart = prevCart.map(item => {
+        if (item.product_color_id === productColorId) {
+          const newQuantity = item.quantity + delta;
+          return {
+            ...item,
+            quantity:
+              newQuantity >= 1 && newQuantity <= item.stock_quantity
+                ? newQuantity
+                : item.quantity,
+          };
+        }
+        return item;
+      });
       localStorage.setItem('cart', JSON.stringify(updatedCart));
-
       return updatedCart;
     });
   };
 
-  // Remove um item do carrinho
-  const removeFromCart = (index) => {
+  // Remove um item específico (considerando cor)
+  const removeFromCart = (productColorId) => {
     setCart(prevCart => {
-      const updatedCart = prevCart.filter((_, i) => i !== index);
+      const updatedCart = prevCart.filter(
+        item => item.product_color_id !== productColorId
+      );
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       return updatedCart;
     });
@@ -66,40 +69,90 @@ function Carrinho() {
           <>
             <div className="carrinho_">
               <ul className="productList_">
-                {cart.map((product, index) => (
-                  <li key={index} className="productItem_">
+                {cart.map((product) => (
+                  <li key={product.product_color_id} className="productItem_">
                     <div className="product_">
                       <div className="productDetails_">
                         <div className='productDetails_1_'>
                           <img
-                            src={product.primary_image_url || 'default-image.png'}
+                            src={product.primary_image_url || product.image_url}
                             alt={product.name}
                           />
                         </div>
                         <div className='productDetails_2'>
                           <h3>{product.name}</h3>
-                          <p><span>Preço</span><span> {product.price} Mzn</span></p>
-                          <p><span>Quantidade</span><span> {product.quantity}</span> </p>
+
+                          {/* Cor */}
+                          <p className="cart-info-line">
+                            <span>Cor:</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span
+                                style={{
+                                  width: '14px',
+                                  height: '14px',
+                                  borderRadius: '50%',
+                                  backgroundColor: product.hex_code,
+                                  border: '1px solid #ccc'
+                                }}
+                              />
+                              {product.color}
+                            </span>
+                          </p>
+
+                          {/* Tamanho */}
+                          <p className="cart-info-line">
+                            <span>Tamanho:</span>
+                            <span>{product.size} ({product.size_type})</span>
+                          </p>
+
+                          {/* SKU */}
+                          <p className="cart-info-line">
+                            <span>SKU:</span>
+                            <span>{product.sku}</span>
+                          </p>
+
+                          {/* Preço */}
+                          <p>
+                            <span>Preço</span>
+                            <span>{product.price} Mzn</span>
+                          </p>
+
+                          {/* Quantidade */}
+                          <p>
+                            <span>Quantidade</span>
+                            <span>{product.quantity}</span>
+                          </p>
+
+                          {/* Stock 
+                          <p className="cart-stock">
+                            <span>Disponível:</span>
+                            <span>{product.stock_quantity}</span>
+                          </p>*/}
                         </div>
                       </div>
+
                       <div className="buttons_">
                         <button
-                          className="button_" id='botao'
-                          onClick={() => updateQuantity(index, 1)}
+                          className="button_"
+                          onClick={() => updateQuantity(product.product_color_id, 1)}
                           disabled={product.quantity >= product.stock_quantity}
-                        >  <FiPlus  size={15} style={{margin: 'auto', textAlign: 'center'}} /></button>
+                        >
+                          <FiPlus size={15} style={{ margin: 'auto' }} />
+                        </button>
                         <button
-                          className="button_" id='botao'
-                          onClick={() => updateQuantity(index, -1)}
+                          className="button_"
+                          onClick={() => updateQuantity(product.product_color_id, -1)}
                           disabled={product.quantity <= 1}
                         >
-                          <FiMinus  size={15} style={{margin: 'auto', textAlign: 'center'}} />
+                          <FiMinus size={15} style={{ margin: 'auto' }} />
                         </button>
-                       
-                          <p className="button_ removeButton_"
-                          onClick={() => removeFromCart(index)}>Remover</p>
-                       
-                       <p className='button_ addWishList_'>Favoritar</p>
+                        <p
+                          className="button_ removeButton_"
+                          onClick={() => removeFromCart(product.product_color_id)}
+                        >
+                          Remover
+                        </p>
+                        <p className='button_ addWishList_'>Favoritar</p>
                       </div>
                     </div>
                   </li>
