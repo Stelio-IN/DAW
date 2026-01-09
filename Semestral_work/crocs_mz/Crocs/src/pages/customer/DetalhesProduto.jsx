@@ -13,24 +13,21 @@ const ProdutoDetalhado = () => {
 
   const { favorites, toggleFavorite } = useFavorites();
 
-
-// Ordena tamanhos
+  // Função para ordenar tamanhos
   const ordenarTamanhos = (sizes = []) => {
-  return [...sizes].sort((a, b) => {
-    const aNum = parseInt(a.size);
-    const bNum = parseInt(b.size);
+    return [...sizes].sort((a, b) => {
+      const aNum = parseInt(a.size);
+      const bNum = parseInt(b.size);
 
-    // Se ambos forem números → ordena numericamente
-    if (!isNaN(aNum) && !isNaN(bNum)) {
-      return aNum - bNum;
-    }
+      if (!isNaN(aNum) && !isNaN(bNum)) {
+        return aNum - bNum;
+      }
 
-    // Caso contrário → ordena como texto (S, M, L, XL)
-    return a.size.localeCompare(b.size);
-  });
-};
+      return a.size.localeCompare(b.size);
+    });
+  };
 
-
+  // Fetch produto do backend
   useEffect(() => {
     if (productID) {
       fetch(`http://localhost:3005/api/products/pr/${productID}`)
@@ -51,7 +48,7 @@ const ProdutoDetalhado = () => {
     }
   }, [product]);
 
-  // Atualiza imagem quando muda cor
+  // Atualiza imagem principal quando muda cor
   useEffect(() => {
     if (corSelecionada?.images?.length > 0) {
       const imagem = corSelecionada.images.find(img => img.is_primary) || corSelecionada.images[0];
@@ -60,14 +57,15 @@ const ProdutoDetalhado = () => {
   }, [corSelecionada]);
 
   // Primeiro tamanho disponível por padrão
-useEffect(() => {
-  if (corSelecionada?.sizes?.length > 0) {
-    const sizesOrdenados = ordenarTamanhos(corSelecionada.sizes);
-    const firstAvailable = sizesOrdenados.find(s => s.stock_quantity > 0);
-    setTamanhoSelecionado(firstAvailable || null);
-  }
-}, [corSelecionada]);
+  useEffect(() => {
+    if (corSelecionada?.sizes?.length > 0) {
+      const sizesOrdenados = ordenarTamanhos(corSelecionada.sizes);
+      const firstAvailable = sizesOrdenados.find(s => s.stock_quantity > 0);
+      setTamanhoSelecionado(firstAvailable || null);
+    }
+  }, [corSelecionada]);
 
+  // Função adicionar ao carrinho
   const addToCart = () => {
     if (!product || !corSelecionada || !tamanhoSelecionado) {
       alert("Selecione cor e tamanho");
@@ -76,39 +74,43 @@ useEffect(() => {
 
     const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
 
-
-
-
     const itemToAdd = {
-  product_id: product.product_id,
-  product_color_id: corSelecionada.product_color_id,
-  product_color_size_id: tamanhoSelecionado.product_color_size_id,
-  name: product.name,
-  color: corSelecionada.name,
-  hex_code: corSelecionada.hex_code,
-  size: tamanhoSelecionado.size,
-  size_type: tamanhoSelecionado.size_type,
-  sku: tamanhoSelecionado.sku,
-  price: tamanhoSelecionado.price,
-  stock_quantity: tamanhoSelecionado.stock_quantity, // 🔥 ESSENCIAL
-  quantity: 1,
-  image_url: imagemPrincipal
-};
+      product_id: product.product_id,
+      product_color_id: corSelecionada.product_color_id,
+      product_color_size_id: tamanhoSelecionado.product_color_size_id,
+      name: product.name,
+      color: corSelecionada.name,
+      hex_code: corSelecionada.hex_code,
+      size: tamanhoSelecionado.size,
+      size_type: tamanhoSelecionado.size_type,
+      sku: tamanhoSelecionado.sku,
 
+      base_price: tamanhoSelecionado.base_price,
+      promo_price: tamanhoSelecionado.promo_price,
+      discount_percentage: tamanhoSelecionado.discount_percentage,
+      is_on_promotion: tamanhoSelecionado.is_on_promotion,
+
+      price: tamanhoSelecionado.is_on_promotion
+        ? tamanhoSelecionado.promo_price
+        : tamanhoSelecionado.base_price,
+
+      stock_quantity: tamanhoSelecionado.stock_quantity,
+      quantity: 1,
+      image_url: imagemPrincipal
+    };
 
     const existingIndex = currentCart.findIndex(item =>
-  item.product_color_size_id === itemToAdd.product_color_size_id
-);
+      item.product_color_size_id === itemToAdd.product_color_size_id
+    );
 
-if (existingIndex >= 0) {
-  const existing = currentCart[existingIndex];
-
-  if (existing.quantity < existing.stock_quantity) {
-    existing.quantity += 1;
-  }
-} else {
-  currentCart.push(itemToAdd);
-}
+    if (existingIndex >= 0) {
+      const existing = currentCart[existingIndex];
+      if (existing.quantity < existing.stock_quantity) {
+        existing.quantity += 1;
+      }
+    } else {
+      currentCart.push(itemToAdd);
+    }
 
     localStorage.setItem('cart', JSON.stringify(currentCart));
     alert("Produto adicionado ao carrinho");
@@ -155,9 +157,53 @@ if (existingIndex >= 0) {
         <div className="col-direita">
           <h1>{product.name}</h1>
 
+          {/* PREÇO */}
           <p style={{ fontWeight: 'bold', fontSize: '20pt' }}>
-            {(tamanhoSelecionado?.price || product.base_price)
-              ?.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
+           {tamanhoSelecionado?.is_on_promotion ? (
+  <>
+    {/* Preço original riscado */}
+    <span style={{ textDecoration: 'line-through', color: '#888', marginRight: '10px' }}>
+      {tamanhoSelecionado.base_price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
+    </span>
+
+    {/* Preço promocional */}
+    <span style={{ color: 'red' }}>
+      {tamanhoSelecionado.promo_price.toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
+    </span>
+
+    {/* Percentagem de desconto */}
+    <span style={{
+      background: 'red',
+      color: 'white',
+      padding: '4px 8px',
+      borderRadius: '6px',
+      marginLeft: '10px',
+      fontSize: '12px'
+    }}>
+      -{tamanhoSelecionado.discount_percentage}%
+    </span>
+
+    {/* Nome da promoção */}
+    {tamanhoSelecionado.promotion_name && (
+      <div style={{ fontSize: '12px', color: '#555', marginTop: '4px' }}>
+        Promoção: {tamanhoSelecionado.promotion_name}
+      </div>
+    )}
+
+    {/* Descrição da promoção */}
+    {tamanhoSelecionado.promotion_description && (
+      <div style={{ fontSize: '12px', color: '#777', marginTop: '2px' }}>
+        {tamanhoSelecionado.promotion_description}
+      </div>
+    )}
+  </>
+) : (
+  <span>
+    {(tamanhoSelecionado?.base_price || product.base_price)
+      .toLocaleString('pt-MZ', { style: 'currency', currency: 'MZN' })}
+  </span>
+)}
+
           </p>
 
           <p style={{ maxWidth: '600px', fontStyle: 'italic' }}>
@@ -214,10 +260,20 @@ if (existingIndex >= 0) {
                   }}
                 >
                   {t.size}
+                  {t.is_on_promotion && (
+                    <span style={{
+                      fontSize: '10px',
+                      color: 'red',
+                      display: 'block'
+                    }}>
+                      -{t.discount_percentage}%
+                    </span>
+                  )}
                 </button>
               ))}
           </div>
 
+          {/* BOTÕES */}
           <button className="cart" onClick={addToCart}>
             Adicionar ao Carrinho
           </button>

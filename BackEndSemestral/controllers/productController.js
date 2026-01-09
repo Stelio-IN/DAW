@@ -128,6 +128,7 @@ const getProductsEspecific = async (req, res) => {
         p.description,
         p.status,
         MAX(pi.image_url) AS primary_image_url,
+
         (
           SELECT JSON_ARRAYAGG(
             JSON_OBJECT(
@@ -135,6 +136,7 @@ const getProductsEspecific = async (req, res) => {
               'name', c.name,
               'hex_code', c.hex_code,
               'stock_quantity', pc.stock_quantity,
+
               'images', (
                 SELECT JSON_ARRAYAGG(
                   JSON_OBJECT(
@@ -146,16 +148,74 @@ const getProductsEspecific = async (req, res) => {
                 FROM productimages pi2
                 WHERE pi2.product_color_id = pc.product_color_id
               ),
+
               'sizes', (
                 SELECT JSON_ARRAYAGG(
                   JSON_OBJECT(
                     'product_color_size_id', pcs.product_color_size_id,
+                    'sku', pcs.sku,
                     'size_id', pcs.size_id,
                     'size', s.size,
                     'size_type', st.name,
                     'stock_quantity', pcs.stock_quantity,
-                    'price', IFNULL(pcs.price_override, p.price),
-                    'sku', pcs.sku
+
+                    -- preço base
+                    'base_price', COALESCE(pcs.price_override, p.price),
+
+                    -- Busca promoção mais específica disponível (tamanho -> cor -> produto)
+                    'promo_price', (
+                      SELECT ROUND(COALESCE(pcs.price_override, p.price) * (1 - pr.discount_percentage / 100), 2)
+                      FROM product_promotions pp
+                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                      WHERE 
+                        (pp.product_color_size_id = pcs.product_color_size_id
+                          OR pp.product_color_id = pcs.product_color_id
+                          OR pp.product_id = p.product_id)
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                      ORDER BY
+                        CASE 
+                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                          WHEN pp.product_color_id IS NOT NULL THEN 2
+                          WHEN pp.product_id IS NOT NULL THEN 3
+                        END
+                      LIMIT 1
+                    ),
+
+                    'discount_percentage', (
+                      SELECT pr.discount_percentage
+                      FROM product_promotions pp
+                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                      WHERE 
+                        (pp.product_color_size_id = pcs.product_color_size_id
+                          OR pp.product_color_id = pcs.product_color_id
+                          OR pp.product_id = p.product_id)
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                      ORDER BY
+                        CASE 
+                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                          WHEN pp.product_color_id IS NOT NULL THEN 2
+                          WHEN pp.product_id IS NOT NULL THEN 3
+                        END
+                      LIMIT 1
+                    ),
+
+                    'is_on_promotion', (
+                      SELECT 1
+                      FROM product_promotions pp
+                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                      WHERE 
+                        (pp.product_color_size_id = pcs.product_color_size_id
+                          OR pp.product_color_id = pcs.product_color_id
+                          OR pp.product_id = p.product_id)
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                      ORDER BY
+                        CASE 
+                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                          WHEN pp.product_color_id IS NOT NULL THEN 2
+                          WHEN pp.product_id IS NOT NULL THEN 3
+                        END
+                      LIMIT 1
+                    )
                   )
                 )
                 FROM product_color_sizes pcs
@@ -171,9 +231,10 @@ const getProductsEspecific = async (req, res) => {
             )
           )
           FROM productcolors pc
-          JOIN colors c ON pc.color_id = c.color_id
+          INNER JOIN colors c ON pc.color_id = c.color_id
           WHERE pc.product_id = p.product_id
         ) AS colors
+
       FROM products p
       INNER JOIN categories g ON g.category_id = p.category_id
       LEFT JOIN productcolors pc ON p.product_id = pc.product_id
@@ -206,6 +267,9 @@ const getProductsEspecific = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
 
 
 const getProductByName = async (req, res) => {
