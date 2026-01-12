@@ -6,7 +6,7 @@ import cartao from "../../assets/img/card.svg";
 import mpesa from "../../assets/img/mpesa.png";
 import emola from "../../assets/img/emola.png";
 import Timeline from "../../component/TimeLine";
-import PayPalButton from '../customer/Paypal';
+import PayPalButton from "../customer/Paypal";
 
 const Pay = () => {
   //const [selectedSize, setSelectedSize] = useState(null);
@@ -14,7 +14,100 @@ const Pay = () => {
   // Estado para controlar qual método de pagamento está ativo
   //const [activePayment, setActivePayment] = useState(null);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  
+
+  // Dados de entrega
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [city, setCity] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [phone, setPhone] = useState("");
+  const [country, setCountry] = useState("Moçambique");
+
+  const handleSubmitOrder = async () => {
+  // Verifica se há método de pagamento
+  if (!activeMethod) {
+    alert("Selecione um método de pagamento");
+    return;
+  }
+
+  // Verifica dados obrigatórios de entrega
+  if (!firstName || !lastName || !address1 || !city || !phone) {
+    alert("Preencha todos os dados de entrega obrigatórios");
+    return;
+  }
+
+  // Prepara o carrinho para envio
+  const cartPrepared = cart.map(item => ({
+    ...item,
+    product_id: Number(item.product_id),
+    product_color_id: Number(item.product_color_id),
+    product_color_size_id: Number(item.product_color_size_id),
+    quantity: Number(item.quantity || 1),
+    price: Number(item.price || 0),
+  }));
+
+  // Validação simples
+const invalidItems = cartPrepared.filter(item => !item.product_color_size_id);
+if (invalidItems.length > 0) {
+  console.error("Itens inválidos no carrinho:", invalidItems);
+  alert("Há produtos inválidos no carrinho.");
+  return;
+}
+
+  // Verifica se o carrinho não está vazio
+  if (cartPrepared.length === 0) {
+    alert("O carrinho está vazio ou contém produtos inválidos.");
+    return;
+  }
+
+  console.log("Cart que será enviado:", cartPrepared);
+
+  // Cria objeto do cliente
+  const customer = {
+    id: 8, // teste
+    deliveryInfo: {
+      first_name: firstName,
+      last_name: lastName,
+      address1,
+      address2,
+      city,
+      province,
+      postal_code: postalCode,
+      phone,
+      country,
+    },
+  };
+
+  try {
+    const response = await fetch("http://localhost:3005/api/orders/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customer,
+        cart: cartPrepared,   // envia cart preparado
+        paymentMethod: activeMethod,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || "Erro ao criar pedido");
+      console.error("Erro do backend:", data);
+      return;
+    }
+
+    console.log("VENDA REGISTADA:", data);
+    alert("Venda criada com sucesso!");
+    emptyCart();
+  } catch (err) {
+    console.error("Erro de ligação ao servidor:", err);
+    alert("Erro de ligação ao servidor");
+  }
+};
 
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
@@ -37,22 +130,23 @@ const Pay = () => {
   const [cart, setCart] = useState([]);
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
-  const loadCart = () => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(storedCart);
-  };
+    const loadCart = () => {
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+      setCart(storedCart);
+    };
 
-  // Carrega ao abrir
-  loadCart();
+    // Carrega ao abrir
+    loadCart();
 
-  // Escuta mudanças do localStorage
-  window.addEventListener("storage", loadCart);
+    // Escuta mudanças do localStorage
+    window.addEventListener("storage", loadCart);
 
-  return () => {
-    window.removeEventListener("storage", loadCart);
-  };
-}, []);
+    return () => {
+      window.removeEventListener("storage", loadCart);
+    };
+  }, []);
 
+  
 
   const emptyCart = () => {
     setCart([]); // Esvazia o estado do carrinho
@@ -66,14 +160,11 @@ const Pay = () => {
     );
   };
 
-
   return (
     <div className="content-pagamento">
-    
       <div className="pagamento">
         <section className="catalog-items">
           <div className="delivery">
-            
             <div
               style={{
                 marginTop: "50px",
@@ -81,37 +172,80 @@ const Pay = () => {
                 flexDirection: "column",
               }}
             >
-               {/*<Timeline currentStep={currentStep} /> <br />*/ } 
+              {/*<Timeline currentStep={currentStep} /> <br />*/}
               <h3 style={{ color: "#5b5b5b" }}>Endereço de Entrega *</h3>
               <p>Preencha os dados abaixo com o seu endereço.</p>
             </div>
             <div>
               {" "}
-              <select id="combo-pais">
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
                 <option value="Moçambique">Moçambique</option>
               </select>{" "}
             </div>
             <div>
               {" "}
-              <input type="text" placeholder="   Seu primeiro nome" />{" "}
-              <input type="text" placeholder="   Seu sobrenome" />{" "}
+              <input
+                type="text"
+                placeholder="Seu primeiro nome"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Seu sobrenome"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+              />{" "}
             </div>
             <div>
               {" "}
-              <input type="text" placeholder="   Endereço primario" />{" "}
+              <input
+                type="text"
+                placeholder="Endereço primario"
+                value={address1}
+                onChange={(e) => setAddress1(e.target.value)}
+              />{" "}
             </div>
             <div>
               {" "}
-              <input type="text" placeholder="   Endereço secundario" />{" "}
+              <input
+                type="text"
+                placeholder="Endereço secundario"
+                value={address2}
+                onChange={(e) => setAddress2(e.target.value)}
+              />{" "}
             </div>
             <div>
-              <input type="text" placeholder="   Cidade" />{" "}
-              <input type="text" placeholder="   Provincia" />{" "}
-              <input type="number " placeholder="   Código Postal" maxLength={5} />
+              <input
+                type="text"
+                placeholder="Cidade"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+              />
+              <input
+                type="text"
+                placeholder="Provincia"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Código Postal"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+              />
             </div>
             <div>
               {" "}
-              <input type="number" placeholder="   Telefone" maxLength={9} />{" "}
+              <input
+                type="number"
+                placeholder="Telefone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />{" "}
             </div>
 
             <div
@@ -121,20 +255,28 @@ const Pay = () => {
                 flexDirection: "column",
               }}
             >
-              
+              <button onClick={handleSubmitOrder}>Finalizarrrrr Compra</button>
             </div>
 
             <section className="Payments">
-            <h3 style={{ color: "#5b5b5b", width: '100%' }}>Pagamento*</h3>
-            <p style={{ color: "#000000", width: '100%' }}>Todas as transações são seguras e encriptadas.</p>
+              <h3 style={{ color: "#5b5b5b", width: "100%" }}>Pagamento*</h3>
+              <p style={{ color: "#000000", width: "100%" }}>
+                Todas as transações são seguras e encriptadas.
+              </p>
               <div>
-                <p> Total a pagar:<span style={{ fontWeight: '700'}}> {calculateTotal()} Mzn</span></p>
+                <p>
+                  Total a pagar:
+                  <span style={{ fontWeight: "700" }}>
+                    {" "}
+                    {calculateTotal()} Mzn
+                  </span>
+                </p>
 
-               {/* Paypal */}
-               <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
-                  {" "}
+                {/* PAYPAL */}
+                <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
                   <img src={paypal} alt="" />
                 </button>
+
                 {activeMethod === "paypal" && (
                   <div className="Paypal_payment">
                     <p>
@@ -146,129 +288,107 @@ const Pay = () => {
                         O que é PayPal?
                       </span>
                     </p>
-                    <PayPalButton 
-                      totalMZN={calculateTotal()} 
-                      onPaymentSuccess={emptyCart} 
-                      cartItems={cart} // Passando o cart como prop
-                    />
 
+                    <PayPalButton
+                      totalMZN={calculateTotal()}
+                      cartItems={cart}
+                      onPaymentSuccess={handleSubmitOrder}
+                    />
                   </div>
                 )}
 
-
-                {/* Cartão */}
+                {/* CARTÃO */}
                 <button id="btn_card" onClick={() => toggleMethod("card")}>
-                  {" "}
                   <img src={cartao} alt="" /> <span>Cartão</span>
                 </button>
+
                 {activeMethod === "card" && (
                   <div className="Card_payment">
-                    <label htmlFor=""> Nome do Proprietário</label>
+                    <label>Nome do Proprietário</label>
                     <input type="text" placeholder="Tobias Zucula Mphemo" />
-                    <label htmlFor=""> Número do cartão</label>
-                    <input
-                      type="number"
-                      placeholder="1234 5678 9012 3456"
-                      maxLength={16}
-                    />
+
+                    <label>Número do cartão</label>
+                    <input type="number" placeholder="1234 5678 9012 3456" />
+
                     <div className="div1">
                       <div>
-                        <label htmlFor="">Data de Expiração</label>
+                        <label>Data de Expiração</label>
                         <input type="text" placeholder="MM/YY" />
                       </div>
                       <div>
-                        <label htmlFor="">CVV</label>
-                        <input type="number" placeholder="Cvv" maxLength={3} />
+                        <label>CVV</label>
+                        <input type="number" placeholder="123" />
                       </div>
                     </div>
+
+                    {/* BOTÃO FINAL DE VENDA */}
+                    <button onClick={handleSubmitOrder}>
+                      Finalizar Compra
+                    </button>
                   </div>
                 )}
 
-                {/* M-pesa */}
+                {/* MPESA */}
                 <button id="btn_mpesa" onClick={() => toggleMethod("mpesa")}>
-                  {" "}
                   <img src={mpesa} alt="" />
                 </button>
+
                 {activeMethod === "mpesa" && (
                   <div className="M-pesa_payment">
-                    <p>Clique no botão abaixo e confirme o pagamento..</p>
+                    <p>Clique no botão abaixo e confirme o pagamento.</p>
 
-                    <button id="btn_pay">
-                      {" "}
-                      <span>Pagar com </span>{" "}
-                      <img src={mpesa} alt="" onClick={handlePurchaseClick} />
+                    <button id="btn_pay" onClick={handleSubmitOrder}>
+                      <span>Pagar com </span>
+                      <img src={mpesa} alt="" />
                     </button>
-
-                    {/* Modal de Pagamento */}
-                    {showPaymentModal && (
-                      <div className="modal" onClick={handleCloseModal}>
-                        <div
-                          className="modalContent"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <h2>Pagamento</h2>
-                          <p>Total a Pagar: {calculateTotal()}$</p>
-                          <label>
-                            Celular:
-                            <input type="text" placeholder="Seu celular" />
-                          </label>
-                          <button
-                            onClick={() =>
-                              alert("Compra finalizada com sucesso!")
-                            }
-                          >
-                            Finalizar Compra
-                          </button>
-                          <button onClick={handleCloseModal}>Fechar</button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
-                {/* Emola */}
+                {/* EMOLA */}
                 <button id="btn_emola" onClick={() => toggleMethod("emola")}>
-                  {" "}
                   <img src={emola} alt="" />
                 </button>
+
                 {activeMethod === "emola" && (
                   <div className="Emola_payment">
                     <p>Clique no botão abaixo e prossiga com o pagamento.</p>
-                    <button id="btn_pay">
-                      {" "}
-                      <span>Pagar com </span>{" "}
-                      <img src={emola} alt="" onClick={handlePurchaseClick} />
+
+                    <button id="btn_pay" onClick={handleSubmitOrder}>
+                      <span>Pagar com </span>
+                      <img src={emola} alt="" />
                     </button>
                   </div>
                 )}
               </div>
             </section>
-
           </div>
-      
         </section>
-        
 
         <section className="Detalhes">
           <div className="Order_summary">
             <ul className="productList">
               {cart.map((product) => (
-                 <li key={product.product_color_id} className="productItem">
+                <li key={product.product_color_id} className="productItem">
                   <div className="product">
                     <div className="productDetails">
                       <div className="productDetails_1">
                         <img
-                         src={product.primary_image_url || product.image_url || "default.png"}
+                          src={
+                            product.primary_image_url ||
+                            product.image_url ||
+                            "default.png"
+                          }
                           alt={product.name}
                         />
                       </div>
                       <div className="productDetails_2">
                         <h3>{product.name}</h3>
-                       <p>Preço: {product.price} Mzn</p>
-<p>Quantidade: {product.quantity}</p>
-<p>Cor: {product.color}</p>
-<p>Tamanho: {product.size} ({product.size_type})</p>
-
+                        <p>Preço: {product.price} Mzn</p>
+                        <p>Quantidade: {product.quantity}</p>
+                        <p>Cor: {product.color}</p>
+                        <p>
+                          Tamanho: {product.size} ({product.size_type})
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -276,7 +396,7 @@ const Pay = () => {
               ))}
             </ul>
             <div className="order">
-            <h2>RESUMO DO PEDIDO</h2>
+              <h2>RESUMO DO PEDIDO</h2>
               <div className="subtotal">
                 <p>SubTotal</p>
                 <p>0 Mzn</p>
@@ -294,15 +414,23 @@ const Pay = () => {
                 <p> {calculateTotal()} Mzn</p>
               </div>
             </div>
-            
-            <section className="Paymentos">
-            <h3 style={{ color: "#000000", width: '100%' }}>Pagamento*</h3>
-            <p style={{ color: "#000000", width: '100%' }}>Todas as transações são seguras e encriptadas.</p>
-              <div>
-                <p> Total a pagar: <span style={{ fontWeight: 'bold'}}>{calculateTotal()}  Mzn</span></p>
 
-               {/* Paypal */}
-               <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
+            <section className="Paymentos">
+              <h3 style={{ color: "#000000", width: "100%" }}>Pagamento*</h3>
+              <p style={{ color: "#000000", width: "100%" }}>
+                Todas as transações são seguras e encriptadas.
+              </p>
+              <div>
+                <p>
+                  {" "}
+                  Total a pagar:{" "}
+                  <span style={{ fontWeight: "bold" }}>
+                    {calculateTotal()} Mzn
+                  </span>
+                </p>
+
+                {/* Paypal */}
+                <button id="btn_paypal" onClick={() => toggleMethod("paypal")}>
                   {" "}
                   <img src={paypal} alt="" />
                 </button>
@@ -317,15 +445,13 @@ const Pay = () => {
                         O que é PayPal?
                       </span>
                     </p>
-                    <PayPalButton 
-                      totalMZN={calculateTotal()} 
-                      onPaymentSuccess={emptyCart} 
+                    <PayPalButton
+                      totalMZN={calculateTotal()}
+                      onPaymentSuccess={emptyCart}
                       cartItems={cart} // Passando o cart como prop
                     />
-
                   </div>
                 )}
-
 
                 {/* Cartão */}
                 <button id="btn_card" onClick={() => toggleMethod("card")}>
@@ -364,10 +490,9 @@ const Pay = () => {
                   <div className="M-pesa_payment">
                     <p>Clique no botão abaixo e confirme o pagamento..</p>
 
-                    <button id="btn_pay">
-                      {" "}
-                      <span>Pagar com </span>{" "}
-                      <img src={mpesa} alt="" onClick={handlePurchaseClick} />
+                    <button id="btn_pay" onClick={handleSubmitOrder}>
+                      <span>Pagar com</span>
+                      <img src={mpesa} alt="" />
                     </button>
 
                     {/* Modal de Pagamento */}
@@ -383,13 +508,10 @@ const Pay = () => {
                             Celular:
                             <input type="text" placeholder="Seu celular" />
                           </label>
-                          <button
-                            onClick={() =>
-                              alert("Compra finalizada com sucesso!")
-                            }
-                          >
+                          <button onClick={handleSubmitOrder}>
                             Finalizar Compra
                           </button>
+
                           <button onClick={handleCloseModal}>Fechar</button>
                         </div>
                       </div>
@@ -405,16 +527,13 @@ const Pay = () => {
                 {activeMethod === "emola" && (
                   <div className="Emola_payment">
                     <p>Clique no botão abaixo e prossiga com o pagamento.</p>
-                    <button id="btn_pay">
-                      {" "}
-                      <span>Pagar com </span>{" "}
-                      <img src={emola} alt="" onClick={handlePurchaseClick} />
+                    <button onClick={handleSubmitOrder}>
+                      Finalizar Compra
                     </button>
                   </div>
                 )}
               </div>
             </section>
-            
           </div>
         </section>
       </div>

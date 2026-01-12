@@ -1,7 +1,9 @@
 import { Sequelize, DataTypes } from 'sequelize';
 import dbConfig from '../config/db.js';
 
+// =====================
 // Models
+// =====================
 import userModel from './UserModel.js';
 import categoryModel from './CategoryModel.js';
 import productModel from './ProductModel.js';
@@ -16,6 +18,7 @@ import sizeTypeModel from './SizeTypeModel.js';
 import sizeModel from './SizeModel.js';
 import promotionModel from './PromotionsModel.js';
 import productPromotionModel from './ProductPromotionsModel.js';
+import promotionSaleModel from './PromotionSaleModel.js';
 
 // =====================
 // Sequelize instance
@@ -58,10 +61,11 @@ const db = {
 
   Order: orderModel(sequelize, DataTypes),
   OrderItem: orderItemModel(sequelize, DataTypes),
+  PromotionSale: promotionSaleModel(sequelize, DataTypes),
 };
 
 // =====================
-// Relações entre tabelas
+// Associações
 // =====================
 
 // Category ↔ Product
@@ -72,7 +76,7 @@ db.Product.belongsTo(db.Category, { foreignKey: 'category_id' });
 db.Gender.hasMany(db.Product, { foreignKey: 'gender_id' });
 db.Product.belongsTo(db.Gender, { foreignKey: 'gender_id' });
 
-// Product ↔ Color (N:N)
+// Product ↔ Color (N:N) via ProductColor
 db.Product.belongsToMany(db.Color, {
   through: db.ProductColor,
   foreignKey: 'product_id',
@@ -83,20 +87,16 @@ db.Color.belongsToMany(db.Product, {
 });
 
 // ProductColor ↔ ProductImage
-db.ProductColor.hasMany(db.ProductImage, {
-  foreignKey: 'product_color_id',
-});
-db.ProductImage.belongsTo(db.ProductColor, {
-  foreignKey: 'product_color_id',
-});
+db.ProductColor.hasMany(db.ProductImage, { foreignKey: 'product_color_id' });
+db.ProductImage.belongsTo(db.ProductColor, { foreignKey: 'product_color_id' });
 
 // ProductColor ↔ ProductColorSize
-db.ProductColor.hasMany(db.ProductColorSize, {
-  foreignKey: 'product_color_id',
-});
-db.ProductColorSize.belongsTo(db.ProductColor, {
-  foreignKey: 'product_color_id',
-});
+db.ProductColor.hasMany(db.ProductColorSize, { foreignKey: 'product_color_id' });
+db.ProductColorSize.belongsTo(db.ProductColor, { foreignKey: 'product_color_id' });
+
+// ProductColor ↔ Product
+db.ProductColor.belongsTo(db.Product, { foreignKey: 'product_id' });
+db.Product.hasMany(db.ProductColor, { foreignKey: 'product_id' });
 
 // Size ↔ ProductColorSize
 db.Size.hasMany(db.ProductColorSize, { foreignKey: 'size_id' });
@@ -127,14 +127,10 @@ db.Color.hasMany(db.OrderItem, { foreignKey: 'color_id' });
 db.OrderItem.belongsTo(db.Color, { foreignKey: 'color_id' });
 
 // ProductColorSize ↔ OrderItem
-db.ProductColorSize.hasMany(db.OrderItem, {
-  foreignKey: 'product_color_size_id',
-});
-db.OrderItem.belongsTo(db.ProductColorSize, {
-  foreignKey: 'product_color_size_id',
-});
+db.ProductColorSize.hasMany(db.OrderItem, { foreignKey: 'product_color_size_id' });
+db.OrderItem.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
 
-// ProductColorSize ↔ Promotion (N:N)
+// ProductColorSize ↔ Promotion (N:N) via ProductPromotion
 db.ProductColorSize.belongsToMany(db.Promotion, {
   through: db.ProductPromotion,
   foreignKey: 'product_color_size_id',
@@ -144,15 +140,27 @@ db.Promotion.belongsToMany(db.ProductColorSize, {
   foreignKey: 'promotion_id',
 });
 
+// Promotion ↔ PromotionSale
+db.Promotion.hasMany(db.PromotionSale, { foreignKey: 'promotion_id' });
+db.PromotionSale.belongsTo(db.Promotion, { foreignKey: 'promotion_id' });
+
+// Order ↔ PromotionSale
+db.Order.hasMany(db.PromotionSale, { foreignKey: 'order_id' });
+db.PromotionSale.belongsTo(db.Order, { foreignKey: 'order_id' });
+
+// ProductColorSize ↔ PromotionSale
+db.ProductColorSize.hasMany(db.PromotionSale, { foreignKey: 'product_color_size_id' });
+db.PromotionSale.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
+
 // =====================
-// Conexão + Sync (ORDEM CORRETA)
+// Conexão + Sync
 // =====================
 (async () => {
   try {
     await sequelize.authenticate();
     console.log('Conexão com o banco de dados estabelecida.');
 
-    // Tabelas base
+    // Base
     await db.User.sync();
     await db.Category.sync();
     await db.Gender.sync();
@@ -169,6 +177,7 @@ db.Promotion.belongsToMany(db.ProductColorSize, {
     // Promoções
     await db.Promotion.sync();
     await db.ProductPromotion.sync();
+    await db.PromotionSale.sync();
 
     // Pedidos
     await db.Order.sync();

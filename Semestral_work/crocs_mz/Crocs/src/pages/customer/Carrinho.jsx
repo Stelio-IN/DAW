@@ -49,10 +49,31 @@ function Carrinho() {
     });
   };
 
-  // Cálculo do total do carrinho
-  const calculateTotal = () => {
-    return cart.reduce((total, product) => total + product.price * product.quantity, 0);
-  };
+
+  // Total sem desconto (preço original)
+const calculateSubtotal = () => {
+  return cart.reduce((total, product) => {
+    return total + product.base_price * product.quantity;
+  }, 0);
+};
+
+// Total a pagar (já com promoções)
+const calculateTotal = () => {
+  return cart.reduce((total, product) => {
+    return total + product.price * product.quantity;
+  }, 0);
+};
+
+// Quanto o cliente poupou
+const calculateDiscount = () => {
+  return cart.reduce((total, product) => {
+    if (product.is_on_promotion) {
+      return total + ((product.base_price - product.price) * product.quantity);
+    }
+    return total;
+  }, 0);
+};
+
 
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
@@ -61,6 +82,8 @@ function Carrinho() {
   const handleCloseModal = () => {
     setShowPaymentModal(false);
   };
+
+  
 
   return (
     <div className="content-carrinho_">
@@ -162,22 +185,41 @@ function Carrinho() {
               <div className="Order_summary_">
                 <div className="order_">
                   <h2>RESUMO DO PEDIDO</h2>
-                  <div className="subtotal_">
-                    <p>SubTotal</p>
-                    <p>0 Mzn</p>
-                  </div>
-                  <div className="shipping_">
-                    <p>Entrega (Delivery)</p>
-                    <p>Sera calculado a seguir</p>
-                  </div>
-                  <div className="descounted_">
-                    <p>Você Poupou</p>
-                    <p> 0 Mzn</p>
-                  </div>
-                  <div className="total_">
-                    <p>Total: </p>
-                    <p>{calculateTotal()} Mzn</p>
-                  </div>
+               <div className="subtotal_">
+  <p>SubTotal</p>
+  <p>
+    {calculateSubtotal().toLocaleString('pt-MZ', {
+      style: 'currency',
+      currency: 'MZN'
+    })}
+  </p>
+</div>
+
+<div className="shipping_">
+  <p>Entrega (Delivery)</p>
+  <p>Será calculado a seguir</p>
+</div>
+
+<div className="descounted_">
+  <p>Você Poupou</p>
+  <p style={{ color: 'green' }}>
+    -{calculateDiscount().toLocaleString('pt-MZ', {
+      style: 'currency',
+      currency: 'MZN'
+    })}
+  </p>
+</div>
+
+<div className="total_">
+  <p>Total:</p>
+  <p>
+    {calculateTotal().toLocaleString('pt-MZ', {
+      style: 'currency',
+      currency: 'MZN'
+    })}
+  </p>
+</div>
+
                   <Link to='/pagamento'>
                     <button className="purchaseButton_" onClick={handlePurchaseClick}>
                       Finalizar Compra

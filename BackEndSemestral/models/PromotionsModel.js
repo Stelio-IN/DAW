@@ -15,7 +15,7 @@ export default (sequelize, DataTypes) => {
     },
     {
       tableName: 'promotions',
-      timestamps: true,
+      timestamps: false,
     }
   );
 };

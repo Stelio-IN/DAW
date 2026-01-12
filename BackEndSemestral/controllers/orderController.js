@@ -1,10 +1,40 @@
 import db from '../models/index.js';
 const Order = db.Order;
 
+import { processOrder } from './services/orderService.js';
+
+/*const createOrder = async (req, res) => {
+  try {
+    const { customer, cart, paymentMethod } = req.body;
+
+    const result = await processOrder(customer, cart, paymentMethod);
+
+    res.status(201).json({
+      message: 'Pedido criado com sucesso!',
+      order: result
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+*/
+
 const createOrder = async (req, res) => {
   try {
-    const order = await Order.create(req.body);
-    res.status(201).json(order);
+    const { customer, cart, paymentMethod } = req.body;
+
+    // Para teste, não chamamos nenhuma API externa
+    // Só simulamos que o pagamento foi concluído
+    const result = await processOrder(customer, cart, paymentMethod);
+
+    // Simula que o pagamento foi bem sucedido
+    // Atualizamos o status do pedido para 'paid' apenas para teste
+    // await Order.update({ status: 'paid' }, { where: { order_id: result.order_id } });
+
+    res.status(201).json({
+      message: 'Pedido criado com sucesso! (teste sem pagamento real)',
+      order: result
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

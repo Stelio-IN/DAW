@@ -1,7 +1,7 @@
-import db from '../models/index.js';
+import db from "../models/index.js";
 const Product = db.Product;
 
- const createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
   try {
     const product = await Product.create(req.body);
     res.status(201).json(product);
@@ -10,7 +10,7 @@ const Product = db.Product;
   }
 };
 
- const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res) => {
   try {
     const products = await Product.findAll();
     res.status(200).json(products);
@@ -19,20 +19,20 @@ const Product = db.Product;
   }
 };
 
- const getProductById = async (req, res) => {
+const getProductById = async (req, res) => {
   try {
     const product = await Product.findByPk(req.params.id);
     if (product) {
       res.status(200).json(product);
     } else {
-      res.status(404).json({ message: 'Product not found' });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
- const updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
   try {
     const [updated] = await Product.update(req.body, {
       where: { product_id: req.params.id },
@@ -41,22 +41,22 @@ const Product = db.Product;
       const updatedProduct = await Product.findByPk(req.params.id);
       res.status(200).json(updatedProduct);
     } else {
-      res.status(404).json({ message: 'Product not found' });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
- const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
     const deleted = await Product.destroy({
       where: { product_id: req.params.id },
     });
     if (deleted) {
-      res.status(204).json({ message: 'Product deleted' });
+      res.status(204).json({ message: "Product deleted" });
     } else {
-      res.status(404).json({ message: 'Product not found' });
+      res.status(404).json({ message: "Product not found" });
     }
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -103,23 +103,23 @@ const products = async (req, res) => {
     query += ` GROUP BY p.product_id, p.name, p.price, p.description, p.status, g.name `;
 
     const products = await db.sequelize.query(query, {
-      replacements: { search: `%${search || ''}%` },
+      replacements: { search: `%${search || ""}%` },
       type: db.sequelize.QueryTypes.SELECT,
     });
 
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error fetching products with search:', error);
+    console.error("Error fetching products with search:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const getProductsEspecific = async (req, res) => {
   const id = req.params.id;
 
   try {
-    const [produto] = await db.sequelize.query(`
+    const [produto] = await db.sequelize.query(
+      `
       SELECT 
         p.product_id,
         p.name AS product_name,
@@ -171,7 +171,10 @@ const getProductsEspecific = async (req, res) => {
                         (pp.product_color_size_id = pcs.product_color_size_id
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                       AND NOW() BETWEEN pr.start_date AND pr.end_date
+AND (pr.promo_stock_limit IS NULL 
+     OR pr.promo_stock_used < pr.promo_stock_limit)
+
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -190,6 +193,9 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
+AND (pr.promo_stock_limit IS NULL 
+     OR pr.promo_stock_used < pr.promo_stock_limit)
+
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -198,6 +204,49 @@ const getProductsEspecific = async (req, res) => {
                         END
                       LIMIT 1
                     ),
+
+                    'promotion_name', (
+                      SELECT pr.name
+                      FROM product_promotions pp
+                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                      WHERE 
+                        (pp.product_color_size_id = pcs.product_color_size_id
+                          OR pp.product_color_id = pcs.product_color_id
+                          OR pp.product_id = p.product_id)
+                       AND NOW() BETWEEN pr.start_date AND pr.end_date
+AND (pr.promo_stock_limit IS NULL 
+     OR pr.promo_stock_used < pr.promo_stock_limit)
+
+                      ORDER BY
+                        CASE 
+                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                          WHEN pp.product_color_id IS NOT NULL THEN 2
+                          WHEN pp.product_id IS NOT NULL THEN 3
+                        END
+                      LIMIT 1
+                    ),
+
+                    'promotion_description', (
+                      SELECT pr.description
+                      FROM product_promotions pp
+                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                      WHERE 
+                        (pp.product_color_size_id = pcs.product_color_size_id
+                          OR pp.product_color_id = pcs.product_color_id
+                          OR pp.product_id = p.product_id)
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+AND (pr.promo_stock_limit IS NULL 
+     OR pr.promo_stock_used < pr.promo_stock_limit)
+
+                      ORDER BY
+                        CASE 
+                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                          WHEN pp.product_color_id IS NOT NULL THEN 2
+                          WHEN pp.product_id IS NOT NULL THEN 3
+                        END
+                      LIMIT 1
+                    ),
+
 
                     'is_on_promotion', (
                       SELECT 1
@@ -208,6 +257,9 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
+AND (pr.promo_stock_limit IS NULL 
+     OR pr.promo_stock_used < pr.promo_stock_limit)
+
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -242,13 +294,15 @@ const getProductsEspecific = async (req, res) => {
         ON pc.product_color_id = pi.product_color_id AND pi.is_primary = 1
       WHERE p.product_id = :id
       GROUP BY p.product_id, p.name, p.price, p.description, g.name, p.status
-    `, {
-      replacements: { id },
-      type: db.sequelize.QueryTypes.SELECT,
-    });
+    `,
+      {
+        replacements: { id },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     if (!produto) {
-      return res.status(404).json({ error: 'Produto não encontrado' });
+      return res.status(404).json({ error: "Produto não encontrado" });
     }
 
     res.json({
@@ -261,22 +315,18 @@ const getProductsEspecific = async (req, res) => {
       primary_image_url: produto.primary_image_url,
       colors: produto.colors || [],
     });
-
   } catch (error) {
-    console.error('Erro ao buscar produto específico:', error);
+    console.error("Erro ao buscar produto específico:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
-
-
-
 
 const getProductByName = async (req, res) => {
   const { nome } = req.query;
 
   try {
-    const [produto] = await db.sequelize.query(`
+    const [produto] = await db.sequelize.query(
+      `
       SELECT 
         p.product_id, 
         p.name AS product_name, 
@@ -311,12 +361,15 @@ const getProductByName = async (req, res) => {
       WHERE p.name LIKE :nome
       GROUP BY p.product_id
       LIMIT 1;
-    `, {
-      replacements: { nome: `%${nome}%` },
-      type: db.sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { nome: `%${nome}%` },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
-    if (!produto) return res.status(404).json({ error: "Produto não encontrado" });
+    if (!produto)
+      return res.status(404).json({ error: "Produto não encontrado" });
 
     res.json({
       product_id: produto.product_id,
@@ -334,12 +387,11 @@ const getProductByName = async (req, res) => {
   }
 };
 
-
-
 const ProductHistory = async (req, res) => {
   try {
     // Consulta para buscar o histórico de compras
-    const productHistory = await db.sequelize.query(`
+    const productHistory = await db.sequelize.query(
+      `
 SELECT 
   p.order_id, 
   p.payer_name, 
@@ -356,18 +408,22 @@ LEFT JOIN productcolors pc ON pr.product_id = pc.product_id
 LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
 GROUP BY p.order_id, p.payer_name, p.created_at, c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total
 ORDER BY p.order_id;  -- Ordena pelos order_id
-    `, {
-      type: db.sequelize.QueryTypes.SELECT, // Tipo de consulta
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT, // Tipo de consulta
+      }
+    );
 
     if (productHistory.length === 0) {
-      return res.status(404).json({ error: 'Nenhum histórico de compras encontrado.' });
+      return res
+        .status(404)
+        .json({ error: "Nenhum histórico de compras encontrado." });
     }
 
     // Retorna o histórico de compras
     res.status(200).json(productHistory);
   } catch (error) {
-    console.error('Erro ao buscar histórico de compras:', error);
+    console.error("Erro ao buscar histórico de compras:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -376,12 +432,13 @@ const UsuarioProductHistory = async (req, res) => {
   try {
     // Certifique-se de que o middleware autentica o usuário
     if (!req.user) {
-      return res.status(401).json({ error: 'Usuário não autenticado' });
+      return res.status(401).json({ error: "Usuário não autenticado" });
     }
 
     const userId = req.user.user_id; // pega o ID do usuário logado
 
-    const productHistory = await db.sequelize.query(`
+    const productHistory = await db.sequelize.query(
+      `
       SELECT 
         o.order_id,
         o.order_date,
@@ -399,22 +456,25 @@ const UsuarioProductHistory = async (req, res) => {
       WHERE o.user_id = :userId
       GROUP BY o.order_id, o.order_date, o.status, c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total
       ORDER BY o.order_id;
-    `, {
-      replacements: { userId },
-      type: db.sequelize.QueryTypes.SELECT,
-    });
+    `,
+      {
+        replacements: { userId },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     if (productHistory.length === 0) {
-      return res.status(404).json({ error: 'Nenhum histórico de compras encontrado para este usuário.' });
+      return res.status(404).json({
+        error: "Nenhum histórico de compras encontrado para este usuário.",
+      });
     }
 
     res.status(200).json(productHistory);
   } catch (error) {
-    console.error('Erro ao buscar histórico de compras:', error);
+    console.error("Erro ao buscar histórico de compras:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 const ProductHistoryByOrderId = async (req, res) => {
   const { orderId } = req.params;
@@ -473,22 +533,21 @@ const ProductHistoryByOrderId = async (req, res) => {
     );
 
     if (result.length === 0) {
-      return res.status(404).json({ error: 'Nenhum produto encontrado para esse pedido.' });
+      return res
+        .status(404)
+        .json({ error: "Nenhum produto encontrado para esse pedido." });
     }
 
     res.status(200).json(result);
   } catch (error) {
-    console.error('Erro ao buscar os produtos do pedido:', error);
+    console.error("Erro ao buscar os produtos do pedido:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-
 // Controller para obter produtos por categoria
 const getProductsByCategories = async (req, res) => {
   const { categoryIds } = req.params;
-  
-
 
   console.log("Received categoryIds:", categoryIds);
   // Verifica se os IDs de categoria foram passados corretamente
@@ -497,8 +556,8 @@ const getProductsByCategories = async (req, res) => {
     return res.status(400).json({ message: "Estilos não fornecidos." });
   }
 
-  const categoryIdsArray = categoryIds.split(','); // Transforma a string em um array
-  console.log("Converted categoryIdsArray:", categoryIdsArray); 
+  const categoryIdsArray = categoryIds.split(","); // Transforma a string em um array
+  console.log("Converted categoryIdsArray:", categoryIdsArray);
   try {
     // Ajuste na consulta para usar o Sequelize com múltiplos valores para category_id
     const products = await db.sequelize.query(
@@ -528,34 +587,36 @@ const getProductsByCategories = async (req, res) => {
     `,
       {
         replacements: { categoryIds: categoryIdsArray }, // Passa o array de IDs de categoria
-        type: db.sequelize.QueryTypes.SELECT
+        type: db.sequelize.QueryTypes.SELECT,
       }
     );
-    
+
     if (products.length === 0) {
       console.log("No products found for the provided categories.");
-      return res.status(404).json({ message: "Nenhum produto encontrado para as categorias selecionadas." });
+      return res.status(404).json({
+        message: "Nenhum produto encontrado para as categorias selecionadas.",
+      });
     }
 
-    console.log("Found products:", products); 
+    console.log("Found products:", products);
     res.status(200).json(products);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
-    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
-
 
 // Controller para obter produtos por categoria
 const getProductsByColor = async (req, res) => {
   const { colorId } = req.params;
-  
+
   try {
     // Verifique se o categoryId foi passado corretamente
     if (!colorId) {
       return res.status(400).json({ message: "Cor não fornecida." });
     }
-
 
     const colorArray = colorId.split(",");
 
@@ -587,21 +648,24 @@ const getProductsByColor = async (req, res) => {
     `, // Usando :categoryId como parâmetro nomeado
       {
         replacements: { colorId: colorArray }, // Substituindo :categoryId com o valor real
-        type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
+        type: db.sequelize.QueryTypes.SELECT, // Definindo o tipo de consulta como SELECT
       }
     );
-    
+
     if (products.length === 0) {
-      return res.status(404).json({ message: "Nenhum produto encontrado para esta cor." });
+      return res
+        .status(404)
+        .json({ message: "Nenhum produto encontrado para esta cor." });
     }
 
     res.status(200).json(products);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
-    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
-
 
 const getProductsByPrice = async (req, res) => {
   const { min, max } = req.params; // Use os nomes min e max para os parâmetros
@@ -654,7 +718,9 @@ const getProductsByPrice = async (req, res) => {
 
     if (products.length === 0) {
       console.warn("Nenhum produto encontrado no intervalo fornecido.");
-      return res.status(404).json({ message: "Nenhum produto encontrado neste intervalo de preço." });
+      return res.status(404).json({
+        message: "Nenhum produto encontrado neste intervalo de preço.",
+      });
     }
 
     // Log para indicar que a resposta foi enviada com sucesso
@@ -663,23 +729,23 @@ const getProductsByPrice = async (req, res) => {
   } catch (error) {
     // Log de erro detalhado
     console.error("Erro ao buscar produtos por preço:", error);
-    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
-
 
 // Controller para obter produtos por Genero
 const getProductsByGender = async (req, res) => {
   const { genderId } = req.params;
-  
+
   try {
     // Verifique se o genderId foi passado corretamente
     if (!genderId) {
       return res.status(400).json({ message: "Genero não fornecido." });
     }
 
-
-    const genderArray = genderId.split(',');
+    const genderArray = genderId.split(",");
     // Ajuste na consulta para usar o Sequelize com o método replacements
     const products = await db.sequelize.query(
       `
@@ -708,34 +774,37 @@ const getProductsByGender = async (req, res) => {
     `, // Usando :genderId como parâmetro nomeado
       {
         replacements: { genderId: genderArray }, // Substituindo :categoryId com o valor real
-        type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
+        type: db.sequelize.QueryTypes.SELECT, // Definindo o tipo de consulta como SELECT
       }
     );
-    
+
     if (products.length === 0) {
-      return res.status(404).json({ message: "Nenhum produto encontrado para este genero." });
+      return res
+        .status(404)
+        .json({ message: "Nenhum produto encontrado para este genero." });
     }
 
     res.status(200).json(products);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
-    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
 
 // Controller para obter produtos por tamanho
-const getProductsBySize  = async (req, res) => {
+const getProductsBySize = async (req, res) => {
   const { sizeIds } = req.params;
-  
+
   try {
     // Verifique se o genderId foi passado corretamente
     if (!sizeIds) {
-      console.log( 'o tamanho = ' + sizeIds);
+      console.log("o tamanho = " + sizeIds);
       return res.status(400).json({ message: "tamanho não fornecido." });
     }
 
-
-    const sizeArray = sizeIds.split(',');
+    const sizeArray = sizeIds.split(",");
     // Ajuste na consulta para usar o Sequelize com o método replacements
     const products = await db.sequelize.query(
       `
@@ -765,38 +834,45 @@ WHERE ps.size_id IN (:sizeIds)
     `, // Usando :genderId como parâmetro nomeado
       {
         replacements: { sizeIds: sizeArray }, // Substituindo :categoryId com o valor real
-        type: db.sequelize.QueryTypes.SELECT // Definindo o tipo de consulta como SELECT
+        type: db.sequelize.QueryTypes.SELECT, // Definindo o tipo de consulta como SELECT
       }
     );
-    
+
     if (products.length === 0) {
-      return res.status(404).json({ message: "Nenhum produto encontrado para este tamanho." });
+      return res
+        .status(404)
+        .json({ message: "Nenhum produto encontrado para este tamanho." });
     }
 
     res.status(200).json(products);
   } catch (error) {
     console.error("Erro ao buscar produtos:", error);
-    res.status(500).json({ message: "Erro ao buscar produtos", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar produtos", error: error.message });
   }
 };
 
 // Faturamento Mensal
 const getFaturamentoMesAtual = async (req, res) => {
   try {
-    const [faturamento] = await db.sequelize.query(`
+    const [faturamento] = await db.sequelize.query(
+      `
       SELECT 
         SUM(c.preco_total) AS total_faturado
       FROM paymentos p
       JOIN compras c ON c.pagamento_id = p.id
       WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE())
         AND YEAR(p.created_at) = YEAR(CURRENT_DATE());
-    `, {
-      type: db.sequelize.QueryTypes.SELECT,
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(faturamento || { total_faturado: 0 });
   } catch (error) {
-    console.error('Erro ao calcular faturamento do mês atual:', error);
+    console.error("Erro ao calcular faturamento do mês atual:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -804,14 +880,17 @@ const getFaturamentoMesAtual = async (req, res) => {
 // Pedidos Mensal
 const getTotalPedidosMensais = async (req, res) => {
   try {
-    const pedidos = await db.sequelize.query(`
+    const pedidos = await db.sequelize.query(
+      `
       SELECT COUNT(*) AS total_pedidos
       FROM paymentos
       WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
         AND YEAR(created_at) = YEAR(CURRENT_DATE())
-    `, {
-      type: db.sequelize.QueryTypes.SELECT,
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(pedidos[0]);
   } catch (error) {
@@ -823,7 +902,8 @@ const getTotalPedidosMensais = async (req, res) => {
 //Faturamento diario
 const getFaturamentoPorDia = async (req, res) => {
   try {
-    const resultados = await db.sequelize.query(`
+    const resultados = await db.sequelize.query(
+      `
       SELECT 
         DATE(p.created_at) AS data,
         SUM(c.preco_total) AS faturamento_diario
@@ -833,9 +913,11 @@ const getFaturamentoPorDia = async (req, res) => {
         AND YEAR(p.created_at) = YEAR(CURRENT_DATE())
       GROUP BY DATE(p.created_at)
       ORDER BY DATE(p.created_at)
-    `, {
-      type: db.sequelize.QueryTypes.SELECT,
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(resultados);
   } catch (error) {
@@ -844,10 +926,11 @@ const getFaturamentoPorDia = async (req, res) => {
   }
 };
 
-// Vendas por Categoria (deve ser eliminada) 
+// Vendas por Categoria (deve ser eliminada)
 const getCategoriasMaisVendidas = async (req, res) => {
   try {
-    const resultado = await db.sequelize.query(`
+    const resultado = await db.sequelize.query(
+      `
       SELECT 
         cat.name AS category,
         SUM(c.quantidade) AS total_vendido
@@ -856,9 +939,11 @@ const getCategoriasMaisVendidas = async (req, res) => {
       INNER JOIN categories cat ON p.category_id = cat.category_id
       GROUP BY cat.name
       ORDER BY total_vendido DESC
-    `, {
-      type: db.sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(resultado);
   } catch (error) {
@@ -868,9 +953,10 @@ const getCategoriasMaisVendidas = async (req, res) => {
 };
 
 // Categorias Vendidas por mes
- const getCategoriasVendidasPorMes = async (req, res) => {
+const getCategoriasVendidasPorMes = async (req, res) => {
   try {
-    const resultado = await db.sequelize.query(`
+    const resultado = await db.sequelize.query(
+      `
       SELECT 
         DATE_FORMAT(p.created_at, '%Y-%m') AS mes,
         cat.name AS categoria,
@@ -881,14 +967,18 @@ const getCategoriasMaisVendidas = async (req, res) => {
       INNER JOIN categories cat ON pr.category_id = cat.category_id
       GROUP BY mes, categoria
       ORDER BY mes DESC, total_vendido DESC
-    `, {
-      type: db.sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(resultado);
   } catch (error) {
     console.error("Erro ao buscar vendas por categoria/mês:", error);
-    res.status(500).json({ error: "Erro ao gerar gráfico por categoria e mês." });
+    res
+      .status(500)
+      .json({ error: "Erro ao gerar gráfico por categoria e mês." });
   }
 };
 
@@ -897,7 +987,8 @@ const getProdutosMaisVendidosPorMes = async (req, res) => {
   const { mes } = req.query; // Formato: YYYY-MM
 
   try {
-    const results = await db.sequelize.query(`
+    const results = await db.sequelize.query(
+      `
       SELECT 
         p.product_id,
         p.name AS nome_produto,
@@ -912,10 +1003,12 @@ const getProdutosMaisVendidosPorMes = async (req, res) => {
       WHERE DATE_FORMAT(pay.created_at, '%Y-%m') = :mes
       GROUP BY p.product_id, p.name
       ORDER BY total_faturado DESC;
-    `, {
-      replacements: { mes }, // Ex: '2025-07'
-      type: db.sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { mes }, // Ex: '2025-07'
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(results);
   } catch (error) {
@@ -929,9 +1022,10 @@ const getpedidosEReceitaPorHora = async (req, res) => {
   try {
     const { data } = req.query;
 
-    const dataFiltro = data || new Date().toISOString().split('T')[0]; // ex: "2025-07-10"
+    const dataFiltro = data || new Date().toISOString().split("T")[0]; // ex: "2025-07-10"
 
-    const resultados = await db.sequelize.query(`
+    const resultados = await db.sequelize.query(
+      `
       SELECT 
         HOUR(p.created_at) AS hora,
         COUNT(DISTINCT p.id) AS total_pedidos,
@@ -941,10 +1035,12 @@ const getpedidosEReceitaPorHora = async (req, res) => {
       WHERE DATE(p.created_at) = :dataFiltro
       GROUP BY hora
       ORDER BY hora ASC
-    `, {
-      replacements: { dataFiltro },
-      type: db.sequelize.QueryTypes.SELECT
-    });
+    `,
+      {
+        replacements: { dataFiltro },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(resultados);
   } catch (error) {
@@ -953,7 +1049,7 @@ const getpedidosEReceitaPorHora = async (req, res) => {
   }
 };
 
-// Estoque total 
+// Estoque total
 const estoqueTotal = async (req, res) => {
   try {
     const [resultado] = await db.sequelize.query(`
@@ -966,7 +1062,7 @@ const estoqueTotal = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-// Produtos Sem Estoque 
+// Produtos Sem Estoque
 const Semestoque = async (req, res) => {
   try {
     const [resultado] = await db.sequelize.query(`
@@ -1009,7 +1105,8 @@ const ProdutosSemEstoqueDetalhado = async (req, res) => {
 // Estoque por produto cor
 const ProdutosComEstoquePorCor = async (req, res) => {
   try {
-    const resultado = await db.sequelize.query(`
+    const resultado = await db.sequelize.query(
+      `
       SELECT 
         p.product_id,
         p.name AS product_name,
@@ -1022,9 +1119,11 @@ const ProdutosComEstoquePorCor = async (req, res) => {
       LEFT JOIN ProductImages pi ON pi.product_color_id = pc.product_color_id AND pi.is_primary = true
       GROUP BY p.product_id, pc.product_color_id, c.name, pc.stock_quantity
       ORDER BY p.product_id ASC, c.name ASC;
-    `, {
-      type: db.sequelize.QueryTypes.SELECT,
-    });
+    `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
     res.status(200).json(resultado);
   } catch (error) {
@@ -1033,45 +1132,32 @@ const ProdutosComEstoquePorCor = async (req, res) => {
   }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default {
-    createProduct,
-    getAllProducts,
-    getProductById,
-    updateProduct,
-    deleteProduct,
-    products,
-    estoqueTotal,
-    Semestoque,
-    getProductsEspecific,
-    ProductHistory,
-    UsuarioProductHistory,
-    getProductsByCategories, 
-    getProductsByColor, 
-    getProductsByPrice,
-    getProductsBySize, 
-    getProductsByGender,
-    ProductHistoryByOrderId,
-    getFaturamentoMesAtual,
-    getTotalPedidosMensais,
-    getFaturamentoPorDia,
-    getCategoriasMaisVendidas,
-    getCategoriasVendidasPorMes,
-    getProdutosMaisVendidosPorMes,
-    getpedidosEReceitaPorHora,
-    ProdutosSemEstoqueDetalhado,
-    ProdutosComEstoquePorCor,
-    getProductByName  
+  createProduct,
+  getAllProducts,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  products,
+  estoqueTotal,
+  Semestoque,
+  getProductsEspecific,
+  ProductHistory,
+  UsuarioProductHistory,
+  getProductsByCategories,
+  getProductsByColor,
+  getProductsByPrice,
+  getProductsBySize,
+  getProductsByGender,
+  ProductHistoryByOrderId,
+  getFaturamentoMesAtual,
+  getTotalPedidosMensais,
+  getFaturamentoPorDia,
+  getCategoriasMaisVendidas,
+  getCategoriasVendidasPorMes,
+  getProdutosMaisVendidosPorMes,
+  getpedidosEReceitaPorHora,
+  ProdutosSemEstoqueDetalhado,
+  ProdutosComEstoquePorCor,
+  getProductByName,
 };

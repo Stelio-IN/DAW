@@ -24,6 +24,10 @@ export default (sequelize, DataTypes) => {
         allowNull: true,
       },
     },
-    { timestamps: false }
+    {
+      tableName: 'product_color_sizes', // 🔹 nome correto da tabela no DB
+      timestamps: false,
+      underscored: true, // opcional, se quiser mapear snake_case automaticamente
+    }
   );
 };
