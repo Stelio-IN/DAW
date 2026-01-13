@@ -27,18 +27,22 @@ export const processOrder = async (customer, cart, paymentMethod) => {
     const order = await Order.create({
       user_id: customer.id,
       order_date: new Date(),
-      status: 'pending_payment',
+      status: 'PENDING',
       total_amount: 0,
       payment_method: paymentMethod,
       customer_name: `${customer.deliveryInfo.first_name} ${customer.deliveryInfo.last_name}`,
+      phone: customer.deliveryInfo.phone,
       address: customer.deliveryInfo.address1,
       city: customer.deliveryInfo.city,
       province: customer.deliveryInfo.province,
       postal_code: customer.deliveryInfo.postal_code,
-      phone: customer.deliveryInfo.phone,
       country: customer.deliveryInfo.country,
       subtotal: 0,
-      discount_amount: 0
+      discount_amount: 0,
+      shipping_amount: 0,
+      payment_status: 'PENDING',
+      mpesa_reference: null,
+      payment_gateway_response: null
     }, { transaction });
 
     // 2️⃣ Processar cada item do carrinho
@@ -46,21 +50,18 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       const quantity = Number(item.quantity);
       if (quantity <= 0) throw new Error("Quantidade inválida");
 
-      // Buscar SKU real para validação de stock
       const pcs = await ProductColorSize.findByPk(item.product_color_size_id, { transaction });
       if (!pcs) throw new Error("Produto não encontrado");
 
       if (pcs.stock_quantity < quantity)
         throw new Error(`Stock insuficiente para SKU ${item.sku || pcs.product_color_size_id}`);
 
-      // Preço real: se houver promoção, pegar promo_price, senão base_price
       const basePrice = Number(item.base_price || 0);
       if (basePrice <= 0) throw new Error("Preço inválido para produto " + item.product_color_size_id);
 
       let unitPrice = basePrice;
       let discountAmount = 0;
 
-      // 3️⃣ Verificar se há promoção
       let promo = null;
       if (item.is_on_promotion && item.promotion_id) {
         promo = await Promotion.findOne({
@@ -84,7 +85,6 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         if (promo) {
           unitPrice = Number(item.promo_price);
           discountAmount = (basePrice - unitPrice) * quantity;
-
           await promo.increment('promo_stock_used', { by: quantity, transaction });
         }
       }
@@ -92,7 +92,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       totalAmount += unitPrice * quantity;
       totalDiscount += discountAmount;
 
-      // 4️⃣ Criar item do pedido
+      // 3️⃣ Criar item do pedido, salvando info extra do frontend
       await OrderItem.create({
         order_id: order.order_id,
         product_id: item.product_id,
@@ -103,10 +103,16 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         base_price: basePrice,
         discount_amount: discountAmount,
         promotion_id: promo ? promo.promotion_id : null,
-        promotion_name: promo ? promo.name : null
+        promotion_name: promo ? promo.name : null,
+        name: item.name,
+        color: item.color,
+        hex_code: item.hex_code,
+        size: item.size,
+        size_type: item.size_type,
+        image_url: item.image_url
       }, { transaction });
 
-      // 5️⃣ Registrar venda promocional
+      // 4️⃣ Registrar venda promocional
       if (promo) {
         await PromotionSale.create({
           promotion_id: promo.promotion_id,
@@ -122,12 +128,12 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         }, { transaction });
       }
 
-      // 6️⃣ Atualizar stock real
+      // 5️⃣ Atualizar stock real
       pcs.stock_quantity -= quantity;
       await pcs.save({ transaction });
     }
 
-    // 7️⃣ Atualizar totals do pedido
+    // 6️⃣ Atualizar totals do pedido
     order.subtotal = totalAmount + totalDiscount;
     order.discount_amount = totalDiscount;
     order.total_amount = totalAmount;
