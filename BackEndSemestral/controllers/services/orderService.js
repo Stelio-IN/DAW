@@ -38,7 +38,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       postal_code: customer.deliveryInfo.postal_code,
       country: customer.deliveryInfo.country,
       subtotal: 0,
-      discount_amount: 0,
+      discount_amount: (item.base_price - item.price) || 0,
       shipping_amount: 0,
       payment_status: 'PENDING',
       mpesa_reference: null,
@@ -64,6 +64,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
 
       let promo = null;
       if (item.is_on_promotion && item.promotion_id) {
+        // ✅ Busca a promoção usando o alias 'product_promotions'
         promo = await Promotion.findOne({
           where: {
             promotion_id: item.promotion_id,
@@ -76,6 +77,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
           },
           include: [{
             model: ProductPromotion,
+            as: 'product_promotions', // ⚠️ usa o alias do index.js
             where: { product_color_size_id: pcs.product_color_size_id },
             required: true
           }],
@@ -100,10 +102,10 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         color_id: item.product_color_id,
         quantity,
         unit_price: unitPrice,
-        base_price: basePrice,
-        discount_amount: discountAmount,
-        promotion_id: promo ? promo.promotion_id : null,
-        promotion_name: promo ? promo.name : null,
+        base_price: item.price,
+        discount_amount: (unitPrice - item.price) || 0,
+        promotion_id: item.promotion_id ? item.promotion_id : null,
+        promotion_name:item.promotion_name? item.promotion_name : null,
         name: item.name,
         color: item.color,
         hex_code: item.hex_code,

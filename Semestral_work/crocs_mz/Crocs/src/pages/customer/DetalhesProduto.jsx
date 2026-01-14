@@ -85,6 +85,10 @@ const ProdutoDetalhado = () => {
       size_type: tamanhoSelecionado.size_type,
       sku: tamanhoSelecionado.sku,
 
+        // 🔥 Promoção
+  promotion_id: tamanhoSelecionado.promotion_id || null,
+  promotion_name: tamanhoSelecionado.promotion_name || null,
+  
       base_price: tamanhoSelecionado.base_price,
       promo_price: tamanhoSelecionado.promo_price,
       discount_percentage: tamanhoSelecionado.discount_percentage,

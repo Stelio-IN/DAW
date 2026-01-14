@@ -159,10 +159,8 @@ const getProductsEspecific = async (req, res) => {
                     'size_type', st.name,
                     'stock_quantity', pcs.stock_quantity,
 
-                    -- preço base
                     'base_price', COALESCE(pcs.price_override, p.price),
 
-                    -- Busca promoção mais específica disponível (tamanho -> cor -> produto)
                     'promo_price', (
                       SELECT ROUND(COALESCE(pcs.price_override, p.price) * (1 - pr.discount_percentage / 100), 2)
                       FROM product_promotions pp
@@ -171,10 +169,8 @@ const getProductsEspecific = async (req, res) => {
                         (pp.product_color_size_id = pcs.product_color_size_id
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
-                       AND NOW() BETWEEN pr.start_date AND pr.end_date
-AND (pr.promo_stock_limit IS NULL 
-     OR pr.promo_stock_used < pr.promo_stock_limit)
-
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -193,9 +189,26 @@ AND (pr.promo_stock_limit IS NULL
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-AND (pr.promo_stock_limit IS NULL 
-     OR pr.promo_stock_used < pr.promo_stock_limit)
+                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
+                      ORDER BY
+                        CASE 
+                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                          WHEN pp.product_color_id IS NOT NULL THEN 2
+                          WHEN pp.product_id IS NOT NULL THEN 3
+                        END
+                      LIMIT 1
+                    ),
 
+                    'promotion_id', (
+                      SELECT pr.promotion_id
+                      FROM product_promotions pp
+                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                      WHERE 
+                        (pp.product_color_size_id = pcs.product_color_size_id
+                          OR pp.product_color_id = pcs.product_color_id
+                          OR pp.product_id = p.product_id)
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -213,10 +226,8 @@ AND (pr.promo_stock_limit IS NULL
                         (pp.product_color_size_id = pcs.product_color_size_id
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
-                       AND NOW() BETWEEN pr.start_date AND pr.end_date
-AND (pr.promo_stock_limit IS NULL 
-     OR pr.promo_stock_used < pr.promo_stock_limit)
-
+                        AND NOW() BETWEEN pr.start_date AND pr.end_date
+                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -235,9 +246,7 @@ AND (pr.promo_stock_limit IS NULL
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-AND (pr.promo_stock_limit IS NULL 
-     OR pr.promo_stock_used < pr.promo_stock_limit)
-
+                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -246,7 +255,6 @@ AND (pr.promo_stock_limit IS NULL
                         END
                       LIMIT 1
                     ),
-
 
                     'is_on_promotion', (
                       SELECT 1
@@ -257,9 +265,7 @@ AND (pr.promo_stock_limit IS NULL
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-AND (pr.promo_stock_limit IS NULL 
-     OR pr.promo_stock_used < pr.promo_stock_limit)
-
+                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -294,7 +300,7 @@ AND (pr.promo_stock_limit IS NULL
         ON pc.product_color_id = pi.product_color_id AND pi.is_primary = 1
       WHERE p.product_id = :id
       GROUP BY p.product_id, p.name, p.price, p.description, g.name, p.status
-    `,
+      `,
       {
         replacements: { id },
         type: db.sequelize.QueryTypes.SELECT,
@@ -320,6 +326,8 @@ AND (pr.promo_stock_limit IS NULL
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 const getProductByName = async (req, res) => {
   const { nome } = req.query;

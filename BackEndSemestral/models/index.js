@@ -152,6 +152,17 @@ db.PromotionSale.belongsTo(db.Order, { foreignKey: 'order_id' });
 db.ProductColorSize.hasMany(db.PromotionSale, { foreignKey: 'product_color_size_id' });
 db.PromotionSale.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
 
+// Promotion ↔ ProductPromotion (1:N)
+db.Promotion.hasMany(db.ProductPromotion, {
+  foreignKey: 'promotion_id',
+  as: 'product_promotions', // opcional, mas útil
+});
+db.ProductPromotion.belongsTo(db.Promotion, {
+  foreignKey: 'promotion_id',
+  as: 'promotion',
+});
+
+
 // =====================
 // Conexão + Sync
 // =====================
