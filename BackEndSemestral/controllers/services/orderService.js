@@ -134,7 +134,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         total_discount: totalDiscount,
 
         total_sem_promocao: totalSemPromocao,
-        total_com_promocao: totalComPromocao,
+       total_com_promocao: item.promotion_id ? totalComPromocao : 0,
 
         custo_unidade: custoUnidade,
         custo_total: custoTotal,
