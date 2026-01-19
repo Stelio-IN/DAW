@@ -160,7 +160,7 @@ const getProductsEspecific = async (req, res) => {
                     'stock_quantity', pcs.stock_quantity,
 
                     'base_price', COALESCE(pcs.price_override, p.price),
-
+                    'cost_price', pcs.cost_price,
                     'promo_price', (
                       SELECT ROUND(COALESCE(pcs.price_override, p.price) * (1 - pr.discount_percentage / 100), 2)
                       FROM product_promotions pp

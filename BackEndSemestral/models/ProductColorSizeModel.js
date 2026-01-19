@@ -23,6 +23,13 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(10,2),
         allowNull: true,
       },
+      cost_price: {
+  type: DataTypes.DECIMAL(10,2),
+  allowNull: true,
+  defaultValue: 0.00
+},
+
+      
     },
     {
       tableName: 'product_color_sizes', // 🔹 nome correto da tabela no DB

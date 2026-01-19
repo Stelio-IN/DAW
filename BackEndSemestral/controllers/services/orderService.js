@@ -15,56 +15,62 @@ export const processOrder = async (customer, cart, paymentMethod) => {
   const transaction = await sequelize.transaction();
 
   try {
-    console.log("=== INÍCIO DO PEDIDO ===");
+    let orderTotalComPromocao = 0;
+    let orderTotalSemPromocao = 0;
+    let orderTotalDiscount = 0;
+
+     console.log("=== INÍCIO DO PEDIDO ===");
     console.log("Cliente:", customer);
     console.log("Carrinho:", cart);
     console.log("Método de pagamento:", paymentMethod);
-
-    let totalAmount = 0;
-    let totalDiscount = 0;
 
     // 1️⃣ Criar pedido
     const order = await Order.create({
       user_id: customer.id,
       order_date: new Date(),
       status: 'PENDING',
+      subtotal: 0,
+      discount_amount: 0,
       total_amount: 0,
       payment_method: paymentMethod,
+      payment_status: 'PENDING',
       customer_name: `${customer.deliveryInfo.first_name} ${customer.deliveryInfo.last_name}`,
       phone: customer.deliveryInfo.phone,
       address: customer.deliveryInfo.address1,
       city: customer.deliveryInfo.city,
       province: customer.deliveryInfo.province,
       postal_code: customer.deliveryInfo.postal_code,
-      country: customer.deliveryInfo.country,
-      subtotal: 0,
-      discount_amount: 0,
-      shipping_amount: 0,
-      payment_status: 'PENDING',
-      mpesa_reference: null,
-      payment_gateway_response: null
+      country: customer.deliveryInfo.country
     }, { transaction });
 
-    // 2️⃣ Processar cada item do carrinho
+    // 2️⃣ Processar carrinho
     for (const item of cart) {
       const quantity = Number(item.quantity);
-      if (quantity <= 0) throw new Error("Quantidade inválida");
+      if (quantity <= 0) throw new Error('Quantidade inválida');
 
-      const pcs = await ProductColorSize.findByPk(item.product_color_size_id, { transaction });
-      if (!pcs) throw new Error("Produto não encontrado");
+      const pcs = await ProductColorSize.findByPk(
+        item.product_color_size_id,
+        { transaction }
+      );
+      if (!pcs) throw new Error('Produto não encontrado');
 
       if (pcs.stock_quantity < quantity)
-        throw new Error(`Stock insuficiente para SKU ${item.sku || pcs.product_color_size_id}`);
+        throw new Error('Stock insuficiente');
 
-      const basePrice = Number(item.base_price || 0);
-      if (basePrice <= 0) throw new Error("Preço inválido para produto " + item.product_color_size_id);
+      /* ===============================
+         🔹 PREÇOS
+      =============================== */
+      const unitPrice = Number(item.base_price); // SEM promoção
+      if (unitPrice <= 0) throw new Error('Preço inválido');
 
-      let unitPrice = basePrice;
-      let discountAmount = 0;
+      const discountPercentage = item.discount_percentage
+        ? Number(item.discount_percentage) / 100
+        : 0;
 
+      let basePrice = item.price; // COM promoção
       let promo = null;
+
       if (item.is_on_promotion && item.promotion_id) {
-        // ✅ Busca a promoção usando o alias 'product_promotions'
         promo = await Promotion.findOne({
           where: {
             promotion_id: item.promotion_id,
@@ -77,7 +83,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
           },
           include: [{
             model: ProductPromotion,
-            as: 'product_promotions', // ⚠️ usa o alias do index.js
+            as: 'product_promotions',
             where: { product_color_size_id: pcs.product_color_size_id },
             required: true
           }],
@@ -85,30 +91,60 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         });
 
         if (promo) {
-          unitPrice = Number(item.promo_price);
-          discountAmount = (basePrice - unitPrice) * quantity;
+          basePrice = Number(item.promo_price);
           await promo.increment('promo_stock_used', { by: quantity, transaction });
         }
       }
 
-      const preco = Number(item.price);
-      const precoBase = Number(item.base_price);
+      /* ===============================
+         🔹 CÁLCULOS (FÓRMULAS OFICIAIS)
+      =============================== */
+      const discountAmount = unitPrice * discountPercentage;
+      const totalSemPromocao = unitPrice * quantity;
+      const totalComPromocao = item.price * quantity;
+      const totalDiscount = totalSemPromocao * discountPercentage;
 
-      totalAmount += unitPrice * quantity;
-      totalDiscount += discountAmount;
+      const custoUnidade = Number(pcs.cost_price);
+      console.log("o custo do produto", custoUnidade)
+      const custoTotal = custoUnidade * quantity;
+      console.log("o custo do Total", custoTotal)
 
-      // 3️⃣ Criar item do pedido, salvando info extra do frontend
+      /* ===============================
+         🔹 ACUMULADORES DO PEDIDO
+      =============================== */
+      orderTotalSemPromocao += totalSemPromocao;
+      orderTotalComPromocao += totalComPromocao;
+      orderTotalDiscount += totalDiscount;
+
+      /* ===============================
+         🔹 ORDER ITEM
+      =============================== */
       await OrderItem.create({
         order_id: order.order_id,
         product_id: item.product_id,
         product_color_size_id: pcs.product_color_size_id,
         color_id: item.product_color_id,
         quantity,
+
         unit_price: unitPrice,
-        base_price: item.price,
-        discount_amount: (unitPrice - item.price) || 0,
-        promotion_id: item.promotion_id ? item.promotion_id : null,
-        promotion_name:item.promotion_name? item.promotion_name : null,
+        base_price: basePrice,
+
+        discount_percentage: discountPercentage,
+        discount_amount: discountAmount,
+        total_discount: totalDiscount,
+
+        total_sem_promocao: totalSemPromocao,
+        total_com_promocao: totalComPromocao,
+
+        custo_unidade: custoUnidade,
+        custo_total: custoTotal,
+
+        promotion_id: item.promotion_id || 0,
+        promotion_name: item.name || null,
+
+        lucro_sem_promocao: totalSemPromocao - custoTotal || 0,
+        lucro_com_promocao: totalComPromocao - custoTotal || 0,
+
         name: item.name,
         color: item.color,
         hex_code: item.hex_code,
@@ -117,48 +153,52 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         image_url: item.image_url
       }, { transaction });
 
-      // 4️⃣ Registrar venda promocional
+      /* ===============================
+         🔹 REGISTO DE VENDA PROMOCIONAL
+      =============================== */
       if (promo) {
         await PromotionSale.create({
           promotion_id: promo.promotion_id,
           order_id: order.order_id,
           product_color_size_id: pcs.product_color_size_id,
           quantity,
-          base_price: basePrice,
-          promo_price: unitPrice,
-          discount_value: discountAmount,
+          base_price: unitPrice,
+          promo_price: basePrice,
+          discount_value: totalDiscount,
           sold_at: new Date(),
           payment_method: paymentMethod,
           customer_phone: customer.deliveryInfo.phone
         }, { transaction });
       }
 
-      // 5️⃣ Atualizar stock real
+      /* ===============================
+         🔹 STOCK
+      =============================== */
       pcs.stock_quantity -= quantity;
       await pcs.save({ transaction });
     }
 
-    // 6️⃣ Atualizar totals do pedido
-    order.subtotal = totalAmount + totalDiscount;
-    order.discount_amount = totalDiscount;
-    order.total_amount = totalAmount;
+    /* ===============================
+       🔹 TOTAIS DO PEDIDO
+    =============================== */
+    order.subtotal = orderTotalSemPromocao;
+    order.discount_amount = orderTotalDiscount;
+    order.total_amount = orderTotalComPromocao;
 
     await order.save({ transaction });
     await transaction.commit();
 
-    console.log("=== PEDIDO CONCLUÍDO ===", order.order_id);
-
     return {
       order_id: order.order_id,
-      total_amount: order.total_amount,
       subtotal: order.subtotal,
       discount_amount: order.discount_amount,
+      total_amount: order.total_amount,
       status: order.status
     };
 
   } catch (error) {
     await transaction.rollback();
-    console.error("❌ ERRO NO PEDIDO:", error);
+    console.error('❌ ERRO NO PEDIDO:', error);
     throw error;
   }
 };
