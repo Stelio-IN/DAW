@@ -38,7 +38,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       postal_code: customer.deliveryInfo.postal_code,
       country: customer.deliveryInfo.country,
       subtotal: 0,
-      discount_amount: (item.base_price - item.price) || 0,
+      discount_amount: 0,
       shipping_amount: 0,
       payment_status: 'PENDING',
       mpesa_reference: null,
@@ -90,6 +90,9 @@ export const processOrder = async (customer, cart, paymentMethod) => {
           await promo.increment('promo_stock_used', { by: quantity, transaction });
         }
       }
+
+      const preco = Number(item.price);
+      const precoBase = Number(item.base_price);
 
       totalAmount += unitPrice * quantity;
       totalDiscount += discountAmount;
