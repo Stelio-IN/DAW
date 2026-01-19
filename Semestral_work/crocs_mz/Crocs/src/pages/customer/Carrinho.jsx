@@ -32,7 +32,7 @@ function Carrinho() {
           };
         }
         return item;
-      });
+      }); 
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       return updatedCart;
     });

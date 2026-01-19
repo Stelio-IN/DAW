@@ -105,7 +105,9 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       const totalDiscount = totalSemPromocao * discountPercentage;
 
       const custoUnidade = Number(pcs.cost_price);
+      const custoUnidadee = Number(item.cost_price);
       console.log("o custo do produto", custoUnidade)
+      console.log("o custo do produto", custoUnidadee)
       const custoTotal = custoUnidade * quantity;
       console.log("o custo do Total", custoTotal)
 
@@ -158,12 +160,12 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       =============================== */
       if (promo) {
         await PromotionSale.create({
-          promotion_id: promo.promotion_id,
+          promotion_id: item.promotion_id,
           order_id: order.order_id,
           product_color_size_id: pcs.product_color_size_id,
           quantity,
           base_price: unitPrice,
-          promo_price: basePrice,
+          promo_price: item.price,
           discount_value: totalDiscount,
           sold_at: new Date(),
           payment_method: paymentMethod,
