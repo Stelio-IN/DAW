@@ -143,7 +143,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         promotion_name: item.name || null,
 
         lucro_sem_promocao: totalSemPromocao - custoTotal || 0,
-        lucro_com_promocao: totalComPromocao - custoTotal || 0,
+        lucro_com_promocao: item.promotion_id ? (totalComPromocao - custoTotal) : 0,
 
         name: item.name,
         color: item.color,
