@@ -421,7 +421,7 @@ ORDER BY p.order_id;  -- Ordena pelos order_id
         type: db.sequelize.QueryTypes.SELECT, // Tipo de consulta
       }
     );
-
+ 
     if (productHistory.length === 0) {
       return res
         .status(404)

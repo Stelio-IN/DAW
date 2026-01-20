@@ -18,10 +18,10 @@ function Carrinho() {
   }, []);
 
   // Atualiza a quantidade de um produto específico (considerando cor)
-  const updateQuantity = (productColorId, delta) => {
-    setCart(prevCart => {
-      const updatedCart = prevCart.map(item => {
-        if (item.product_color_id === productColorId) {
+  const updateQuantity = (productColorSizeId, delta) => {
+  setCart(prevCart => {
+    const updatedCart = prevCart.map(item => {
+      if (item.product_color_size_id === productColorSizeId) {
           const newQuantity = item.quantity + delta;
           return {
             ...item,
@@ -39,11 +39,11 @@ function Carrinho() {
   };
 
   // Remove um item específico (considerando cor)
-  const removeFromCart = (productColorId) => {
-    setCart(prevCart => {
-      const updatedCart = prevCart.filter(
-        item => item.product_color_id !== productColorId
-      );
+  const removeFromCart = (productColorSizeId) => {
+  setCart(prevCart => {
+    const updatedCart = prevCart.filter(
+      item => item.product_color_size_id !== productColorSizeId
+    );
       localStorage.setItem('cart', JSON.stringify(updatedCart));
       return updatedCart;
     });
@@ -83,6 +83,8 @@ const calculateDiscount = () => {
     setShowPaymentModal(false);
   };
 
+
+  
   
 
   return (
@@ -93,7 +95,7 @@ const calculateDiscount = () => {
             <div className="carrinho_">
               <ul className="productList_">
                 {cart.map((product) => (
-                  <li key={product.product_color_id} className="productItem_">
+                  <li key={product.product_color_size_id} className="productItem_">
                     <div className="product_">
                       <div className="productDetails_">
                         <div className='productDetails_1_'>
@@ -157,21 +159,21 @@ const calculateDiscount = () => {
                       <div className="buttons_">
                         <button
                           className="button_"
-                          onClick={() => updateQuantity(product.product_color_id, 1)}
+                          onClick={() => updateQuantity(product.product_color_size_id, 1)}
                           disabled={product.quantity >= product.stock_quantity}
                         >
                           <FiPlus size={15} style={{ margin: 'auto' }} />
                         </button>
                         <button
                           className="button_"
-                          onClick={() => updateQuantity(product.product_color_id, -1)}
+                          onClick={() => updateQuantity(product.product_color_size_id, -1)}
                           disabled={product.quantity <= 1}
                         >
                           <FiMinus size={15} style={{ margin: 'auto' }} />
                         </button>
                         <p
                           className="button_ removeButton_"
-                          onClick={() => removeFromCart(product.product_color_id)}
+                          onClick={() => removeFromCart(product.product_color_size_id)}
                         >
                           Remover
                         </p>

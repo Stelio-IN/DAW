@@ -20,7 +20,17 @@ export default (sequelize, DataTypes) => {
 
       product_color_size_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
+      },
+
+      product_color_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+
+      product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
       },
 
       quantity: {
