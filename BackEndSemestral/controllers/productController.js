@@ -279,7 +279,8 @@ const getProductsEspecific = async (req, res) => {
                 FROM product_color_sizes pcs
                 INNER JOIN sizes s ON pcs.size_id = s.size_id
                 INNER JOIN size_types st ON s.size_type_id = st.size_type_id
-                WHERE pcs.product_color_id = pc.product_color_id
+                WHERE pcs.product_color_id = pc.product_color_id AND pcs.stock_quantity > 0
+
                 ORDER BY
                   CASE 
                     WHEN s.size REGEXP '^[0-9]+$' THEN CAST(s.size AS UNSIGNED)
@@ -289,8 +290,16 @@ const getProductsEspecific = async (req, res) => {
             )
           )
           FROM productcolors pc
-          INNER JOIN colors c ON pc.color_id = c.color_id
-          WHERE pc.product_id = p.product_id
+INNER JOIN colors c ON pc.color_id = c.color_id
+WHERE pc.product_id = p.product_id
+AND EXISTS (
+  SELECT 1
+  FROM product_color_sizes pcs
+  WHERE pcs.product_color_id = pc.product_color_id
+  AND pcs.stock_quantity > 0
+)
+
+          
         ) AS colors
 
       FROM products p

@@ -43,10 +43,15 @@ const ProdutoDetalhado = () => {
 
   // Primeira cor por padrão
   useEffect(() => {
-    if (product?.colors?.length > 0) {
-      setCorSelecionada(product.colors[0]);
-    }
-  }, [product]);
+  if (product?.colors?.length > 0) {
+    const corComStock = product.colors.find(
+      cor => cor.sizes && cor.sizes.length > 0
+    );
+
+    setCorSelecionada(corComStock || null);
+  }
+}, [product]);
+
 
   // Atualiza imagem principal quando muda cor
   useEffect(() => {
@@ -57,13 +62,16 @@ const ProdutoDetalhado = () => {
   }, [corSelecionada]);
 
   // Primeiro tamanho disponível por padrão
-  useEffect(() => {
-    if (corSelecionada?.sizes?.length > 0) {
-      const sizesOrdenados = ordenarTamanhos(corSelecionada.sizes);
-      const firstAvailable = sizesOrdenados.find(s => s.stock_quantity > 0);
-      setTamanhoSelecionado(firstAvailable || null);
-    }
-  }, [corSelecionada]);
+ useEffect(() => {
+  if (corSelecionada?.sizes?.length > 0) {
+    const sizesOrdenados = ordenarTamanhos(corSelecionada.sizes);
+    const firstAvailable = sizesOrdenados.find(s => s.stock_quantity > 0);
+    setTamanhoSelecionado(firstAvailable || null);
+  } else {
+    setTamanhoSelecionado(null);
+  }
+}, [corSelecionada]);
+
 
   // Função adicionar ao carrinho
   const addToCart = () => {
@@ -119,6 +127,15 @@ const ProdutoDetalhado = () => {
     localStorage.setItem('cart', JSON.stringify(currentCart));
     alert("Produto adicionado ao carrinho");
   };
+
+  if (!product || !product.colors || product.colors.length === 0) {
+  return (
+    <p style={{ padding: '40px', fontSize: '18px' }}>
+      Produto indisponível no momento
+    </p>
+  );
+}
+
 
   if (!product) return <p>Carregando detalhes do produto...</p>;
 
