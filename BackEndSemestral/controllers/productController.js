@@ -161,6 +161,42 @@ const getProductsEspecific = async (req, res) => {
 
                     'base_price', COALESCE(pcs.price_override, p.price),
                     'cost_price', pcs.cost_price,
+
+                    -- Aqui pegamos os valores da tabela promotions com COALESCE
+                    'promo_stock_used', COALESCE(
+                      (SELECT pr.promo_stock_used
+                       FROM product_promotions pp
+                       JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                       WHERE (pp.product_color_size_id = pcs.product_color_size_id
+                              OR pp.product_color_id = pcs.product_color_id
+                              OR pp.product_id = p.product_id)
+                         AND NOW() BETWEEN pr.start_date AND pr.end_date
+                       ORDER BY
+                         CASE 
+                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                           WHEN pp.product_color_id IS NOT NULL THEN 2
+                           WHEN pp.product_id IS NOT NULL THEN 3
+                         END
+                       LIMIT 1), 0
+                    ),
+
+                    'promo_stock_limit', COALESCE(
+                      (SELECT pr.promo_stock_limit
+                       FROM product_promotions pp
+                       JOIN promotions pr ON pr.promotion_id = pp.promotion_id
+                       WHERE (pp.product_color_size_id = pcs.product_color_size_id
+                              OR pp.product_color_id = pcs.product_color_id
+                              OR pp.product_id = p.product_id)
+                         AND NOW() BETWEEN pr.start_date AND pr.end_date
+                       ORDER BY
+                         CASE 
+                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                           WHEN pp.product_color_id IS NOT NULL THEN 2
+                           WHEN pp.product_id IS NOT NULL THEN 3
+                         END
+                       LIMIT 1), 999999
+                    ),
+
                     'promo_price', (
                       SELECT ROUND(COALESCE(pcs.price_override, p.price) * (1 - pr.discount_percentage / 100), 2)
                       FROM product_promotions pp
@@ -170,7 +206,6 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -189,7 +224,6 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -208,7 +242,6 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -227,7 +260,6 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -246,7 +278,6 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -265,7 +296,6 @@ const getProductsEspecific = async (req, res) => {
                           OR pp.product_color_id = pcs.product_color_id
                           OR pp.product_id = p.product_id)
                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                        AND (pr.promo_stock_limit IS NULL OR pr.promo_stock_used < pr.promo_stock_limit)
                       ORDER BY
                         CASE 
                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
@@ -290,16 +320,14 @@ const getProductsEspecific = async (req, res) => {
             )
           )
           FROM productcolors pc
-INNER JOIN colors c ON pc.color_id = c.color_id
-WHERE pc.product_id = p.product_id
-AND EXISTS (
-  SELECT 1
-  FROM product_color_sizes pcs
-  WHERE pcs.product_color_id = pc.product_color_id
-  AND pcs.stock_quantity > 0
-)
-
-          
+          INNER JOIN colors c ON pc.color_id = c.color_id
+          WHERE pc.product_id = p.product_id
+          AND EXISTS (
+            SELECT 1
+            FROM product_color_sizes pcs
+            WHERE pcs.product_color_id = pc.product_color_id
+            AND pcs.stock_quantity > 0
+          )
         ) AS colors
 
       FROM products p
@@ -335,6 +363,7 @@ AND EXISTS (
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 

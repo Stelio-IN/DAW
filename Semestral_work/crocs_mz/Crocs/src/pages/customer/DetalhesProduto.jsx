@@ -95,6 +95,8 @@ const ProdutoDetalhado = () => {
 
         // 🔥 Promoção
   promotion_id: tamanhoSelecionado.promotion_id || null,
+  promo_stock_limit: tamanhoSelecionado.promo_stock_limit || null,
+  promo_stock_used: tamanhoSelecionado.promo_stock_used || null,
   promotion_name: tamanhoSelecionado.promotion_name || null,
   cost_price: tamanhoSelecionado.cost_price,
       base_price: tamanhoSelecionado.base_price,

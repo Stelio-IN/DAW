@@ -4,8 +4,8 @@ import "../../assets/style/home.css";
 import "../../assets/style/slide.css";
 import "../../assets/style/catalogo.css";
 
-import { FiArrowLeft, FiArrowRight, FiHeart } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa';
+import { FiArrowLeft, FiArrowRight, FiHeart } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa";
 // Images
 import colecao_1 from "../../assets/img/col1.avif";
 import colecao_2 from "../../assets/img/col2.avif";
@@ -43,7 +43,7 @@ const Home = () => {
     const fetchExchangeRates = async () => {
       try {
         const response = await fetch(
-          "https://api.exchangerate-api.com/v4/latest/MZN"
+          "https://api.exchangerate-api.com/v4/latest/MZN",
         );
         const data = await response.json();
         setExchangeRates(data.rates); // Define todas as taxas disponíveis
@@ -72,10 +72,6 @@ const Home = () => {
     <div className="content">
       <main>
         <article>
-      
-
-
-
           {/* Section 1 */}
           <div className="Container">
             <div className="home-container">
@@ -89,27 +85,27 @@ const Home = () => {
 
             <div className="home-container-img"> </div>
           </div>
-
-    
-
- <br /><br />
-   {/* Section 3 */}   
-   <div className="Container-promo">
-   <img src={template} alt="" />
+          <br />
+          <br />
+          {/* Section 3 */}
+          <div className="Container-promo">
+            <img src={template} alt="" />
           </div>
-        
-
           <div className="main">
-              <header>
-                <h1></h1>
-                <p>
-                  {" "}
-                 <b style={{fontSize: '2rem'}}>CROCS™ | </b>  NOVOS MODELOS
-                </p>
-                <span><FiArrowLeft size={40} id="seta_esquerda"/></span>
-                <span><FiArrowRight size={40} id="seta_direita"/></span>
-              </header>
-              <section>
+            <header>
+              <h1></h1>
+              <p>
+                {" "}
+                <b style={{ fontSize: "2rem" }}>CROCS™ | </b> NOVOS MODELOS
+              </p>
+              <span>
+                <FiArrowLeft size={40} id="seta_esquerda" />
+              </span>
+              <span>
+                <FiArrowRight size={40} id="seta_direita" />
+              </span>
+            </header>
+            <section>
               {products.length > 0 ? (
                 products.map((product, index) => (
                   <div className="product" key={index}>
@@ -130,7 +126,7 @@ const Home = () => {
                           ? `${product.price} MZN`
                           : `${convertPrice(
                               product.price,
-                              currency
+                              currency,
                             )} ${currency}`}
                       </samp>
                       {/* Dropdown para selecionar a moeda */}
@@ -147,6 +143,7 @@ const Home = () => {
                     <div className="button">
                       <div className="colors">
                         {Array.isArray(product.colors) &&
+                          product.colors.length > 0 &&
                           product.colors.map((color, index) => (
                             <div
                               key={index}
@@ -165,18 +162,20 @@ const Home = () => {
                       >
                         ver mais
                       </button>
-                      <button className="btn_favoritoo"
+                      <button
+                        className="btn_favoritoo"
                         onClick={() => {
                           console.log("Produto favorito clicado:", product);
                           toggleFavorite(product);
                         }}
-                       
                       >
                         {favorites.some(
-                          (item) => item.product_id === product.product_id
-                        )
-                        ? <FaHeart color={ 'gray'} />
-                        : <FiHeart  size={25} />}
+                          (item) => item.product_id === product.product_id,
+                        ) ? (
+                          <FaHeart color={"gray"} />
+                        ) : (
+                          <FiHeart size={25} />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -185,59 +184,58 @@ const Home = () => {
                 <p>Carregando produtos...</p>
               )}
             </section>
+          </div>
+          {/* Popular Collections */}
+          <section className="carrosel_1">
+            <div className="slider">
+              <p id="txt_colecao">
+                <b style={{ fontSize: "2rem" }}>CROCS™ | </b> COLEÇÕES
+              </p>
+              <div className="slide-track">
+                {[
+                  colecao_1,
+                  colecao_2,
+                  colecao_3,
+                  colecao_4,
+                  colecao_5,
+                  colecao_6,
+                  colecao_1,
+                  colecao_2,
+                  colecao_3,
+                  colecao_4,
+                  colecao_5,
+                  colecao_6,
+                ].map((img, index) => (
+                  <div className="slide" key={index}>
+                    <img src={img} alt={`Coleção ${index + 1}`} />
+                    <p>Coleçao {index + 1}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-
- {/* Popular Collections */}
- <section className="carrosel_1">
-         
-         <div className="slider">
-         <p id="txt_colecao">
-              <b style={{fontSize: '2rem'}}>CROCS™ | </b>  COLEÇÕES
-             </p>
-           <div className="slide-track">
-             {[
-               colecao_1,
-               colecao_2,
-               colecao_3,
-               colecao_4,
-               colecao_5,
-               colecao_6,
-               colecao_1,
-               colecao_2,
-               colecao_3,
-               colecao_4,
-               colecao_5,
-               colecao_6,
-             ].map((img, index) => (
-               <div className="slide" key={index}>
-                 <img src={img} alt={`Coleção ${index + 1}`} />
-                 <p>Coleçao {index + 1}</p>
-               </div>
-             ))}
-           </div>
-         </div>
-       </section>
-
+          </section>
           {/* Section 4 */}
           <div className="Container-extended">
             <div>
               <img src={template5} alt="" />
               <h2>Confor e Facil</h2>
-              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi tempora magni tempora magni  </p>
-             <button>Saber mais</button>
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
+                tempora magni tempora magni{" "}
+              </p>
+              <button>Saber mais</button>
             </div>
             <div>
-            
-            <img src={template5} alt="" />
-            <h2>Conheca as novidades</h2>
-              <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi tempora magni  </p>
-             <button>Saber mais</button>
+              <img src={template5} alt="" />
+              <h2>Conheca as novidades</h2>
+              <p>
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Animi
+                tempora magni{" "}
+              </p>
+              <button>Saber mais</button>
             </div>
-
-        
           </div>
-
-      {/* 
+          {/* 
           <div className="Container_2">
             <div className="Container-content">
               <div className="promotion">
@@ -269,16 +267,13 @@ const Home = () => {
                 <img src={gif} />
               </div>
             </div>
-          </div> */} 
-
+          </div> */}
           {/* Popular Collections */}
-        
           <section className="carrosel_1">
-         
             <div className="slider">
-            <p id="txt_colecao">
-                 <b style={{fontSize: '2rem'}}>CROCS™ | </b>  COLEÇÕES
-                </p>
+              <p id="txt_colecao">
+                <b style={{ fontSize: "2rem" }}>CROCS™ | </b> COLEÇÕES
+              </p>
               <div className="slide-track">
                 {[
                   colecao_1,
@@ -302,49 +297,52 @@ const Home = () => {
               </div>
             </div>
           </section>
-
-       
-
-
-{/* Section 3 */}   <div className="Container-promo">
-<img src={template4} alt="" />
+          {/* Section 3 */}{" "}
+          <div className="Container-promo">
+            <img src={template4} alt="" />
           </div>
-            <div className="main">
-              <header>
-                <h1></h1>
-                <p>
-                  {" "}
-                 <b style={{fontSize: '2rem'}}>CROCS™ | </b>  NOVOS MODELOS
-                </p>
-                <span><FiArrowLeft size={40} id="seta_esquerda"/></span>
-                <span><FiArrowRight size={40} id="seta_direita"/></span>
-              </header>
-              <section>
+          <div className="main">
+            <header>
+              <h1></h1>
+              <p>
+                {" "}
+                <b style={{ fontSize: "2rem" }}>CROCS™ | </b> NOVOS MODELOS
+              </p>
+              <span>
+                <FiArrowLeft size={40} id="seta_esquerda" />
+              </span>
+              <span>
+                <FiArrowRight size={40} id="seta_direita" />
+              </span>
+            </header>
+            <section>
               {products.length > 0 ? (
-                products.map((product, index) => (
-                  <div className="product" key={index}>
-                    <picture>
-                      <img
-                        src={product.primary_image_url}
-                        alt={product.product_name}
-                        loading="lazy"
-                      />
-                    </picture>
+                products
+                  .filter((p) => Array.isArray(p.colors) && p.colors.length > 0)
+                  .map((product, index) => (
+                    <div className="product" key={index}>
+                      <picture>
+                        <img
+                          src={product.primary_image_url}
+                          alt={product.product_name}
+                          loading="lazy"
+                        />
+                      </picture>
 
-                    <div className="detail">
-                      <p>
-                        <small>{product.product_name}</small>
-                      </p>
-                      <samp>
-                        {currency === "MZN"
-                          ? `${product.price} MZN`
-                          : `${convertPrice(
-                              product.price,
-                              currency
-                            )} ${currency}`}
-                      </samp>
-                      {/* Dropdown para selecionar a moeda */}
-                      {/**<select
+                      <div className="detail">
+                        <p>
+                          <small>{product.product_name}</small>
+                        </p>
+                        <samp>
+                          {currency === "MZN"
+                            ? `${product.price} MZN`
+                            : `${convertPrice(
+                                product.price,
+                                currency,
+                              )} ${currency}`}
+                        </samp>
+                        {/* Dropdown para selecionar a moeda */}
+                        {/**<select
                       value={currency}
                       onChange={(e) => handleCurrencyChange(e.target.value)}
                     >
@@ -352,84 +350,90 @@ const Home = () => {
                       <option value="USD">USD</option>
                       <option value="ZAR">ZAR</option>
                     </select>*/}
-                    </div>
-
-                    <div className="button">
-                      <div className="colors">
-                        {Array.isArray(product.colors) &&
-                          product.colors.map((color, index) => (
-                            <div
-                              key={index}
-                              className="color-box"
-                              style={{ backgroundColor: color.hex_code }}
-                              title={color.name}
-                            />
-                          ))}
                       </div>
-                      <button
-                        className="product-button"
-                        onClick={() => {
-                          console.log(`Product ID: ${product.product_id}`);
-                          navigate(`/produto/detalhes/${product.product_id}`);
-                        }}
-                      >
-                        ver mais
-                      </button>
-                      <button className="btn_favoritoo"
-                        onClick={() => {
-                          console.log("Produto favorito clicado:", product);
-                          toggleFavorite(product);
-                        }}
-                       
-                      >
-                        {favorites.some(
-                          (item) => item.product_id === product.product_id
-                        )
-                        ? <FaHeart color={ 'gray'}/>
-                        : <FiHeart  size={25} />}
-                      </button>
+
+                      <div className="button">
+                        <div className="colors">
+                          {Array.isArray(product.colors) &&
+                            product.colors.map((color, index) => (
+                              <div
+                                key={index}
+                                className="color-box"
+                                style={{ backgroundColor: color.hex_code }}
+                                title={color.name}
+                              />
+                            ))}
+                        </div>
+                        <button
+                          className="product-button"
+                          onClick={() => {
+                            console.log(`Product ID: ${product.product_id}`);
+                            navigate(`/produto/detalhes/${product.product_id}`);
+                          }}
+                        >
+                          ver mais
+                        </button>
+                        <button
+                          className="btn_favoritoo"
+                          onClick={() => {
+                            console.log("Produto favorito clicado:", product);
+                            toggleFavorite(product);
+                          }}
+                        >
+                          {favorites.some(
+                            (item) => item.product_id === product.product_id,
+                          ) ? (
+                            <FaHeart color={"gray"} />
+                          ) : (
+                            <FiHeart size={25} />
+                          )}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  ))
               ) : (
                 <p>Carregando produtos...</p>
               )}
             </section>
-            </div>
-           
-                {/* Section 3 */}   <div className="Container-promo">
-<img src={template4} alt="" />
           </div>
-
-
-            <section className="categorias"> 
-        <div className="social">
-          <br />
-          <h1>@CROCS_MOZAMBIQUE | <b style={{fontSize: '15pt', fontWeight: '100'}}>No Instagram</b></h1>
-          <button href="https://www.instagram.com/crocs_mozambique/?hl=en" target='blank' >Seguir  @crocs_mozambique</button>
-         
-        </div>
-                <div className="categore">
-                  <div className="categor">
-                  
-                   <img src={template} alt="" />
-                   <h2>Cartões</h2>
-                   <button>Solicitar</button>
-                  </div>
-                  <div className="categor">
-                    <img src={template4} alt="" />
-                    <h2>jibbitz</h2>
-                    <button>Comprar</button>
-                  </div>
-                  <div className="categor">
-                    <img src={template4} alt="" />
-                    <h2>LOJAs</h2>
-                    <button>Ver lojas</button>
-                  </div>
-                </div>
-         </section>
-        
-       
+          {/* Section 3 */}{" "}
+          <div className="Container-promo">
+            <img src={template4} alt="" />
+          </div>
+          <section className="categorias">
+            <div className="social">
+              <br />
+              <h1>
+                @CROCS_MOZAMBIQUE |{" "}
+                <b style={{ fontSize: "15pt", fontWeight: "100" }}>
+                  No Instagram
+                </b>
+              </h1>
+              <button
+                href="https://www.instagram.com/crocs_mozambique/?hl=en"
+                target="blank"
+              >
+                Seguir @crocs_mozambique
+              </button>
+            </div>
+            <div className="categore">
+              <div className="categor">
+                <img src={template} alt="" />
+                <h2>Cartões</h2>
+                <button>Solicitar</button>
+              </div>
+              <div className="categor">
+                <img src={template4} alt="" />
+                <h2>jibbitz</h2>
+                <button>Comprar</button>
+              </div>
+              <div className="categor">
+                <img src={template4} alt="" />
+                <h2>LOJAs</h2>
+                <button>Ver lojas</button>
+              </div>
+            </div>
+          </section>
         </article>
       </main>
     </div>

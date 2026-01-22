@@ -130,17 +130,33 @@ db.OrderItem.belongsTo(db.Color, { foreignKey: 'color_id' });
 db.ProductColorSize.hasMany(db.OrderItem, { foreignKey: 'product_color_size_id' });
 db.OrderItem.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
 
-// ProductColorSize ↔ Promotion (N:N) via ProductPromotion
-db.ProductColorSize.belongsToMany(db.Promotion, {
-  through: db.ProductPromotion,
-  foreignKey: 'product_color_size_id',
-});
-db.Promotion.belongsToMany(db.ProductColorSize, {
-  through: db.ProductPromotion,
+// =====================
+// ProductPromotion (ajustado)
+// =====================
+
+// Promotion ↔ ProductPromotion (1:N)
+db.Promotion.hasMany(db.ProductPromotion, {
   foreignKey: 'promotion_id',
+  as: 'product_promotions', // útil para includes
+});
+db.ProductPromotion.belongsTo(db.Promotion, {
+  foreignKey: 'promotion_id',
+  as: 'promotion',
 });
 
+// Relacionamentos opcionais para Product / Color / ProductColorSize
+db.Product.hasMany(db.ProductPromotion, { foreignKey: 'product_id' });
+db.ProductPromotion.belongsTo(db.Product, { foreignKey: 'product_id' });
+
+db.Color.hasMany(db.ProductPromotion, { foreignKey: 'product_color_id' });
+db.ProductPromotion.belongsTo(db.Color, { foreignKey: 'product_color_id' });
+
+db.ProductColorSize.hasMany(db.ProductPromotion, { foreignKey: 'product_color_size_id' });
+db.ProductPromotion.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
+
+// =====================
 // Promotion ↔ PromotionSale
+// =====================
 db.Promotion.hasMany(db.PromotionSale, { foreignKey: 'promotion_id' });
 db.PromotionSale.belongsTo(db.Promotion, { foreignKey: 'promotion_id' });
 
@@ -151,17 +167,6 @@ db.PromotionSale.belongsTo(db.Order, { foreignKey: 'order_id' });
 // ProductColorSize ↔ PromotionSale
 db.ProductColorSize.hasMany(db.PromotionSale, { foreignKey: 'product_color_size_id' });
 db.PromotionSale.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
-
-// Promotion ↔ ProductPromotion (1:N)
-db.Promotion.hasMany(db.ProductPromotion, {
-  foreignKey: 'promotion_id',
-  as: 'product_promotions', // opcional, mas útil
-});
-db.ProductPromotion.belongsTo(db.Promotion, {
-  foreignKey: 'promotion_id',
-  as: 'promotion',
-});
-
 
 // =====================
 // Conexão + Sync

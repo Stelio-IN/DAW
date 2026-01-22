@@ -109,45 +109,51 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         promotion_id: item.promotion_id,
       });
 
-      if (item.is_on_promotion && item.promotion_id) {
-        promo = await Promotion.findOne({
-          where: {
-            promotion_id: item.promotion_id,
-            start_date: { [Op.lte]: new Date() },
-            end_date: { [Op.gte]: new Date() },
-            [Op.or]: [
-              { promo_stock_limit: null },
-              { promo_stock_used: { [Op.lt]: col("promo_stock_limit") } },
-            ],
-          },
-          include: [
-            {
-              model: ProductPromotion,
-              as: "product_promotions",
-              required: true,
-              where: {
-                [Op.or]: [
-                  { product_color_size_id: pcs.product_color_size_id },
-                  { product_color_id: pcs.product_color_id },
-                  { product_id: item.product_id },
-                ],
-              },
-            },
-          ],
-          transaction,
-          lock: transaction.LOCK.UPDATE,
-        });
+     if (item.is_on_promotion && item.promotion_id) {
+  // 🔹 Usando promo_stock_used e promo_stock_limit do item do carrinho
+  const promoUsed = Number(item.promo_stock_used || 0);
+  const promoLimit = item.promo_stock_limit !== null ? Number(item.promo_stock_limit) : null;
 
-        console.log("🎯 PROMO RESULT:", promo);
+  console.log("🔢 Limite e usado da promoção:", {
+    promo_stock_used: promoUsed,
+    promo_stock_limit: promoLimit,
+    item_quantity: quantity,
+    total_after_update: promoUsed + quantity
+  });
 
-        if (promo) {
-          basePrice = Number(item.promo_price);
-          await promo.increment("promo_stock_used", {
-            by: quantity,
-            transaction,
-          });
-        }
-      }
+  // Checar se há stock suficiente
+  if (promoLimit !== null && promoUsed + quantity > promoLimit) {
+    console.error("❌ Stock promocional insuficiente!");
+    throw new Error("Stock promocional esgotado");
+  }
+
+  // 💰 Aplicar preço promocional
+  basePrice = Number(item.promo_price);
+
+  // 📦 Incrementar stock promocional de forma segura
+  const [affectedRows] = await Promotion.update(
+    {
+      promo_stock_used: sequelize.literal(`COALESCE(promo_stock_used, 0) + ${quantity}`)
+    },
+    {
+      where: { promotion_id: item.promotion_id },
+      transaction,
+    }
+  );
+
+  console.log("📊 Promoções afetadas na atualização:", affectedRows);
+  // 🔹 Remover promoção se atingir limite
+  if (promoLimit !== null && promoUsed + quantity >= promoLimit) {
+    console.log(`⚠️ Promoção ${item.promotion_name} atingiu o limite e será desativada`);
+
+    // Atualiza a promoção para não estar mais ativa
+    await Promotion.update(
+      { end_date: new Date() }, // encerra a promoção
+      { where: { promotion_id: item.promotion_id }, transaction }
+    );
+  }
+}
+
 
       /* ===============================
          🔹 CÁLCULOS
@@ -165,7 +171,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       });
 
       /* ===============================
-         🔹 CUSTOS
+         🔹 CUSTOS tualizar
       =============================== */
       const custoUnidade = Number(pcs.cost_price);
       const custoTotal = custoUnidade * quantity;
@@ -266,10 +272,25 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       /* ===============================
          🔹 STOCK
       =============================== */
-      console.log("📦 STOCK ANTES:", pcs.stock_quantity);
-      pcs.stock_quantity -= quantity;
-      console.log("📦 STOCK DEPOIS:", pcs.stock_quantity);
-      await pcs.save({ transaction });
+      /* ===============================
+   🔹 STOCK (ATÓMICO / SEGURO)
+=============================== */
+      const updatedRows = await ProductColorSize.update(
+        {
+          stock_quantity: sequelize.literal(`stock_quantity - ${quantity}`),
+        },
+        {
+          where: {
+            product_color_size_id: pcs.product_color_size_id,
+            stock_quantity: { [Op.gte]: quantity },
+          },
+          transaction,
+        },
+      );
+
+      if (updatedRows[0] === 0) {
+        throw new Error("Stock insuficiente ou produto já reservado");
+      }
     }
 
     /* ===============================
