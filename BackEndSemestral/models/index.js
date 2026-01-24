@@ -21,6 +21,21 @@ import productPromotionModel from './ProductPromotionsModel.js';
 import promotionSaleModel from './PromotionSaleModel.js';
 
 // =====================
+// Jibbitz Models
+// =====================
+import jibbitzCategoryModel from './JibbitzCategoryModel.js';
+import jibbitzModel from './JibbitzModel.js';
+import jibbitzStockModel from './JibbitzStockModel.js';
+import jibbitzImageModel from './JibbitzImageModel.js';
+import jibbitzGroupModel from './JibbitzGroupModel.js';
+import jibbitzGroupItemModel from './JibbitzGroupItemModel.js';
+import jibbitzOrderItemModel from './JibbitzOrderItemModel.js';
+import jibbitzPromotionModel from './JibbitzPromotionModel.js';
+import jibbitzPromotionItemModel from './JibbitzPromotionItemModel.js';
+import jibbitzPromotionSaleModel from './JibbitzPromotionSaleModel.js';
+
+
+// =====================
 // Sequelize instance
 // =====================
 const sequelize = new Sequelize(
@@ -62,11 +77,32 @@ const db = {
   Order: orderModel(sequelize, DataTypes),
   OrderItem: orderItemModel(sequelize, DataTypes),
   PromotionSale: promotionSaleModel(sequelize, DataTypes),
+
+    // =====================
+  // Jibbitz Domain
+  // =====================
+  JibbitzCategory: jibbitzCategoryModel(sequelize, DataTypes),
+  Jibbitz: jibbitzModel(sequelize, DataTypes),
+  JibbitzStock: jibbitzStockModel(sequelize, DataTypes),
+  JibbitzImage: jibbitzImageModel(sequelize, DataTypes),
+
+  JibbitzGroup: jibbitzGroupModel(sequelize, DataTypes),
+  JibbitzGroupItem: jibbitzGroupItemModel(sequelize, DataTypes),
+
+  JibbitzOrderItem: jibbitzOrderItemModel(sequelize, DataTypes),
+
+  JibbitzPromotion: jibbitzPromotionModel(sequelize, DataTypes),
+  JibbitzPromotionItem: jibbitzPromotionItemModel(sequelize, DataTypes),
+  JibbitzPromotionSale: jibbitzPromotionSaleModel(sequelize, DataTypes),
+
 };
 
 // =====================
 // Associações
 // =====================
+
+
+
 
 // Category ↔ Product
 db.Category.hasMany(db.Product, { foreignKey: 'category_id' });
@@ -168,6 +204,69 @@ db.PromotionSale.belongsTo(db.Order, { foreignKey: 'order_id' });
 db.ProductColorSize.hasMany(db.PromotionSale, { foreignKey: 'product_color_size_id' });
 db.PromotionSale.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_size_id' });
 
+
+db.JibbitzCategory.hasMany(db.Jibbitz, { foreignKey: 'category_id' });
+db.Jibbitz.belongsTo(db.JibbitzCategory, { foreignKey: 'category_id' });
+
+db.Jibbitz.hasOne(db.JibbitzStock, { foreignKey: 'jibbitz_id' });
+db.JibbitzStock.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
+
+db.Jibbitz.hasMany(db.JibbitzImage, { foreignKey: 'jibbitz_id' });
+db.JibbitzImage.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
+
+db.Jibbitz.belongsToMany(db.JibbitzGroup, {
+  through: db.JibbitzGroupItem,
+  foreignKey: 'jibbitz_id',
+});
+
+db.JibbitzGroup.belongsToMany(db.Jibbitz, {
+  through: db.JibbitzGroupItem,
+  foreignKey: 'group_id',
+});
+
+
+db.JibbitzGroup.hasMany(db.JibbitzGroupItem, { foreignKey: 'group_id' });
+db.JibbitzGroupItem.belongsTo(db.JibbitzGroup, { foreignKey: 'group_id' });
+
+db.Jibbitz.hasMany(db.JibbitzGroupItem, { foreignKey: 'jibbitz_id' });
+db.JibbitzGroupItem.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
+
+db.Order.hasMany(db.JibbitzOrderItem, { foreignKey: 'order_id' });
+db.JibbitzOrderItem.belongsTo(db.Order, { foreignKey: 'order_id' });
+
+db.Jibbitz.hasMany(db.JibbitzOrderItem, { foreignKey: 'jibbitz_id' });
+db.JibbitzOrderItem.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
+
+
+db.JibbitzPromotion.hasMany(db.JibbitzPromotionItem, {
+  foreignKey: 'promotion_id',
+});
+db.JibbitzPromotionItem.belongsTo(db.JibbitzPromotion, {
+  foreignKey: 'promotion_id',
+});
+
+
+db.Jibbitz.hasMany(db.JibbitzPromotionItem, { foreignKey: 'jibbitz_id' });
+db.JibbitzPromotionItem.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
+
+db.JibbitzGroup.hasMany(db.JibbitzPromotionItem, { foreignKey: 'group_id' });
+db.JibbitzPromotionItem.belongsTo(db.JibbitzGroup, { foreignKey: 'group_id' });
+
+db.JibbitzPromotion.hasMany(db.JibbitzPromotionSale, {
+  foreignKey: 'promotion_id',
+});
+db.JibbitzPromotionSale.belongsTo(db.JibbitzPromotion, {
+  foreignKey: 'promotion_id',
+});
+
+
+db.Order.hasMany(db.JibbitzPromotionSale, { foreignKey: 'order_id' });
+db.JibbitzPromotionSale.belongsTo(db.Order, { foreignKey: 'order_id' });
+
+db.Jibbitz.hasMany(db.JibbitzPromotionSale, { foreignKey: 'jibbitz_id' });
+db.JibbitzPromotionSale.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
+
+
 // =====================
 // Conexão + Sync
 // =====================
@@ -198,6 +297,24 @@ db.PromotionSale.belongsTo(db.ProductColorSize, { foreignKey: 'product_color_siz
     // Pedidos
     await db.Order.sync();
     await db.OrderItem.sync();
+
+        // =====================
+    // Jibbitz
+    // =====================
+    await db.JibbitzCategory.sync();
+    await db.Jibbitz.sync();
+    await db.JibbitzStock.sync();
+    await db.JibbitzImage.sync();
+
+    await db.JibbitzGroup.sync();
+    await db.JibbitzGroupItem.sync();
+
+    await db.JibbitzPromotion.sync();
+    await db.JibbitzPromotionItem.sync();
+    await db.JibbitzPromotionSale.sync();
+
+    await db.JibbitzOrderItem.sync();
+
 
     console.log('Tabelas sincronizadas com sucesso.');
   } catch (error) {

@@ -24,6 +24,15 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
   const { favorites, toggleFavorite } = useFavorites();
+  const [jibbitz, setJibbitz] = useState([]);
+
+  // fetching jibbitz
+  useEffect(() => {
+    fetch("http://localhost:3005/api/jibbitz/jibs/")
+      .then((response) => response.json())
+      .then((data) => setJibbitz(data))
+      .catch((error) => console.error("Erro ao buscar jibbitz:", error));
+  }, []);
 
   useEffect(() => {
     // Fetching products from the API
@@ -214,6 +223,129 @@ const Home = () => {
               </div>
             </div>
           </section>
+          <div className="main">
+            <header>
+              <p>
+                <b style={{ fontSize: "2rem" }}>CROCS™ | </b> JIBBITZ™
+              </p>
+              <span>
+                <FiArrowLeft size={40} id="seta_esquerda_jibbitz" />
+              </span>
+              <span>
+                <FiArrowRight size={40} id="seta_direita_jibbitz" />
+              </span>
+            </header>
+
+
+{/* JIBBITZ CARROSEL* */}
+{/* JIBBITZ CARROSEL */}
+<section>
+  {jibbitz.length > 0 ? (
+    jibbitz.map((jib) => {
+      const isPromo = Number(jib.is_on_promotion) === 1;
+
+      return (
+        <div className="product jibbitz-card" key={jib.jibbitz_id}>
+          <picture>
+            <img
+              src={jib.primary_image_url}
+              alt={jib.name}
+              loading="lazy"
+            />
+          </picture>
+
+          <div className="detail">
+            <p>
+              <small>{jib.name}</small>
+            </p>
+
+            {/* 💰 PREÇO */}
+            <samp>
+              {isPromo ? (
+                <>
+                  <span
+                    style={{
+                      textDecoration: "line-through",
+                      color: "#888",
+                      marginRight: "6px",
+                      fontSize: "13px",
+                    }}
+                  >
+                    {Number(jib.base_price).toLocaleString("pt-MZ", {
+                      style: "currency",
+                      currency: "MZN",
+                    })}
+                  </span>
+
+                  <span style={{ color: "red", fontWeight: "bold" }}>
+                    {Number(jib.promo_price).toLocaleString("pt-MZ", {
+                      style: "currency",
+                      currency: "MZN",
+                    })}
+                  </span>
+                </>
+              ) : (
+                <span>
+                  {Number(jib.base_price).toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </span>
+              )}
+            </samp>
+
+            {/* 🏷️ Badge de promoção */}
+            {isPromo && (
+              <div
+                style={{
+                  fontSize: "11px",
+                  color: "white",
+                  background: "red",
+                  display: "inline-block",
+                  padding: "2px 6px",
+                  borderRadius: "6px",
+                  marginTop: "4px",
+                }}
+              >
+                -{jib.discount_percentage}% {jib.promotion_name}
+              </div>
+            )}
+          </div>
+
+          <div className="button">
+            <button
+              className="product-button"
+              onClick={() =>
+                navigate(`/jibbitz/detalhes/${jib.jibbitz_id}`)
+              }
+            >
+              ver mais
+            </button>
+
+            <button
+              className="btn_favoritoo"
+              onClick={() => toggleFavorite(jib)}
+            >
+              {favorites.some(
+                (item) => item.jibbitz_id === jib.jibbitz_id
+              ) ? (
+                <FaHeart color={"gray"} />
+              ) : (
+                <FiHeart size={25} />
+              )}
+            </button>
+          </div>
+        </div>
+      );
+    })
+  ) : (
+    <p>Carregando jibbitz...</p>
+  )}
+</section>
+
+
+
+          </div>
           {/* Section 4 */}
           <div className="Container-extended">
             <div>

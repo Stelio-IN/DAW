@@ -246,7 +246,7 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       /* ===============================
          🔹 REGISTO PROMO
       =============================== */
-      if (promo) {
+      if (item.promotion_id) {
         console.log("📝 REGISTAR PROMOTION SALE");
         await PromotionSale.create(
           {

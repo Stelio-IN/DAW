@@ -21,6 +21,7 @@ import routerSizeType from './routes/sizeTypeRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 
 import imageUploadRoutes from './routes/imageUpload.js';
+import jibbitzRoutes from './routes/jibbitzRoutes.js';
 
 
 
@@ -52,6 +53,7 @@ app.use('/api/sizes', routerSize);
 app.use('/api/sizesType', routerSizeType);
 app.use('/api', paymentRoutes);
 app.use('/api/images', imageUploadRoutes);
+app.use('/api/jibbitz', jibbitzRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {

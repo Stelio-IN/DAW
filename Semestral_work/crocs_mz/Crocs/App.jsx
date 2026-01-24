@@ -17,6 +17,7 @@ import Pesquisa from './src/pages/customer/ProdutoDetalhado.jsx';
 import Pagamento from './src/pages/customer/Pay.jsx'; 
 import Favorito from './src/pages/customer/Favorito.jsx'; 
 import Historico from './src/pages/customer/HistoricoCompras.jsx'; 
+import DetalheJibbitz from './src/pages/customer/DetalheJibbitz.jsx'; 
 
 //import Detalhes from './pages/Produto'; 
 
@@ -64,6 +65,8 @@ function MainApp() {
             <Route path="/pagamento" element= {<Pagamento />} />
             <Route path="/favoritos" element= {<Favorito />} />
             <Route path="/minhasCompras" element= {<Historico />} />
+           <Route path="/jibbitz/detalhes/:jibbitzID" element={<DetalheJibbitz />} />
+
            
            
 
