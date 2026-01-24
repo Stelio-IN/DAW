@@ -85,6 +85,9 @@ const ProdutoDetalhado = () => {
     const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const itemToAdd = {
+cart_item_id: `product_${tamanhoSelecionado.product_color_size_id}`,
+  type: "product", 
+
       product_id: product.product_id,
       product_color_id: corSelecionada.product_color_id,
       product_color_size_id: tamanhoSelecionado.product_color_size_id,
@@ -116,7 +119,8 @@ const ProdutoDetalhado = () => {
     };
 
     const existingIndex = currentCart.findIndex(
-      (item) => item.product_color_size_id === itemToAdd.product_color_size_id,
+      (item) => item.cart_item_id === itemToAdd.cart_item_id
+,
     );
 
     if (existingIndex >= 0) {

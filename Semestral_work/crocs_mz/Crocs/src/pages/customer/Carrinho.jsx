@@ -18,36 +18,37 @@ function Carrinho() {
   }, []);
 
   // Atualiza a quantidade de um produto específico (considerando cor)
-  const updateQuantity = (productColorSizeId, delta) => {
+  const updateQuantity = (cartItemId, delta) => {
   setCart(prevCart => {
     const updatedCart = prevCart.map(item => {
-      if (item.product_color_size_id === productColorSizeId) {
-          const newQuantity = item.quantity + delta;
-          return {
-            ...item,
-            quantity:
-              newQuantity >= 1 && newQuantity <= item.stock_quantity
-                ? newQuantity
-                : item.quantity,
-          };
-        }
-        return item;
-      }); 
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
-      return updatedCart;
+      if (item.cart_item_id === cartItemId) {
+        const newQuantity = item.quantity + delta;
+        return {
+          ...item,
+          quantity:
+            newQuantity >= 1 && newQuantity <= item.stock_quantity
+              ? newQuantity
+              : item.quantity,
+        };
+      }
+      return item;
     });
-  };
 
-  // Remove um item específico (considerando cor)
-  const removeFromCart = (productColorSizeId) => {
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+};
+
+const removeFromCart = (cartItemId) => {
   setCart(prevCart => {
     const updatedCart = prevCart.filter(
-      item => item.product_color_size_id !== productColorSizeId
+      item => item.cart_item_id !== cartItemId
     );
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
-      return updatedCart;
-    });
-  };
+    localStorage.setItem('cart', JSON.stringify(updatedCart));
+    return updatedCart;
+  });
+};
+
 
 
   // Total sem desconto (preço original)
@@ -67,7 +68,7 @@ const calculateTotal = () => {
 // Quanto o cliente poupou
 const calculateDiscount = () => {
   return cart.reduce((total, product) => {
-    if (product.is_on_promotion) {
+    if (product.promotion?.is_on_promotion) {
       return total + ((product.base_price - product.price) * product.quantity);
     }
     return total;
@@ -95,7 +96,7 @@ const calculateDiscount = () => {
             <div className="carrinho_">
               <ul className="productList_">
                 {cart.map((product) => (
-                  <li key={product.product_color_size_id} className="productItem_">
+                  <li key={product.cart_item_id} className="productItem_">
                     <div className="product_">
                       <div className="productDetails_">
                         <div className='productDetails_1_'>
@@ -108,33 +109,45 @@ const calculateDiscount = () => {
                           <h3>{product.name}</h3>
 
                           {/* Cor */}
-                          <p className="cart-info-line">
-                            <span>Cor:</span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <span
-                                style={{
-                                  width: '14px',
-                                  height: '14px',
-                                  borderRadius: '50%',
-                                  backgroundColor: product.hex_code,
-                                  border: '1px solid #ccc'
-                                }}
-                              />
-                              {product.color}
-                            </span>
-                          </p>
+                       {/* ===== DETALHES ESPECÍFICOS POR TIPO ===== */}
 
-                          {/* Tamanho */}
-                          <p className="cart-info-line">
-                            <span>Tamanho:</span>
-                            <span>{product.size} ({product.size_type})</span>
-                          </p>
+{product.type === "product" && (
+  <>
+    <p className="cart-info-line">
+      <span>Cor:</span>
+      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span
+          style={{
+            width: '14px',
+            height: '14px',
+            borderRadius: '50%',
+            backgroundColor: product.hex_code,
+            border: '1px solid #ccc'
+          }}
+        />
+        {product.color}
+      </span>
+    </p>
 
-                          {/* SKU */}
-                          <p className="cart-info-line">
-                            <span>SKU:</span>
-                            <span>{product.sku}</span>
-                          </p>
+    <p className="cart-info-line">
+      <span>Tamanho:</span>
+      <span>{product.size} ({product.size_type})</span>
+    </p>
+
+    <p className="cart-info-line">
+      <span>SKU:</span>
+      <span>{product.sku}</span>
+    </p>
+  </>
+)}
+
+{product.type === "jibbitz" && (
+  <p className="cart-info-line">
+    <span>Tipo:</span>
+    <span>Jibbitz</span>
+  </p>
+)}
+
 
                           {/* Preço */}
                           <p>
@@ -159,21 +172,21 @@ const calculateDiscount = () => {
                       <div className="buttons_">
                         <button
                           className="button_"
-                          onClick={() => updateQuantity(product.product_color_size_id, 1)}
+                          onClick={() => updateQuantity(product.cart_item_id, 1)}
                           disabled={product.quantity >= product.stock_quantity}
                         >
                           <FiPlus size={15} style={{ margin: 'auto' }} />
                         </button>
                         <button
                           className="button_"
-                          onClick={() => updateQuantity(product.product_color_size_id, -1)}
+                          onClick={() => updateQuantity(product.cart_item_id, -1)}
                           disabled={product.quantity <= 1}
                         >
                           <FiMinus size={15} style={{ margin: 'auto' }} />
                         </button>
                         <p
                           className="button_ removeButton_"
-                          onClick={() => removeFromCart(product.product_color_size_id)}
+                          onClick={() => removeFromCart(product.cart_item_id)}
                         >
                           Remover
                         </p>

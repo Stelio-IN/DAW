@@ -368,7 +368,7 @@ if (invalidItems.length > 0) {
           <div className="Order_summary">
             <ul className="productList">
               {cart.map((product) => (
-                <li key={product.product_color_id} className="productItem">
+              <li key={product.cart_item_id} className="productItem">
                   <div className="product">
                     <div className="productDetails">
                       <div className="productDetails_1">
@@ -382,14 +382,27 @@ if (invalidItems.length > 0) {
                         />
                       </div>
                       <div className="productDetails_2">
-                        <h3>{product.name}</h3>
-                        <p>Preço: {product.price} Mzn</p>
-                        <p>Quantidade: {product.quantity}</p>
-                        <p>Cor: {product.color}</p>
-                        <p>
-                          Tamanho: {product.size} ({product.size_type})
-                        </p>
-                      </div>
+  <h3>{product.name}</h3>
+
+  <p>Preço: {product.price} Mzn</p>
+  <p>Quantidade: {product.quantity}</p>
+
+  {/* ===== DETALHES POR TIPO ===== */}
+
+  {product.type === "product" && (
+    <>
+      <p>Cor: {product.color}</p>
+      <p>
+        Tamanho: {product.size} ({product.size_type})
+      </p>
+    </>
+  )}
+
+  {product.type === "jibbitz" && (
+    <p>Tipo: Jibbitz</p>
+  )}
+</div>
+
                     </div>
                   </div>
                 </li>

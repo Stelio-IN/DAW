@@ -43,17 +43,31 @@ const JibbitzDetalhado = () => {
 
     const price = jibbitz.promo_price || jibbitz.base_price;
 
-    const item = {
-      jibbitz_id: jibbitz.jibbitz_id,
-      name: jibbitz.name,
-      price: Number(price),
-      quantity: 1,
-      stock_quantity: jibbitz.stock_quantity,
-      image_url: imagemPrincipal,
-      is_jibbitz: true,
-    };
+   const item = {
+  cart_item_id: `jibbitz_${jibbitz.jibbitz_id}`, // 🔑 NOVO
+  type: "jibbitz",                              // 🔑 NOVO
 
-    const existing = cart.find((i) => i.jibbitz_id === item.jibbitz_id);
+  jibbitz_id: jibbitz.jibbitz_id,
+  name: jibbitz.name,
+
+  base_price: Number(jibbitz.base_price),
+  price: Number(jibbitz.promo_price || jibbitz.base_price),
+
+  quantity: 1,
+  stock_quantity: jibbitz.stock_quantity,
+
+  image_url: imagemPrincipal,
+
+  promotion: {
+    is_on_promotion: Boolean(jibbitz.promo_price),
+    discount_percentage: jibbitz.discount_percentage || null,
+    promo_price: jibbitz.promo_price || null,
+  },
+};
+
+
+   const existing = cart.find(i => i.cart_item_id === item.cart_item_id);
+
 
     if (existing) {
       if (existing.quantity < existing.stock_quantity) {
