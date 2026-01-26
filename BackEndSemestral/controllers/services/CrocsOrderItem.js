@@ -1,13 +1,19 @@
 import db from "../../models/index.js";
-import { Op, Sequelize } from "sequelize";
+import { Op, col, Sequelize } from "sequelize";
 
 const {
   OrderItem,
   PromotionSale,
   ProductColorSize,
   Promotion,
+  ProductPromotion,
+  sequelize,
 } = db;
 
+/**
+ * Processa UM item Crocs dentro de um pedido
+ * Mantendo assinatura do "atual", mas com a lógica funcional do antigo
+ */
 export const processCrocsOrderItem = async ({
   item,
   order,
@@ -15,15 +21,12 @@ export const processCrocsOrderItem = async ({
   paymentMethod,
   transaction,
 }) => {
+  console.log("OS DADOS ITEM:", item);
 
-    console.log('os dados', item)
-    console.log('os dados', order)
-    console.log('os dados', customer)
-    console.log('os dados', paymentMethod)
-    console.log('os dados', transaction)
   const quantity = Number(item.quantity);
   if (quantity <= 0) throw new Error("Quantidade inválida");
 
+  // 🔹 Bloqueio do stock para evitar double-spend
   const pcs = await ProductColorSize.findByPk(item.product_color_size_id, {
     transaction,
     lock: transaction.LOCK.UPDATE,
@@ -32,50 +35,82 @@ export const processCrocsOrderItem = async ({
   if (!pcs) throw new Error("Produto não encontrado");
   if (pcs.stock_quantity < quantity) throw new Error("Stock insuficiente");
 
-  /* ===============================
-     🔹 PREÇOS
-  =============================== */
-  const unitBasePrice = Number(item.base_price);
-  let finalUnitPrice = Number(item.price);
+  // 🔹 PREÇOS
+  let unitPrice = Number(item.base_price);
+  let basePrice = Number(item.price);
+  let promo = null;
 
-  const totalBasePrice = unitBasePrice * quantity;
-  const totalFinalPrice = finalUnitPrice * quantity;
-  const discountValue = totalBasePrice - totalFinalPrice;
+  const discountPercentage = item.discount_percentage
+    ? Number(item.discount_percentage) / 100
+    : 0;
 
-  /* ===============================
-     🔹 PROMOÇÃO
-  =============================== */
+  let totalSemPromocao = unitPrice * quantity;
+  let totalComPromocao = basePrice * quantity;
+  let totalDiscount = totalSemPromocao - totalComPromocao;
+
+  // 🔹 PROMOÇÃO
   if (item.is_on_promotion && item.promotion_id) {
-    const promoUsed = Number(item.promo_stock_used || 0);
-    const promoLimit =
-      item.promo_stock_limit !== null
-        ? Number(item.promo_stock_limit)
-        : null;
-
-    if (promoLimit !== null && promoUsed + quantity > promoLimit) {
-      throw new Error("Stock promocional esgotado");
-    }
-
-    await Promotion.update(
-      {
-        promo_stock_used: Sequelize.literal(
-          `COALESCE(promo_stock_used, 0) + ${quantity}`
-        ),
+    promo = await Promotion.findOne({
+      where: {
+        promotion_id: item.promotion_id,
+        start_date: { [Op.lte]: new Date() },
+        end_date: { [Op.gte]: new Date() },
+        [Op.or]: [
+          { promo_stock_limit: null },
+          { promo_stock_used: { [Op.lt]: col("promo_stock_limit") } },
+        ],
       },
-      { where: { promotion_id: item.promotion_id }, transaction }
-    );
+      include: [
+        {
+          model: ProductPromotion,
+          as: "product_promotions",
+          required: true,
+          where: {
+            [Op.or]: [
+              { product_color_size_id: pcs.product_color_size_id },
+              { product_color_id: pcs.product_color_id },
+              { product_id: item.product_id },
+            ],
+          },
+        },
+      ],
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
 
-    if (promoLimit !== null && promoUsed + quantity >= promoLimit) {
+    if (promo) {
+      // Aplicar preço promocional
+      basePrice = Number(item.promo_price);
+      totalComPromocao = basePrice * quantity;
+      totalDiscount = totalSemPromocao - totalComPromocao;
+
+      // Incrementar promo stock usado
       await Promotion.update(
-        { end_date: new Date() },
+        {
+          promo_stock_used: Sequelize.literal(
+            `COALESCE(promo_stock_used, 0) + ${quantity}`
+          ),
+        },
         { where: { promotion_id: item.promotion_id }, transaction }
       );
+
+      // Se atingir limite, encerra promoção
+      const promoLimit = item.promo_stock_limit ?? null;
+      const promoUsed = item.promo_stock_used ?? 0;
+      if (promoLimit !== null && promoUsed + quantity >= promoLimit) {
+        await Promotion.update(
+          { end_date: new Date() },
+          { where: { promotion_id: item.promotion_id }, transaction }
+        );
+      }
     }
   }
 
-  /* ===============================
-     🔹 ORDER ITEM
-  =============================== */
+  // 🔹 CUSTOS
+  const custoUnidade = Number(pcs.cost_price);
+  const custoTotal = custoUnidade * quantity;
+
+  // 🔹 CRIAR ORDER ITEM
   await OrderItem.create(
     {
       order_id: order.order_id,
@@ -84,11 +119,26 @@ export const processCrocsOrderItem = async ({
       color_id: item.product_color_id,
       quantity,
 
-      unit_price: unitBasePrice,
-      base_price: finalUnitPrice,
+      unit_price: unitPrice,
+      base_price: basePrice,
 
-      total_sem_promocao: totalBasePrice,
-      total_com_promocao: item.is_on_promotion ? totalFinalPrice : 0,
+      discount_percentage: discountPercentage,
+      discount_amount: totalDiscount,
+      total_discount: totalDiscount,
+
+      total_sem_promocao: totalSemPromocao,
+      total_com_promocao: item.promotion_id ? totalComPromocao : 0,
+
+      custo_unidade: custoUnidade,
+      custo_total: custoTotal,
+
+      promotion_id: item.promotion_id || 0,
+      promotion_name: item.promotion_name || null,
+
+      lucro_sem_promocao: totalSemPromocao - custoTotal,
+      lucro_com_promocao: item.promotion_id
+        ? totalComPromocao - custoTotal
+        : 0,
 
       name: item.name,
       color: item.color,
@@ -96,15 +146,11 @@ export const processCrocsOrderItem = async ({
       size: item.size,
       size_type: item.size_type,
       image_url: item.image_url,
-
-      promotion_id: item.promotion_id || null,
     },
     { transaction }
   );
 
-  /* ===============================
-     🔹 REGISTO PROMO
-  =============================== */
+  // 🔹 REGISTO DE VENDA PROMOCIONAL
   if (item.promotion_id) {
     await PromotionSale.create(
       {
@@ -112,13 +158,13 @@ export const processCrocsOrderItem = async ({
         order_id: order.order_id,
 
         product_id: item.product_id,
-        product_color_id: item.product_color_id,
-        product_color_size_id: item.product_color_size_id,
+        product_color_id: item.product_color_id ?? null,
+        product_color_size_id: item.product_color_size_id ?? null,
 
         quantity,
-        base_price: unitBasePrice,
-        promo_price: finalUnitPrice,
-        discount_value: discountValue,
+        base_price: unitPrice,
+        promo_price: basePrice,
+        discount_value: totalDiscount,
         sold_at: new Date(),
         payment_method: paymentMethod,
         customer_phone: customer.deliveryInfo.phone,
@@ -127,10 +173,8 @@ export const processCrocsOrderItem = async ({
     );
   }
 
-  /* ===============================
-     🔹 STOCK
-  =============================== */
-  const updated = await ProductColorSize.update(
+  // 🔹 ATUALIZAR STOCK DE FORMA SEGURA
+  const updatedRows = await ProductColorSize.update(
     {
       stock_quantity: Sequelize.literal(`stock_quantity - ${quantity}`),
     },
@@ -143,16 +187,14 @@ export const processCrocsOrderItem = async ({
     }
   );
 
-  if (updated[0] === 0) {
-    throw new Error("Stock insuficiente");
+  if (updatedRows[0] === 0) {
+    throw new Error("Stock insuficiente ou produto já reservado");
   }
 
-  /* ===============================
-     🔹 RETORNO
-  =============================== */
+  // 🔹 RETORNO
   return {
-    subtotal: totalBasePrice,
-    total: totalFinalPrice,
-    discount: discountValue,
+    subtotal: totalSemPromocao,
+    total: totalComPromocao,
+    discount: totalDiscount,
   };
 };

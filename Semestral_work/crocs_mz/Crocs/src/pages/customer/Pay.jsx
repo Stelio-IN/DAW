@@ -43,18 +43,13 @@ const Pay = () => {
   const cartPrepared = cart.map(item => {
   if (item.type === "product") {
     return {
-      type: "product",
-      cart_item_id: item.cart_item_id,
-
-      product_id: Number(item.product_id),
-      product_color_id: Number(item.product_color_id),
-      product_color_size_id: Number(item.product_color_size_id),
-      stock_quantity: Number(item.stock_quantity || 0),
-      quantity: Number(item.quantity),
-      price: Number(item.price),
-      unit_cost: Number(item.unit_cost),
-      is_on_promotion: item.is_on_promotion || false,
-      promotion_id: item.promotion_id || null,
+    ...item,
+    type: "product",
+    product_id: Number(item.product_id),
+    product_color_id: Number(item.product_color_id),
+    product_color_size_id: Number(item.product_color_size_id),
+    quantity: Number(item.quantity || 1),
+    price: Number(item.price || 0),
     };
   }
 
@@ -69,6 +64,7 @@ const Pay = () => {
       stock_quantity: Number(item.stock_quantity || 0),
       is_on_promotion: item.is_on_promotion || false,
       promotion_id: item.promotion_id || null,
+      discount_percentage: item.discount_percentage || null,
     };
   }
 
