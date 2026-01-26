@@ -65,6 +65,8 @@ const Pay = () => {
       is_on_promotion: item.is_on_promotion || false,
       promotion_id: item.promotion_id || null,
       discount_percentage: item.discount_percentage || null,
+      promo_stock_used: Number(item.promo_stock_used) || 0,
+      promo_stock_limit: Number(item.promo_stock_limit) || null,
     };
   }
 

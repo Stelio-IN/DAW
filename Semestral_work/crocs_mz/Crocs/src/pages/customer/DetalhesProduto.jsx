@@ -85,8 +85,8 @@ const ProdutoDetalhado = () => {
     const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const itemToAdd = {
-cart_item_id: `product_${tamanhoSelecionado.product_color_size_id}`,
-  type: "product", 
+      cart_item_id: `product_${tamanhoSelecionado.product_color_size_id}`,
+      type: "product",
 
       product_id: product.product_id,
       product_color_id: corSelecionada.product_color_id,
@@ -98,7 +98,7 @@ cart_item_id: `product_${tamanhoSelecionado.product_color_size_id}`,
       size_type: tamanhoSelecionado.size_type,
       sku: tamanhoSelecionado.sku,
 
-      // 🔥 Promoção
+      //  Promoção
       promotion_id: tamanhoSelecionado.promotion_id || null,
       promo_stock_limit: tamanhoSelecionado.promo_stock_limit || null,
       promo_stock_used: tamanhoSelecionado.promo_stock_used || null,
@@ -119,8 +119,7 @@ cart_item_id: `product_${tamanhoSelecionado.product_color_size_id}`,
     };
 
     const existingIndex = currentCart.findIndex(
-      (item) => item.cart_item_id === itemToAdd.cart_item_id
-,
+      (item) => item.cart_item_id === itemToAdd.cart_item_id,
     );
 
     if (existingIndex >= 0) {

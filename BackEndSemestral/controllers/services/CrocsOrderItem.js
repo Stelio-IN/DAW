@@ -12,7 +12,7 @@ const {
 
 /**
  * Processa UM item Crocs dentro de um pedido
- * Mantendo assinatura do "atual", mas com a lógica funcional do antigo
+ * Mantendo assinatura do "atual", mas agora bloqueia compra se quantidade exceder promo limit
  */
 export const processCrocsOrderItem = async ({
   item,
@@ -79,6 +79,16 @@ export const processCrocsOrderItem = async ({
     });
 
     if (promo) {
+      const promoLimit = item.promo_stock_limit ?? null;
+      const promoUsed = item.promo_stock_used ?? 0;
+
+      // 🔹 Bloquear compra se quantidade exceder promo stock limit
+      if (promoLimit !== null && promoUsed + quantity > promoLimit) {
+        throw new Error(
+          `Quantidade solicitada (${quantity}) excede o limite promocional. Apenas ${promoLimit - promoUsed} unidades disponíveis com preço promocional.`
+        );
+      }
+
       // Aplicar preço promocional
       basePrice = Number(item.promo_price);
       totalComPromocao = basePrice * quantity;
@@ -95,8 +105,6 @@ export const processCrocsOrderItem = async ({
       );
 
       // Se atingir limite, encerra promoção
-      const promoLimit = item.promo_stock_limit ?? null;
-      const promoUsed = item.promo_stock_used ?? 0;
       if (promoLimit !== null && promoUsed + quantity >= promoLimit) {
         await Promotion.update(
           { end_date: new Date() },

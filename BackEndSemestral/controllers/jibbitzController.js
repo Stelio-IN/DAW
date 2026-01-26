@@ -144,7 +144,9 @@ const getJibbitzDetails = async (req, res) => {
           SELECT JSON_OBJECT(
             'promotion_id', jp.promotion_id,
             'discount_percentage', jp.discount_percentage,
-            'promo_price', ROUND(j.price * (1 - jp.discount_percentage / 100), 2)
+            'promo_price', ROUND(j.price * (1 - jp.discount_percentage / 100), 2),
+            'promo_stock_limit', jp.promo_stock_limit,       -- ✅ Adicionado
+            'promo_stock_used', jp.promo_stock_used          -- ✅ Adicionado
           )
           FROM jibbitz_promotion_items jpi
           JOIN jibbitz_promotions jp 

@@ -64,6 +64,8 @@ const JibbitzDetalhado = () => {
     promotion_id: promotion?.promotion_id || null,
     discount_percentage: promotion?.discount_percentage || null,
     promo_price: promotion?.promo_price || null,
+    promo_stock_used: promotion?.promo_stock_used || 0,
+    promo_stock_limit: promotion?.promo_stock_limit || null,
   };
 
   console.log("🛒 JIBBITZ ADICIONADO AO CARRINHO:", item);
