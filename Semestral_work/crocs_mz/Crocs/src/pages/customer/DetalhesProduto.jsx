@@ -81,7 +81,8 @@ const ProdutoDetalhado = () => {
       alert("Selecione cor e tamanho");
       return;
     }
-
+ 
+    
     const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const itemToAdd = {
