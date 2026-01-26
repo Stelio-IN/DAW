@@ -75,7 +75,7 @@ const ProdutoDetalhado = () => {
     }
   }, [corSelecionada]);
 
-  // Função adicionar ao carrinho
+  // Função adicionar ao carrinho crocs
   const addToCart = () => {
     if (!product || !corSelecionada || !tamanhoSelecionado) {
       alert("Selecione cor e tamanho");

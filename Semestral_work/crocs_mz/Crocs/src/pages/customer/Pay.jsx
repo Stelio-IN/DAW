@@ -40,22 +40,56 @@ const Pay = () => {
   }
 
   // Prepara o carrinho para envio
-  const cartPrepared = cart.map(item => ({
-    ...item,
-    product_id: Number(item.product_id),
-    product_color_id: Number(item.product_color_id),
-    product_color_size_id: Number(item.product_color_size_id),
-    quantity: Number(item.quantity || 1),
-    price: Number(item.price || 0),
-  }));
+  const cartPrepared = cart.map(item => {
+  if (item.type === "product") {
+    return {
+      type: "product",
+      cart_item_id: item.cart_item_id,
+
+      product_id: Number(item.product_id),
+      product_color_id: Number(item.product_color_id),
+      product_color_size_id: Number(item.product_color_size_id),
+      stock_quantity: Number(item.stock_quantity || 0),
+      quantity: Number(item.quantity),
+      price: Number(item.price),
+      unit_cost: Number(item.unit_cost),
+      is_on_promotion: item.is_on_promotion || false,
+      promotion_id: item.promotion_id || null,
+    };
+  }
+
+  if (item.type === "jibbitz") {
+    return {
+      type: "jibbitz",
+      cart_item_id: item.cart_item_id,
+      jibbitz_id: Number(item.jibbitz_id),
+      unit_cost: Number(item.unit_cost),
+      quantity: Number(item.quantity),
+      price: Number(item.price),
+      stock_quantity: Number(item.stock_quantity || 0),
+      is_on_promotion: item.is_on_promotion || false,
+      promotion_id: item.promotion_id || null,
+    };
+  }
+
+  return null;
+}).filter(Boolean);
+
+
 
   // Validação simples
-const invalidItems = cartPrepared.filter(item => !item.product_color_size_id);
+const invalidItems = cartPrepared.filter(item => {
+  if (item.type === "product") return !item.product_color_size_id;
+  if (item.type === "jibbitz") return !item.jibbitz_id;
+  return true; // qualquer outro tipo é inválido
+});
+
 if (invalidItems.length > 0) {
   console.error("Itens inválidos no carrinho:", invalidItems);
   alert("Há produtos inválidos no carrinho.");
   return;
 }
+
 
   // Verifica se o carrinho não está vazio
   if (cartPrepared.length === 0) {

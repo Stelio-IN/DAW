@@ -82,12 +82,17 @@ const Jibbitzs = async (req, res) => {
         ) AS is_on_promotion
 
       FROM jibbitz j
-      INNER JOIN jibbitz_categories c ON c.category_id = j.category_id
-      LEFT JOIN jibbitz_stock js ON js.jibbitz_id = j.jibbitz_id
+      INNER JOIN jibbitz_categories c 
+        ON c.category_id = j.category_id
+      LEFT JOIN jibbitz_stock js 
+        ON js.jibbitz_id = j.jibbitz_id
       LEFT JOIN jibbitz_images ji 
-        ON ji.jibbitz_id = j.jibbitz_id AND ji.is_primary = 1
+        ON ji.jibbitz_id = j.jibbitz_id 
+       AND ji.is_primary = 1
 
       WHERE j.status = 'ativo'
+        AND js.stock_quantity > 0
+
       GROUP BY j.jibbitz_id
       ORDER BY j.created_at DESC
     `;
@@ -103,10 +108,12 @@ const Jibbitzs = async (req, res) => {
   }
 };
 
+
 const getJibbitzDetails = async (req, res) => {
   const { id } = req.params;
 
   try {
+    // 🔹 Buscar detalhes do jibbitz principal
     const [jibbitz] = await db.sequelize.query(
       `
       SELECT
@@ -117,7 +124,9 @@ const getJibbitzDetails = async (req, res) => {
         j.status,
         c.name AS category_name,
         js.stock_quantity,
+        js.cost_price,  
 
+        /* 🖼️ Imagens */
         (
           SELECT JSON_ARRAYAGG(
             JSON_OBJECT(
@@ -130,31 +139,30 @@ const getJibbitzDetails = async (req, res) => {
           WHERE ji.jibbitz_id = j.jibbitz_id
         ) AS images,
 
+        /* 🎯 Promoção (OBJETO ÚNICO) */
         (
-          SELECT jp.discount_percentage
+          SELECT JSON_OBJECT(
+            'promotion_id', jp.promotion_id,
+            'discount_percentage', jp.discount_percentage,
+            'promo_price', ROUND(j.price * (1 - jp.discount_percentage / 100), 2)
+          )
           FROM jibbitz_promotion_items jpi
-          JOIN jibbitz_promotions jp ON jp.promotion_id = jpi.promotion_id
-          LEFT JOIN jibbitz_group_items jgi ON jgi.group_id = jpi.group_id
+          JOIN jibbitz_promotions jp 
+            ON jp.promotion_id = jpi.promotion_id
+          LEFT JOIN jibbitz_group_items jgi 
+            ON jgi.group_id = jpi.group_id
           WHERE 
             (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
+            AND jp.status = 'ativo'
             AND NOW() BETWEEN jp.start_date AND jp.end_date
           LIMIT 1
-        ) AS discount_percentage,
-
-        (
-          SELECT ROUND(j.price * (1 - jp.discount_percentage / 100), 2)
-          FROM jibbitz_promotion_items jpi
-          JOIN jibbitz_promotions jp ON jp.promotion_id = jpi.promotion_id
-          LEFT JOIN jibbitz_group_items jgi ON jgi.group_id = jpi.group_id
-          WHERE 
-            (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
-            AND NOW() BETWEEN jp.start_date AND jp.end_date
-          LIMIT 1
-        ) AS promo_price
+        ) AS promotion
 
       FROM jibbitz j
-      INNER JOIN jibbitz_categories c ON c.category_id = j.category_id
-      LEFT JOIN jibbitz_stock js ON js.jibbitz_id = j.jibbitz_id
+      INNER JOIN jibbitz_categories c 
+        ON c.category_id = j.category_id
+      LEFT JOIN jibbitz_stock js 
+        ON js.jibbitz_id = j.jibbitz_id
       WHERE j.jibbitz_id = :id
       `,
       {
@@ -167,23 +175,27 @@ const getJibbitzDetails = async (req, res) => {
       return res.status(404).json({ error: "Jibbitz não encontrado" });
     }
 
-    // 🔹 Outros jibbitz do mesmo grupo
+    // 🔹 Buscar outros jibbitz do mesmo grupo COM STOCK > 0
     const related = await db.sequelize.query(
       `
       SELECT
         j2.jibbitz_id,
         j2.name,
         j2.price,
+        js2.stock_quantity,
         MAX(ji.image_url) AS primary_image_url
       FROM jibbitz_group_items jgi
       INNER JOIN jibbitz_group_items jgi2 
         ON jgi.group_id = jgi2.group_id
       INNER JOIN jibbitz j2 
         ON j2.jibbitz_id = jgi2.jibbitz_id
+      LEFT JOIN jibbitz_stock js2 
+        ON js2.jibbitz_id = j2.jibbitz_id
       LEFT JOIN jibbitz_images ji 
         ON ji.jibbitz_id = j2.jibbitz_id AND ji.is_primary = 1
       WHERE jgi.jibbitz_id = :id
         AND j2.jibbitz_id <> :id
+        AND js2.stock_quantity > 0      -- ✅ SOMENTE SE TIVER STOCK
       GROUP BY j2.jibbitz_id
       `,
       {
@@ -197,10 +209,12 @@ const getJibbitzDetails = async (req, res) => {
       related_jibbitz: related,
     });
   } catch (error) {
-    console.error("Erro ao buscar detalhes do jibbitz:", error);
+    console.error("❌ Erro ao buscar detalhes do jibbitz:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 
 export default {

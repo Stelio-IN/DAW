@@ -35,56 +35,68 @@ const JibbitzDetalhado = () => {
     }
   }, [jibbitzID]);
 
-  // Adicionar ao carrinho
+  // Adicionar ao carrinho jibbitz
   const addToCart = () => {
-    if (!jibbitz) return;
+  if (!jibbitz) return;
 
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-    const price = jibbitz.promo_price || jibbitz.base_price;
+  const promotion = jibbitz.promotion || null;
 
-   const item = {
-  cart_item_id: `jibbitz_${jibbitz.jibbitz_id}`, // 🔑 NOVO
-  type: "jibbitz",                              // 🔑 NOVO
+  const item = {
+    cart_item_id: `jibbitz_${jibbitz.jibbitz_id}`,
+    type: "jibbitz",
 
-  jibbitz_id: jibbitz.jibbitz_id,
-  name: jibbitz.name,
+    jibbitz_id: jibbitz.jibbitz_id,
+    name: jibbitz.name,
 
-  base_price: Number(jibbitz.base_price),
-  price: Number(jibbitz.promo_price || jibbitz.base_price),
+    base_price: Number(jibbitz.base_price),
+    price: Number(promotion?.promo_price || jibbitz.base_price),
+    unit_cost: Number(jibbitz.cost_price || 0),
+    quantity: 1,
+    stock_quantity: jibbitz.stock_quantity,
 
-  quantity: 1,
-  stock_quantity: jibbitz.stock_quantity,
+    image_url: imagemPrincipal,
+    
 
-  image_url: imagemPrincipal,
+    // 🔥 PROMOÇÃO (CORRETO)
+    is_on_promotion: Boolean(promotion),
+    promotion_id: promotion?.promotion_id || null,
+    discount_percentage: promotion?.discount_percentage || null,
+    promo_price: promotion?.promo_price || null,
+  };
 
-  promotion: {
-    is_on_promotion: Boolean(jibbitz.promo_price),
-    discount_percentage: jibbitz.discount_percentage || null,
-    promo_price: jibbitz.promo_price || null,
-  },
+  console.log("🛒 JIBBITZ ADICIONADO AO CARRINHO:", item);
+
+  const existing = cart.find(i => i.cart_item_id === item.cart_item_id);
+
+  if (existing) {
+    if (existing.quantity < existing.stock_quantity) {
+      existing.quantity += 1;
+    }
+  } else {
+    cart.push(item);
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+   console.group("🛒 JIBBITZ ADICIONADO AO CARRINHO");
+  console.log("Item enviado para o carrinho:", item);
+  console.log("Carrinho completo agora:", cart);
+  console.groupEnd();
+  alert("Jibbitz adicionado ao carrinho");
 };
 
-
-   const existing = cart.find(i => i.cart_item_id === item.cart_item_id);
-
-
-    if (existing) {
-      if (existing.quantity < existing.stock_quantity) {
-        existing.quantity += 1;
-      }
-    } else {
-      cart.push(item);
-    }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Jibbitz adicionado ao carrinho");
-  };
 
   if (!jibbitz)
     return <p style={{ padding: "40px" }}>Carregando detalhes do Jibbitz...</p>;
 
-  const isPromo = Boolean(jibbitz.promo_price);
+  const promotion = jibbitz.promotion || null;
+
+const isPromo = Boolean(promotion?.promo_price);
+
+const basePrice = Number(jibbitz.base_price);
+const promoPrice = Number(promotion?.promo_price);
+const discountPercentage = promotion?.discount_percentage;
 
   return (
     <div className="container-detalhes-produto">
@@ -128,51 +140,52 @@ const JibbitzDetalhado = () => {
           <h1>{jibbitz.name}</h1>
 
           {/* PREÇO */}
-          <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
-            {isPromo ? (
-              <>
-                <span
-                  style={{
-                    textDecoration: "line-through",
-                    color: "#888",
-                    marginRight: "10px",
-                  }}
-                >
-                  {Number(jibbitz.base_price).toLocaleString("pt-MZ", {
-                    style: "currency",
-                    currency: "MZN",
-                  })}
-                </span>
+         <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
+  {isPromo ? (
+    <>
+      <span
+        style={{
+          textDecoration: "line-through",
+          color: "#888",
+          marginRight: "10px",
+        }}
+      >
+        {basePrice.toLocaleString("pt-MZ", {
+          style: "currency",
+          currency: "MZN",
+        })}
+      </span>
 
-                <span style={{ color: "red" }}>
-                  {Number(jibbitz.promo_price).toLocaleString("pt-MZ", {
-                    style: "currency",
-                    currency: "MZN",
-                  })}
-                </span>
+      <span style={{ color: "red" }}>
+        {promoPrice.toLocaleString("pt-MZ", {
+          style: "currency",
+          currency: "MZN",
+        })}
+      </span>
 
-                <span
-                  style={{
-                    background: "red",
-                    color: "white",
-                    padding: "4px 8px",
-                    borderRadius: "6px",
-                    marginLeft: "10px",
-                    fontSize: "12px",
-                  }}
-                >
-                  -{jibbitz.discount_percentage}%
-                </span>
-              </>
-            ) : (
-              <span>
-                {Number(jibbitz.base_price).toLocaleString("pt-MZ", {
-                  style: "currency",
-                  currency: "MZN",
-                })}
-              </span>
-            )}
-          </p>
+      <span
+        style={{
+          background: "red",
+          color: "white",
+          padding: "4px 8px",
+          borderRadius: "6px",
+          marginLeft: "10px",
+          fontSize: "12px",
+        }}
+      >
+        -{discountPercentage}%
+      </span>
+    </>
+  ) : (
+    <span>
+      {basePrice.toLocaleString("pt-MZ", {
+        style: "currency",
+        currency: "MZN",
+      })}
+    </span>
+  )}
+</p>
+
 
           <p style={{ maxWidth: "600px", fontStyle: "italic" }}>
             {jibbitz.description}
