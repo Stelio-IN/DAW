@@ -78,6 +78,7 @@ export const processCrocsOrderItem = async ({
       lock: transaction.LOCK.UPDATE,
     });
 
+    
     if (promo) {
       const promoLimit = item.promo_stock_limit ?? null;
       const promoUsed = item.promo_stock_used ?? 0;

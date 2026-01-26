@@ -138,6 +138,7 @@ const discountPercentageFinal = isOnPromotion
   ? item.discount_percentage || 0
   : 0;
 
+  
   // 🔹 Criar JibbitzOrderItem
   const orderItem = await JibbitzOrderItem.create(
   {
