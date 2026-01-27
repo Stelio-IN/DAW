@@ -1,4 +1,5 @@
 import db from "../models/index.js";
+import {Op} from 'sequelize';
 const Product = db.Product;
 
 const createProduct = async (req, res) => {
@@ -926,6 +927,96 @@ const getProductsFilteredMenu = async (req, res) => {
 };
 
 
+ const filterProducts = async (req, res) => {
+  try {
+    const {
+      category,
+      gender,
+      color,
+      size,
+      minPrice,
+      maxPrice,
+    } = req.query;
+
+    // Filtros WHERE dinâmicos
+    let filters = `WHERE p.status = 'ativo'`; // apenas produtos ativos
+
+    if (category) filters += ` AND p.category_id = :category`;
+    if (gender) filters += ` AND p.gender_id = :gender`;
+
+    // filtro por cores
+    if (color) filters += ` AND pc.color_id = :color`;
+
+    // filtro por tamanho
+    if (size) filters += ` AND pcs.size_id = :size`;
+
+    // filtro por preço (price_override OU base price)
+    if (minPrice || maxPrice) {
+      filters += ` AND (
+        (pcs.price_override BETWEEN :minPrice AND :maxPrice)
+        OR (pcs.price_override IS NULL AND p.price BETWEEN :minPrice AND :maxPrice)
+      )`;
+    }
+
+    // Query principal
+    const query = `
+      SELECT
+        p.product_id,
+        p.name AS product_name,
+        p.price AS base_price,
+        p.description,
+        p.status,
+        c1.name AS category_name,
+        MAX(pi.image_url) AS primary_image_url,
+        (
+          SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'color_id', col.color_id,
+              'name', col.name,
+              'hex_code', col.hex_code
+            )
+          )
+          FROM productcolors pc
+          INNER JOIN colors col ON col.color_id = pc.color_id
+          INNER JOIN product_color_sizes pcs ON pcs.product_color_id = pc.product_color_id
+          WHERE pc.product_id = p.product_id
+            AND pcs.stock_quantity > 0
+            ${color ? `AND col.color_id = :color` : ""}
+            ${size ? `AND pcs.size_id = :size` : ""}
+        ) AS colors
+      FROM products p
+      INNER JOIN categories c1 ON c1.category_id = p.category_id
+      LEFT JOIN productcolors pc_main ON pc_main.product_id = p.product_id
+      LEFT JOIN product_color_sizes pcs ON pcs.product_color_id = pc_main.product_color_id
+      LEFT JOIN productimages pi ON pi.product_color_id = pc_main.product_color_id AND pi.is_primary = 1
+      ${filters}
+      GROUP BY p.product_id, p.name, p.price, p.description, p.status, c1.name
+    `;
+
+    const replacements = {
+      category,
+      gender,
+      color,
+      size,
+      minPrice: minPrice || 0,
+      maxPrice: maxPrice || 999999,
+    };
+
+    const products = await db.sequelize.query(query, {
+      replacements,
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Erro ao filtrar produtos:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+
 
 
 
@@ -1219,6 +1310,7 @@ export default {
   products,
   estoqueTotal,
   Semestoque,
+  filterProducts,
   getProductsEspecific,
   ProductHistory,
   UsuarioProductHistory,

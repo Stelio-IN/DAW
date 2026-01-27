@@ -33,6 +33,7 @@ function Loja() {
     max: 5000,
   });
 
+ 
   const handleClickOutside = (event) => {
     if (tamanhoRef.current && !tamanhoRef.current.contains(event.target)) {
       setActiveFilter(null);
