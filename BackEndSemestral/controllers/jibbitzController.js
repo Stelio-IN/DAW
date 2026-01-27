@@ -216,10 +216,142 @@ const getJibbitzDetails = async (req, res) => {
   }
 };
 
+const getJibbitzCategories = async (req, res) => {
+  try {
+    const categories = await db.sequelize.query(
+      `
+      SELECT category_id, name, description
+      FROM jibbitz_categories
+      WHERE status = 'ativo'
+      ORDER BY name ASC
+      `,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
 
+    res.json(categories);
+  } catch (error) {
+    console.error("Erro ao buscar categorias de Jibbitz:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getJibbitzByCategory = async (req, res) => {
+  const { categoryId } = req.params;
+
+  try {
+    const query = `
+      SELECT
+        j.jibbitz_id,
+        j.name,
+        j.price AS base_price,
+        j.description,
+        j.status,
+        c.name AS category_name,
+        js.stock_quantity,
+
+        MAX(ji.image_url) AS primary_image_url,
+
+        -- Promoção ativa (direta ou por grupo)
+        (
+          SELECT jp.promotion_id
+          FROM jibbitz_promotion_items jpi
+          JOIN jibbitz_promotions jp 
+            ON jp.promotion_id = jpi.promotion_id
+          LEFT JOIN jibbitz_group_items jgi 
+            ON jgi.group_id = jpi.group_id
+          WHERE 
+            (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
+            AND NOW() BETWEEN jp.start_date AND jp.end_date
+          LIMIT 1
+        ) AS promotion_id,
+
+        (
+          SELECT jp.name
+          FROM jibbitz_promotion_items jpi
+          JOIN jibbitz_promotions jp 
+            ON jp.promotion_id = jpi.promotion_id
+          LEFT JOIN jibbitz_group_items jgi 
+            ON jgi.group_id = jpi.group_id
+          WHERE 
+            (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
+            AND NOW() BETWEEN jp.start_date AND jp.end_date
+          LIMIT 1
+        ) AS promotion_name,
+
+        (
+          SELECT jp.discount_percentage
+          FROM jibbitz_promotion_items jpi
+          JOIN jibbitz_promotions jp 
+            ON jp.promotion_id = jpi.promotion_id
+          LEFT JOIN jibbitz_group_items jgi 
+            ON jgi.group_id = jpi.group_id
+          WHERE 
+            (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
+            AND NOW() BETWEEN jp.start_date AND jp.end_date
+          LIMIT 1
+        ) AS discount_percentage,
+
+        (
+          SELECT ROUND(j.price * (1 - jp.discount_percentage / 100), 2)
+          FROM jibbitz_promotion_items jpi
+          JOIN jibbitz_promotions jp 
+            ON jp.promotion_id = jpi.promotion_id
+          LEFT JOIN jibbitz_group_items jgi 
+            ON jgi.group_id = jpi.group_id
+          WHERE 
+            (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
+            AND NOW() BETWEEN jp.start_date AND jp.end_date
+          LIMIT 1
+        ) AS promo_price,
+
+        (
+          SELECT 1
+          FROM jibbitz_promotion_items jpi
+          JOIN jibbitz_promotions jp 
+            ON jp.promotion_id = jpi.promotion_id
+          LEFT JOIN jibbitz_group_items jgi 
+            ON jgi.group_id = jpi.group_id
+          WHERE 
+            (jpi.jibbitz_id = j.jibbitz_id OR jgi.jibbitz_id = j.jibbitz_id)
+            AND NOW() BETWEEN jp.start_date AND jp.end_date
+          LIMIT 1
+        ) AS is_on_promotion
+
+      FROM jibbitz j
+      INNER JOIN jibbitz_categories c 
+        ON c.category_id = j.category_id
+      LEFT JOIN jibbitz_stock js 
+        ON js.jibbitz_id = j.jibbitz_id
+      LEFT JOIN jibbitz_images ji 
+        ON ji.jibbitz_id = j.jibbitz_id 
+       AND ji.is_primary = 1
+
+      WHERE j.status = 'ativo'
+        AND js.stock_quantity > 0
+        AND j.category_id = :categoryId
+
+      GROUP BY j.jibbitz_id
+      ORDER BY j.created_at DESC
+    `;
+
+    const jibbitz = await db.sequelize.query(query, {
+      replacements: { categoryId },
+      type: db.sequelize.QueryTypes.SELECT,
+    });
+
+    res.json(jibbitz);
+  } catch (error) {
+    console.error("Erro ao buscar jibbitz por categoria:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 
 export default {
   Jibbitzs,
-  getJibbitzDetails
+  getJibbitzDetails,
+  getJibbitzCategories,
+  getJibbitzByCategory
 };

@@ -899,6 +899,38 @@ WHERE ps.size_id IN (:sizeIds)
   }
 };
 
+// Usado para os produtos por categoria e genero clicados na navbar
+// controllers/productController.js
+const getProductsFilteredMenu = async (req, res) => {
+  try {
+    const { gender, category } = req.query; // filtros vindos da query string
+
+    // Construir objeto de filtros
+    const where = { status: 'ativo' }; // sempre filtra apenas produtos ativos
+
+    if (gender) where.gender_id = gender;
+    if (category) where.category_id = category;
+
+    // Buscar produtos filtrados
+    const products = await Product.findAll({
+      where,
+      order: [['createdAt', 'DESC']], // ordenar por data de criação
+      attributes: ['product_id', 'name', 'description', 'price', 'category_id', 'gender_id', 'status', 'createdAt', 'updatedAt'] // atributos que queremos retornar
+    });
+
+    res.json(products);
+  } catch (err) {
+    console.error("Erro ao buscar produtos do menu:", err);
+    res.status(500).json({ message: "Erro ao buscar produtos do menu" });
+  }
+};
+
+
+
+
+
+///////////////////////////// ADMINISTRAÇÃO ///////////////////////
+
 // Faturamento Mensal
 const getFaturamentoMesAtual = async (req, res) => {
   try {
@@ -1196,6 +1228,7 @@ export default {
   getProductsBySize,
   getProductsByGender,
   ProductHistoryByOrderId,
+  getProductsFilteredMenu,
   getFaturamentoMesAtual,
   getTotalPedidosMensais,
   getFaturamentoPorDia,

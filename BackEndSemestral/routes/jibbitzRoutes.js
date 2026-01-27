@@ -5,5 +5,7 @@ const router = Router();
 
 router.get('/jibs', jibbitzController.Jibbitzs);
 router.get('/jibs/:id', jibbitzController.getJibbitzDetails);
+router.get('/categories', jibbitzController.getJibbitzCategories);
+router.get('/jibs/category/:categoryId', jibbitzController.getJibbitzByCategory);
 
 export default router;
