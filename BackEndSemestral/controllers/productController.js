@@ -927,7 +927,7 @@ const getProductsFilteredMenu = async (req, res) => {
 };
 
 
- const filterProducts = async (req, res) => {
+const filterProducts = async (req, res) => {
   try {
     const {
       category,
@@ -938,26 +938,34 @@ const getProductsFilteredMenu = async (req, res) => {
       maxPrice,
     } = req.query;
 
-    // converter para arrays quando vier "1,2,3"
     const categories = category ? category.split(",").map(Number) : null;
     const genders = gender ? gender.split(",").map(Number) : null;
     const colors = color ? color.split(",").map(Number) : null;
     const sizes = size ? size.split(",").map(Number) : null;
 
-    // WHERE dinâmico
+    // base
     let filters = `WHERE p.status = 'ativo'`;
 
-    if (categories) filters += ` AND p.category_id IN (:categories)`;
-    if (genders) filters += ` AND p.gender_id IN (:genders)`;
+    // bloco OR dinâmico
+    const orConditions = [];
 
-    if (colors) filters += ` AND pc.color_id IN (:colors)`;
-    if (sizes) filters += ` AND pcs.size_id IN (:sizes)`;
+    if (categories) orConditions.push(`p.category_id IN (:categories)`);
+    if (genders) orConditions.push(`p.gender_id IN (:genders)`);
+    if (colors) orConditions.push(`pc.color_id IN (:colors)`);
+    if (sizes) orConditions.push(`pcs.size_id IN (:sizes)`);
 
     if (minPrice || maxPrice) {
-      filters += ` AND (
-        (pcs.price_override BETWEEN :minPrice AND :maxPrice)
-        OR (pcs.price_override IS NULL AND p.price BETWEEN :minPrice AND :maxPrice)
-      )`;
+      orConditions.push(`
+        (
+          pcs.price_override BETWEEN :minPrice AND :maxPrice
+          OR (pcs.price_override IS NULL AND p.price BETWEEN :minPrice AND :maxPrice)
+        )
+      `);
+    }
+
+    // aplica OR apenas se houver filtros
+    if (orConditions.length > 0) {
+      filters += ` AND ( ${orConditions.join(" OR ")} )`;
     }
 
     const query = `
@@ -1027,6 +1035,7 @@ const getProductsFilteredMenu = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 
