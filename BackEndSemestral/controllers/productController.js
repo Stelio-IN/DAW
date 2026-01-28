@@ -938,19 +938,21 @@ const getProductsFilteredMenu = async (req, res) => {
       maxPrice,
     } = req.query;
 
-    // Filtros WHERE dinâmicos
-    let filters = `WHERE p.status = 'ativo'`; // apenas produtos ativos
+    // converter para arrays quando vier "1,2,3"
+    const categories = category ? category.split(",").map(Number) : null;
+    const genders = gender ? gender.split(",").map(Number) : null;
+    const colors = color ? color.split(",").map(Number) : null;
+    const sizes = size ? size.split(",").map(Number) : null;
 
-    if (category) filters += ` AND p.category_id = :category`;
-    if (gender) filters += ` AND p.gender_id = :gender`;
+    // WHERE dinâmico
+    let filters = `WHERE p.status = 'ativo'`;
 
-    // filtro por cores
-    if (color) filters += ` AND pc.color_id = :color`;
+    if (categories) filters += ` AND p.category_id IN (:categories)`;
+    if (genders) filters += ` AND p.gender_id IN (:genders)`;
 
-    // filtro por tamanho
-    if (size) filters += ` AND pcs.size_id = :size`;
+    if (colors) filters += ` AND pc.color_id IN (:colors)`;
+    if (sizes) filters += ` AND pcs.size_id IN (:sizes)`;
 
-    // filtro por preço (price_override OU base price)
     if (minPrice || maxPrice) {
       filters += ` AND (
         (pcs.price_override BETWEEN :minPrice AND :maxPrice)
@@ -958,7 +960,6 @@ const getProductsFilteredMenu = async (req, res) => {
       )`;
     }
 
-    // Query principal
     const query = `
       SELECT
         p.product_id,
@@ -971,33 +972,46 @@ const getProductsFilteredMenu = async (req, res) => {
         (
           SELECT JSON_ARRAYAGG(
             JSON_OBJECT(
+              'product_color_size_id', pcs.product_color_size_id,
               'color_id', col.color_id,
               'name', col.name,
-              'hex_code', col.hex_code
+              'hex_code', col.hex_code,
+              'size_id', pcs.size_id,
+              'stock_quantity', pcs.stock_quantity,
+              'price_override', pcs.price_override
             )
           )
           FROM productcolors pc
           INNER JOIN colors col ON col.color_id = pc.color_id
-          INNER JOIN product_color_sizes pcs ON pcs.product_color_id = pc.product_color_id
+          INNER JOIN product_color_sizes pcs 
+            ON pcs.product_color_id = pc.product_color_id
           WHERE pc.product_id = p.product_id
             AND pcs.stock_quantity > 0
-            ${color ? `AND col.color_id = :color` : ""}
-            ${size ? `AND pcs.size_id = :size` : ""}
+            ${colors ? `AND col.color_id IN (:colors)` : ""}
+            ${sizes ? `AND pcs.size_id IN (:sizes)` : ""}
         ) AS colors
       FROM products p
       INNER JOIN categories c1 ON c1.category_id = p.category_id
-      LEFT JOIN productcolors pc_main ON pc_main.product_id = p.product_id
-      LEFT JOIN product_color_sizes pcs ON pcs.product_color_id = pc_main.product_color_id
-      LEFT JOIN productimages pi ON pi.product_color_id = pc_main.product_color_id AND pi.is_primary = 1
+      LEFT JOIN productcolors pc ON pc.product_id = p.product_id
+      LEFT JOIN product_color_sizes pcs ON pcs.product_color_id = pc.product_color_id
+      LEFT JOIN productimages pi 
+        ON pi.product_color_id = pc.product_color_id
+        AND pi.is_primary = 1
       ${filters}
-      GROUP BY p.product_id, p.name, p.price, p.description, p.status, c1.name
+      GROUP BY
+        p.product_id,
+        p.name,
+        p.price,
+        p.description,
+        p.status,
+        c1.name
     `;
 
     const replacements = {
-      category,
-      gender,
-      color,
-      size,
+      categories,
+      genders,
+      colors,
+      sizes,
       minPrice: minPrice || 0,
       maxPrice: maxPrice || 999999,
     };
@@ -1013,6 +1027,8 @@ const getProductsFilteredMenu = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 
 
