@@ -81,6 +81,7 @@ const ProdutoDetalhado = () => {
       alert("Selecione cor e tamanho");
       return;
     }
+
  
     
     const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -272,34 +273,37 @@ const ProdutoDetalhado = () => {
           {/* CORES */}
           <p className="label">Cores disponíveis</p>
           <div className="alternativas">
-            {product.colors
-              ?.filter((c) => c.stock_quantity > 0)
-              .map((cor) => {
-                const imagem =
-                  cor.images?.find((i) => i.is_primary) || cor.images?.[0];
-                return (
-                  <img
-                    key={cor.product_color_id}
-                    src={imagem?.image_url}
-                    alt={cor.name}
-                    onClick={() => setCorSelecionada(cor)}
-                    style={{
-                      cursor: "pointer",
-                      border:
-                        corSelecionada?.product_color_id ===
-                        cor.product_color_id
-                          ? "2px solid black"
-                          : "1px solid #ccc",
-                      borderRadius: "6px",
-                      marginRight: "8px",
-                      width: "60px",
-                      height: "60px",
-                      objectFit: "cover",
-                    }}
-                  />
-                );
-              })}
-          </div>
+  {product.colors
+    ?.filter(
+      (c) => c.sizes && c.sizes.some((s) => s.stock_quantity > 0)
+    )
+    .map((cor) => {
+      const imagem =
+        cor.images?.find((i) => i.is_primary) || cor.images?.[0];
+
+      return (
+        <img
+          key={cor.product_color_id}
+          src={imagem?.image_url}
+          alt={cor.name}
+          onClick={() => setCorSelecionada(cor)}
+          style={{
+            cursor: "pointer",
+            border:
+              corSelecionada?.product_color_id === cor.product_color_id
+                ? "2px solid black"
+                : "1px solid #ccc",
+            borderRadius: "6px",
+            marginRight: "8px",
+            width: "60px",
+            height: "60px",
+            objectFit: "cover",
+          }}
+        />
+      );
+    })}
+</div>
+
 
           {/* TAMANHOS */}
           <p className="label">Tamanhos ({tamanhoSelecionado?.size_type})</p>
