@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../assets/style/loja.css";
-import { FiFilter } from "react-icons/fi";
 import { useFavorites } from "../../context/FavoritesContext";
-
+import {  FiHeart, FiFilter } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa";
 function Loja() {
   const [openFilters, setOpenFilters] = useState([]); // Array para filtros abertos
   const [genders, setGenders] = useState([]);
   const [selectedGender, setSelectedGender] = useState([]);
   const [colors, setColors] = useState([]);
   const [selectedColor, setSelectedColor] = useState([]);
-  const [sizesTypes, setSizesTypes] = useState([]);
-  const [activeSizeType, setActiveSizeType] = useState(null);
   const [sizes, setSizes] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -24,11 +22,12 @@ function Loja() {
   const [sortOption, setSortOption] = useState("A-Z");
   const [searchTerm, setSearchTerm] = useState("");
   const [filtroOpen, setFiltroOpen] = useState(false);
+  const [products, setProducts] = useState([]); // Novidade: produtos buscados
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { favorites, toggleFavorite } = useFavorites();
   const tamanhoRef = useRef();
-
+const [currency, setCurrency] = useState("MZN"); 
   const toggleFiltro = () => setFiltroOpen(!filtroOpen);
 
   const handleClickOutside = (event) => {
@@ -59,19 +58,17 @@ function Loja() {
     setAppliedFilters(updatedFilters);
   };
 
+  // Busca dados estáticos para filtros
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [catRes, sizeTypeRes, sizeRes, genderRes, colorRes] =
-          await Promise.all([
-            fetch("http://localhost:3005/api/categories"),
-            fetch("http://localhost:3005/api/sizesType"),
-            fetch("http://localhost:3005/api/sizes"),
-            fetch("http://localhost:3005/api/gender"),
-            fetch("http://localhost:3005/api/colors"),
-          ]);
+        const [catRes, sizeRes, genderRes, colorRes] = await Promise.all([
+          fetch("http://localhost:3005/api/categories"),
+          fetch("http://localhost:3005/api/sizes"),
+          fetch("http://localhost:3005/api/gender"),
+          fetch("http://localhost:3005/api/colors"),
+        ]);
         setCategories(await catRes.json());
-        setSizesTypes(await sizeTypeRes.json());
         setSizes(await sizeRes.json());
         setGenders(await genderRes.json());
         setColors(await colorRes.json());
@@ -81,6 +78,32 @@ function Loja() {
     };
     fetchData();
   }, []);
+
+  // Monta query string e busca produtos
+  const fetchProducts = async () => {
+    try {
+      const params = new URLSearchParams();
+
+      if (selectedCategories.length > 0) params.append("category", selectedCategories.join(","));
+      if (selectedGender.length > 0) params.append("gender", selectedGender.join(","));
+      if (selectedColor.length > 0) params.append("color", selectedColor.join(","));
+      if (selectedSizes.length > 0) params.append("size", selectedSizes.join(","));
+      if (selectedPriceRange.min !== 0) params.append("priceMin", selectedPriceRange.min);
+      if (selectedPriceRange.max !== 5000) params.append("priceMax", selectedPriceRange.max);
+      if (searchTerm.trim() !== "") params.append("search", searchTerm.trim());
+
+      const res = await fetch(`http://localhost:3005/api/products/pr/filters?${params.toString()}`);
+      const data = await res.json();
+      setProducts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // Sempre que qualquer filtro, preço ou search mudar, busca produtos
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategories, selectedGender, selectedColor, selectedSizes, selectedPriceRange, searchTerm]);
 
   // Seleção de filtros
   const handleCategorySelect = (categoryId) => {
@@ -110,12 +133,6 @@ function Loja() {
     updateAppliedFilters("Color", label);
   };
 
-  const handleSizeTypeClick = (sizeTypeId) => {
-    setActiveSizeType((prev) =>
-      prev === sizeTypeId ? null : sizeTypeId
-    );
-  };
-
   const handleSizeSelect = (sizeId) => {
     const updated = selectedSizes.includes(sizeId)
       ? selectedSizes.filter((id) => id !== sizeId)
@@ -135,9 +152,16 @@ function Loja() {
   const handleFilterClick = (filter) => {
     setOpenFilters((prev) =>
       prev.includes(filter)
-        ? prev.filter((f) => f !== filter) // remove se já aberto
-        : [...prev, filter] // adiciona se fechado
+        ? prev.filter((f) => f !== filter)
+        : [...prev, filter]
     );
+  };
+
+
+   const convertPrice = (price, targetCurrency) => {
+    if (targetCurrency === "MZN") {
+      return price.toFixed(2); // Retorna o preço original se for MZN ou a taxa não existir
+    }
   };
 
   return (
@@ -206,35 +230,21 @@ function Loja() {
               )}
             </div>
 
-            {/* Tamanho */}
+            {/* Tamanho (sem tipo) */}
             <div onClick={() => handleFilterClick("tamanho")}>
               <h4>Tamanho</h4>
               {openFilters.includes("tamanho") && (
                 <div className="filter-options" ref={tamanhoRef}>
-                  {sizesTypes.map((type) => (
-                    <div key={type.size_type_id}>
-                      <label onClick={() => handleSizeTypeClick(type.size_type_id)}>
-                        {type.name}
-                      </label>
-
-                      {activeSizeType === type.size_type_id && (
-                        <div className="nested-options">
-                          {sizes
-                            .filter((s) => s.size_type_id === type.size_type_id)
-                            .map((s) => (
-                              <label key={s.size_id}>
-                                <input
-                                  type="checkbox"
-                                  checked={selectedSizes.includes(s.size_id)}
-                                  onClick={(e) => e.stopPropagation()}
-                                  onChange={() => handleSizeSelect(s.size_id)}
-                                />
-                                {s.size}
-                              </label>
-                            ))}
-                        </div>
-                      )}
-                    </div>
+                  {sizes.map((s) => (
+                    <label key={s.size_id}>
+                      <input
+                        type="checkbox"
+                        checked={selectedSizes.includes(s.size_id)}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={() => handleSizeSelect(s.size_id)}
+                      />
+                      {s.size}
+                    </label>
                   ))}
                 </div>
               )}
@@ -309,6 +319,7 @@ function Loja() {
             </select>
           </div>
 
+          
           <header className="catalog-header">
             <h3>Filtros aplicáveis</h3>
           </header>
@@ -319,10 +330,71 @@ function Loja() {
           </label>
 
           <section className="catalog-items1">
-            <p style={{ textAlign: "center", marginTop: 20 }}>
-              Nenhum produto será exibido nesta versão — apenas filtros disponíveis.
-            </p>
-          </section>
+                      {products.length > 0 ? (
+                        products.map((product) => (
+                          <div className="catalog-product1" key={product.product_id}>
+                            <picture className="catalog-image1">
+                              <img
+                                src={product.primary_image_url}
+                                alt={product.product_name}
+                                loading="lazy"
+                              />
+                            </picture>
+                            <div className="catalog-detail1">
+                              <p>
+                                <small>{product.product_name}</small>
+                              </p>
+                              <p>
+                                <samp>
+                                 {product.base_price} Mzn
+                                </samp>
+                              </p>
+                            </div>
+                            <div className="catalog-button1">
+                              <div className="colors">
+                            {Array.isArray(product.colors) &&
+                              // Filtra cores únicas pelo color_id
+                              Array.from(
+                                new Map(product.colors.map(c => [c.color_id, c])).values()
+                              ).map((color) => (
+                                <div
+                                  key={color.color_id}
+                                  className="color-box"
+                                  style={{ backgroundColor: color.hex_code }}
+                                  title={color.name}
+                                />
+                              ))}
+                          </div>
+                              <button
+                                className="product-button1"
+                                onClick={() =>
+                                  navigate(`/produto/detalhes/${product.product_id}`)
+                                }
+                              >
+                                Ver mais
+                              </button>
+                              <button
+                                className="btn_favorito"
+                                onClick={() => {
+                                  console.log("Produto favorito clicado:", product);
+                                  toggleFavorite(product);
+                                }}
+                              >
+                                {favorites.some(
+                                  (item) => item.product_id === product.product_id,
+                                ) ? (
+                                  <FaHeart color={"gray"} />
+                                ) : (
+                                  <FiHeart size={25} />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p>Não há produtos nessa categoria.</p>
+                      )}
+                    </section>
         </div>
       </div>
       {error && <p style={{ color: "red" }}>{error}</p>}

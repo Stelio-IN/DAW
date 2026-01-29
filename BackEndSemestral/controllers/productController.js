@@ -136,7 +136,6 @@ const getProductsEspecific = async (req, res) => {
               'product_color_id', pc.product_color_id,
               'name', c.name,
               'hex_code', c.hex_code,
-              'stock_quantity', pc.stock_quantity,
 
               'images', (
                 SELECT JSON_ARRAYAGG(
@@ -364,8 +363,6 @@ const getProductsEspecific = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 
 const getProductByName = async (req, res) => {
@@ -1013,6 +1010,7 @@ const filterProducts = async (req, res) => {
         p.description,
         p.status,
         c1.name
+      HAVING colors IS NOT NULL
     `;
 
     const replacements = {
@@ -1035,6 +1033,7 @@ const filterProducts = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 
