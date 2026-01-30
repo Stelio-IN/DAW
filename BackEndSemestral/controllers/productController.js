@@ -66,7 +66,7 @@ const deleteProduct = async (req, res) => {
 
 const products = async (req, res) => {
   try {
-    const { search } = req.query; // Termo de pesquisa
+    const { search } = req.query;
 
     let query = `
       SELECT 
@@ -76,32 +76,58 @@ const products = async (req, res) => {
         p.description,
         p.status,
         g.name AS category_name,
+
         (
-          SELECT COUNT(DISTINCT pc.color_id)
-          FROM productcolors pc
-          WHERE pc.product_id = p.product_id
+          SELECT COUNT(DISTINCT pc2.color_id)
+          FROM productcolors pc2
+          WHERE pc2.product_id = p.product_id
         ) AS color_count,
+
         JSON_ARRAYAGG(
           JSON_OBJECT(
             'name', c.name,
             'hex_code', c.hex_code
           )
         ) AS colors,
+
         MAX(pi.image_url) AS primary_image_url
+
       FROM products p
       INNER JOIN categories g ON g.category_id = p.category_id
-      LEFT JOIN productcolors pc ON p.product_id = pc.product_id
-      LEFT JOIN colors c ON pc.color_id = c.color_id
+      INNER JOIN productcolors pc ON pc.product_id = p.product_id
+      INNER JOIN colors c ON c.color_id = pc.color_id
+
       LEFT JOIN productimages pi 
-        ON (pc.product_color_id = pi.product_color_id AND pi.is_primary = 1)
+        ON pi.product_color_id = pc.product_color_id
+       AND pi.is_primary = 1
+
+      WHERE
+        EXISTS (
+          SELECT 1
+          FROM productcolors pcx
+          INNER JOIN product_color_sizes pcs
+            ON pcs.product_color_id = pcx.product_color_id
+          WHERE pcx.product_id = p.product_id
+            AND pcs.stock_quantity > 0
+        )
     `;
 
-    // Filtro de busca, se existir
+    // 🔍 filtro de busca
     if (search) {
-      query += ` WHERE p.name LIKE :search OR p.description LIKE :search `;
+      query += `
+        AND (p.name LIKE :search OR p.description LIKE :search)
+      `;
     }
 
-    query += ` GROUP BY p.product_id, p.name, p.price, p.description, p.status, g.name `;
+    query += `
+      GROUP BY 
+        p.product_id, 
+        p.name, 
+        p.price, 
+        p.description, 
+        p.status, 
+        g.name
+    `;
 
     const products = await db.sequelize.query(query, {
       replacements: { search: `%${search || ""}%` },
@@ -110,10 +136,11 @@ const products = async (req, res) => {
 
     res.status(200).json(products);
   } catch (error) {
-    console.error("Error fetching products with search:", error);
+    console.error("Error fetching products:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const getProductsEspecific = async (req, res) => {
   const id = req.params.id;
