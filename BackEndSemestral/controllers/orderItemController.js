@@ -66,9 +66,9 @@ const deleteOrderItem = async (req, res) => {
 
 const getOrderDetails = async (req, res) => {
   try {
-    // 🔧 USER FIXO (TEMPORÁRIO)
-    const userId = 8;
-    console.log("🆔 userId FIXO:", userId);
+    // 🔐 USER VINDO DO AUTH STORAGE (TOKEN)
+    const userId = req.user.user_id;
+    console.log("🆔 userId (TOKEN):", userId);
 
     /**
      * 1️⃣ BUSCAR PEDIDOS DO USUÁRIO
@@ -237,6 +237,7 @@ const getOrderDetails = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 
 

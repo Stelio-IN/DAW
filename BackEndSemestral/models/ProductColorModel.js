@@ -9,7 +9,6 @@ export default (sequelize, DataTypes) => {
       },
       product_id: DataTypes.INTEGER,
       color_id: DataTypes.INTEGER,
-      stock_quantity: DataTypes.INTEGER,
     },
     { timestamps: false }
   );

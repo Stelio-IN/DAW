@@ -9,6 +9,6 @@ router.get('/:id', orderItemController.getOrderItemById);
 router.put('/:id', orderItemController.updateOrderItem);
 router.delete('/:id', orderItemController.deleteOrderItem);
 
-router.get('/orders/my',  orderItemController.getOrderDetails);
+router.get('/orders/my', authenticateToken, orderItemController.getOrderDetails);
 
 export default router;

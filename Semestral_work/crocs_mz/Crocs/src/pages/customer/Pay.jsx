@@ -7,7 +7,7 @@ import mpesa from "../../assets/img/mpesa.png";
 import emola from "../../assets/img/emola.png";
 import Timeline from "../../component/TimeLine";
 import PayPalButton from "../customer/Paypal";
-
+import { getUser } from "../../services/userStorage.js";
 const Pay = () => {
   //const [selectedSize, setSelectedSize] = useState(null);
   const [currentStep] = useState(1);
@@ -98,8 +98,9 @@ if (invalidItems.length > 0) {
   console.log("Cart que será enviado:", cartPrepared);
 
   // Cria objeto do cliente
+  const loggedUser = getUser();
   const customer = {
-    id: 8, // teste
+      id: loggedUser?.id || 8, // teste
     deliveryInfo: {
       first_name: firstName,
       last_name: lastName,

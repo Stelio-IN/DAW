@@ -37,7 +37,8 @@ import AdminGestaoEstoque from './src/pages/admin/AdminGestaoEstoque.jsx';
 import AdminGerirEstoqueProduto from './src/pages/admin/AdminGerirEstoqueProduto.jsx'; 
 
 
-
+import PrivateRoute from './src/component/PrivateRoute.jsx';
+import AdminRoute from './src/component/AdminRoute.jsx';
 function MainApp() {
   const location = useLocation();
 
@@ -50,47 +51,62 @@ function MainApp() {
       {!isAdminRoute && <Nav />}
 
       <div style={{ display: 'flex', flexGrow: 1 }}>
-        {/* Renderiza AdminNav apenas para rotas de Admin */}
-      
-
         <main style={{ flexGrow: 1 }}>
           <Routes> 
-            {/* Rotas gerais */}
+            {/* Rotas públicas */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/sobre-nos" element={<SobreNos />} />
             <Route path="/loja" element={<Loja />} />
             <Route path="/jibbitz" element={<LojaJibbitz />} />
-            <Route path="/produto/detalhes/:productID" element= {<Detalhes />} />
-            <Route path="/carrinho" element= {<Carrinho />} />
-            <Route path="/pesquisa" element= {<Pesquisa />} />
-            <Route path="/pagamento" element= {<Pagamento />} />
-            <Route path="/favoritos" element= {<Favorito />} />
-            <Route path="/minhasCompras" element= {<Historico />} />
-           <Route path="/jibbitz/detalhes/:jibbitzID" element={<DetalheJibbitz />} />
+            <Route path="/produto/detalhes/:productID" element={<Detalhes />} />
+            <Route path="/pesquisa" element={<Pesquisa />} />
+            <Route path="/jibbitz/detalhes/:jibbitzID" element={<DetalheJibbitz />} />
+            <Route path="/favoritos" element={
+              <PrivateRoute>
+                <Favorito />
+              </PrivateRoute>
+            } />
 
-           
-           
+            {/* Rotas privadas (usuário logado) */}
+            <Route path="/carrinho" element={
+              <PrivateRoute>
+                <Carrinho />
+              </PrivateRoute>
+            } />
+            <Route path="/pagamento" element={
+              <PrivateRoute>
+                <Pagamento />
+              </PrivateRoute>
+            } />
+            <Route path="/minhasCompras" element={
+              <PrivateRoute>
+                <Historico />
+              </PrivateRoute>
+            } />
 
-            {/* Rotas específicas para admin */}
+            {/* Rotas de admin protegidas */}
+            <Route path="/admin" element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }>
+              <Route path="dashboard" element={<AdminDashBoard />} />
+              <Route path="Pedidos" element={<AdminPedidos />} />
+              <Route path="pedido/detalhe/:IdPedido?" element={<AdminDetalhePedido />} />
+              <Route path="produtos" element={<AdminProduto />} />
+              <Route path="produto/adicionar" element={<AdminAdicionarProduto />} />
+              <Route path="produto/detalhe/:IdProduto?" element={<AdminDetalheProduto />} />
+              <Route path="usuarios" element={<AdminUsuarios />} />
+              <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />
+              <Route path="produto/estoque-visao-geral" element={<AdminGestaoEstoque />} />
+              <Route path="produto/estoque-produto" element={<AdminGerirEstoqueProduto />} />
+            </Route>
 
-          <Route path="/admin" element={<AdminLayout />} >
-            <Route path="dashboard" element={<AdminDashBoard />} />
-            <Route path="Pedidos" element={<AdminPedidos />} />
-            <Route path="pedido/detalhe/:IdPedido?" element={<AdminDetalhePedido />} />
-            <Route path="produtos" element={<AdminProduto />} />
-            <Route path="produto/adicionar" element={< AdminAdicionarProduto/>} />
-            <Route path="produto/detalhe/:IdProduto?" element={<AdminDetalheProduto />} />
-            <Route path="usuarios" element={<AdminUsuarios />} />
-            <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />
-            <Route path="produto/estoque-visao-geral" element={<AdminGestaoEstoque />} />
-            <Route path="produto/estoque-produto" element={<AdminGerirEstoqueProduto />} />
-          </Route>
           </Routes>
         </main>
       </div>
 
-      {/* Renderiza Footer apenas se não estiver em uma rota Admin */}
       {!isAdminRoute && <Footer />}
     </div>
   );
@@ -99,11 +115,10 @@ function MainApp() {
 function App() {
   return (
     <Router>
-    <FavoritesProvider> {/* Envolvendo a aplicação com o contexto */}
-      <MainApp />
-
-  </FavoritesProvider>
-  </Router>
+      <FavoritesProvider>
+        <MainApp />
+      </FavoritesProvider>
+    </Router>
   );
 }
 

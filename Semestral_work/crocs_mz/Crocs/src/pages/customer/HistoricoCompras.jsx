@@ -1,21 +1,47 @@
 import React, { useEffect, useState } from "react";
 import "../../assets/style/historico.css";
+import { getUser, clearUser } from "../../services/userStorage.js";
+import { useNavigate } from "react-router-dom";
 
 const HistoricoCompras = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
+        const user = getUser();
+
+        // Verificar autenticação
+        if (!user || !user.token) {
+          clearUser();
+          navigate("/login");
+          return;
+        }
+
         const response = await fetch(
-          "http://localhost:3005/api/orderitems/orders/my"
+          "http://localhost:3005/api/orderitems/orders/my",
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              "Content-Type": "application/json",
+            },
+          }
         );
 
+        // ⚠️ IMPORTANTE: não tentar json se for 401
         if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || "Erro ao buscar compras");
+          const text = await response.text();
+
+          if (response.status === 401) {
+            clearUser();
+            navigate("/login");
+            return;
+          }
+
+          throw new Error(text || "Erro ao buscar compras");
         }
 
         const data = await response.json();
@@ -29,7 +55,7 @@ const HistoricoCompras = () => {
     };
 
     fetchOrders();
-  }, []);
+  }, [navigate]);
 
   if (loading) return <p>Carregando pedidos...</p>;
   if (error) return <p style={{ color: "red" }}>{error}</p>;
@@ -61,7 +87,6 @@ const HistoricoCompras = () => {
         <div className="container_historico">
           {orders.length > 0 ? (
             orders.map((order) => {
-              const payerName = order.customer_name || "—";
               const orderTotal = calcOrderTotal(order);
 
               return (
@@ -80,7 +105,7 @@ const HistoricoCompras = () => {
                   </div>
 
                   <div className="pedido-items">
-                    {/* Produtos */}
+                    {/* PRODUTOS */}
                     {order.items.products.map((item) => (
                       <div className="item" key={item.order_item_id}>
                         <picture>
@@ -108,7 +133,8 @@ const HistoricoCompras = () => {
                           <p>
                             <strong>Total:</strong>{" "}
                             {Number(
-                              item.total_com_promocao ?? item.total_sem_promocao
+                              item.total_com_promocao ??
+                                item.total_sem_promocao
                             ).toFixed(2)}{" "}
                             MT
                           </p>
@@ -116,9 +142,9 @@ const HistoricoCompras = () => {
                       </div>
                     ))}
 
-                    {/* Jibbitz */}
+                    {/* JIBBITZ */}
                     {order.items.jibbitz.map((item) => (
-                      <div className="item" key={item.id}>
+                      <div className="item" key={item.order_item_id}>
                         <picture>
                           <img
                             src={item.primary_image_url || "/placeholder.png"}
@@ -135,11 +161,18 @@ const HistoricoCompras = () => {
                           </p>
                           <p>
                             <strong>Preço unitário:</strong>{" "}
-                            {Number(item.promo_unit_price ?? item.base_price).toFixed(2)} MT
+                            {Number(
+                              item.promo_unit_price ?? item.base_price
+                            ).toFixed(2)}{" "}
+                            MT
                           </p>
                           <p>
                             <strong>Total:</strong>{" "}
-                            {Number(item.total_promo_price ?? item.total_base_price).toFixed(2)} MT
+                            {Number(
+                              item.total_promo_price ??
+                                item.total_base_price
+                            ).toFixed(2)}{" "}
+                            MT
                           </p>
                         </div>
                       </div>
