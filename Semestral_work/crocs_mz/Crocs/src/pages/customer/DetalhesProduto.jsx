@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../../assets/style/about.css";
 import "../../assets/style/detalhesProduto.css";
 import { useFavorites } from "../../context/FavoritesContext";
+import { isAuthenticated } from "../../services/userStorage.js";
 
 const ProdutoDetalhado = () => {
   const { productID } = useParams();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [corSelecionada, setCorSelecionada] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState(null);
@@ -38,7 +40,7 @@ const ProdutoDetalhado = () => {
           }
         })
         .catch((err) =>
-          console.error("Erro ao buscar detalhes do produto:", err),
+          console.error("Erro ao buscar detalhes do produto:", err)
         );
     }
   }, [productID]);
@@ -47,7 +49,7 @@ const ProdutoDetalhado = () => {
   useEffect(() => {
     if (product?.colors?.length > 0) {
       const corComStock = product.colors.find(
-        (cor) => cor.sizes && cor.sizes.length > 0,
+        (cor) => cor.sizes && cor.sizes.length > 0
       );
 
       setCorSelecionada(corComStock || null);
@@ -75,15 +77,21 @@ const ProdutoDetalhado = () => {
     }
   }, [corSelecionada]);
 
-  // Função adicionar ao carrinho crocs
+  // =========================
+  // Função adicionar ao carrinho com verificação de login
+  // =========================
   const addToCart = () => {
+    if (!isAuthenticated()) {
+      alert("Precisa estar logado para adicionar ao carrinho");
+      navigate("/login");
+      return;
+    }
+
     if (!product || !corSelecionada || !tamanhoSelecionado) {
       alert("Selecione cor e tamanho");
       return;
     }
 
- 
-    
     const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
 
     const itemToAdd = {
@@ -100,7 +108,7 @@ const ProdutoDetalhado = () => {
       size_type: tamanhoSelecionado.size_type,
       sku: tamanhoSelecionado.sku,
 
-      //  Promoção
+      // Promoção
       promotion_id: tamanhoSelecionado.promotion_id || null,
       promo_stock_limit: tamanhoSelecionado.promo_stock_limit || null,
       promo_stock_used: tamanhoSelecionado.promo_stock_used || null,
@@ -121,7 +129,7 @@ const ProdutoDetalhado = () => {
     };
 
     const existingIndex = currentCart.findIndex(
-      (item) => item.cart_item_id === itemToAdd.cart_item_id,
+      (item) => item.cart_item_id === itemToAdd.cart_item_id
     );
 
     if (existingIndex >= 0) {
@@ -135,6 +143,18 @@ const ProdutoDetalhado = () => {
 
     localStorage.setItem("cart", JSON.stringify(currentCart));
     alert("Produto adicionado ao carrinho");
+  };
+
+  // =========================
+  // Função adicionar/remover favoritos com verificação de login
+  // =========================
+  const handleToggleFavorite = (prod) => {
+    if (!isAuthenticated()) {
+      alert("Precisa estar logado para adicionar aos favoritos");
+      navigate("/login");
+      return;
+    }
+    toggleFavorite(prod);
   };
 
   if (!product || !product.colors || product.colors.length === 0) {
@@ -192,7 +212,6 @@ const ProdutoDetalhado = () => {
           <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
             {tamanhoSelecionado?.is_on_promotion ? (
               <>
-                {/* Preço original riscado */}
                 <span
                   style={{
                     textDecoration: "line-through",
@@ -205,16 +224,12 @@ const ProdutoDetalhado = () => {
                     currency: "MZN",
                   })}
                 </span>
-
-                {/* Preço promocional */}
                 <span style={{ color: "red" }}>
                   {tamanhoSelecionado.promo_price.toLocaleString("pt-MZ", {
                     style: "currency",
                     currency: "MZN",
                   })}
                 </span>
-
-                {/* Percentagem de desconto */}
                 <span
                   style={{
                     background: "red",
@@ -227,8 +242,6 @@ const ProdutoDetalhado = () => {
                 >
                   -{tamanhoSelecionado.discount_percentage}%
                 </span>
-
-                {/* Nome da promoção */}
                 {tamanhoSelecionado.promotion_name && (
                   <div
                     style={{
@@ -240,8 +253,6 @@ const ProdutoDetalhado = () => {
                     Promoção: {tamanhoSelecionado.promotion_name}
                   </div>
                 )}
-
-                {/* Descrição da promoção */}
                 {tamanhoSelecionado.promotion_description && (
                   <div
                     style={{
@@ -256,9 +267,7 @@ const ProdutoDetalhado = () => {
               </>
             ) : (
               <span>
-                {(
-                  tamanhoSelecionado?.base_price || product.base_price
-                ).toLocaleString("pt-MZ", {
+                {(tamanhoSelecionado?.base_price || product.base_price).toLocaleString("pt-MZ", {
                   style: "currency",
                   currency: "MZN",
                 })}
@@ -273,37 +282,34 @@ const ProdutoDetalhado = () => {
           {/* CORES */}
           <p className="label">Cores disponíveis</p>
           <div className="alternativas">
-  {product.colors
-    ?.filter(
-      (c) => c.sizes && c.sizes.some((s) => s.stock_quantity > 0)
-    )
-    .map((cor) => {
-      const imagem =
-        cor.images?.find((i) => i.is_primary) || cor.images?.[0];
+            {product.colors
+              ?.filter((c) => c.sizes && c.sizes.some((s) => s.stock_quantity > 0))
+              .map((cor) => {
+                const imagem =
+                  cor.images?.find((i) => i.is_primary) || cor.images?.[0];
 
-      return (
-        <img
-          key={cor.product_color_id}
-          src={imagem?.image_url}
-          alt={cor.name}
-          onClick={() => setCorSelecionada(cor)}
-          style={{
-            cursor: "pointer",
-            border:
-              corSelecionada?.product_color_id === cor.product_color_id
-                ? "2px solid black"
-                : "1px solid #ccc",
-            borderRadius: "6px",
-            marginRight: "8px",
-            width: "60px",
-            height: "60px",
-            objectFit: "cover",
-          }}
-        />
-      );
-    })}
-</div>
-
+                return (
+                  <img
+                    key={cor.product_color_id}
+                    src={imagem?.image_url}
+                    alt={cor.name}
+                    onClick={() => setCorSelecionada(cor)}
+                    style={{
+                      cursor: "pointer",
+                      border:
+                        corSelecionada?.product_color_id === cor.product_color_id
+                          ? "2px solid black"
+                          : "1px solid #ccc",
+                      borderRadius: "6px",
+                      marginRight: "8px",
+                      width: "60px",
+                      height: "60px",
+                      objectFit: "cover",
+                    }}
+                  />
+                );
+              })}
+          </div>
 
           {/* TAMANHOS */}
           <p className="label">Tamanhos ({tamanhoSelecionado?.size_type})</p>
@@ -354,7 +360,7 @@ const ProdutoDetalhado = () => {
             Adicionar ao Carrinho
           </button>
 
-          <button onClick={() => toggleFavorite(product)} className="favor">
+          <button onClick={() => handleToggleFavorite(product)} className="favor">
             {favorites.some((f) => f.product_id === product.product_id) ? (
               <span style={{ color: "red" }}>Remover dos Favoritos</span>
             ) : (

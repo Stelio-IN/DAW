@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../../assets/style/about.css";
 import "../../assets/style/detalhesProduto.css";
 import { useFavorites } from "../../context/FavoritesContext";
+import { isAuthenticated } from "../../services/userStorage.js";
 
 const JibbitzDetalhado = () => {
   const { jibbitzID } = useParams();
@@ -30,75 +31,90 @@ const JibbitzDetalhado = () => {
           setImagemPrincipal(primary?.image_url);
         })
         .catch((err) =>
-          console.error("Erro ao buscar detalhes do jibbitz:", err),
+          console.error("Erro ao buscar detalhes do jibbitz:", err)
         );
     }
   }, [jibbitzID]);
 
-  // Adicionar ao carrinho jibbitz
+  // =========================
+  // Adicionar ao carrinho com verificação de login
+  // =========================
   const addToCart = () => {
-  if (!jibbitz) return;
+    if (!isAuthenticated()) {
+      alert("Precisa estar logado para adicionar ao carrinho");
+      navigate("/login");
+      return;
+    }
 
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (!jibbitz) return;
 
-  const promotion = jibbitz.promotion || null;
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const item = {
-    cart_item_id: `jibbitz_${jibbitz.jibbitz_id}`,
-    type: "jibbitz",
+    const promotion = jibbitz.promotion || null;
 
-    jibbitz_id: jibbitz.jibbitz_id,
-    name: jibbitz.name,
+    const item = {
+      cart_item_id: `jibbitz_${jibbitz.jibbitz_id}`,
+      type: "jibbitz",
 
-    base_price: Number(jibbitz.base_price),
-    price: Number(promotion?.promo_price || jibbitz.base_price),
-    unit_cost: Number(jibbitz.cost_price || 0),
-    quantity: 1,
-    stock_quantity: jibbitz.stock_quantity,
+      jibbitz_id: jibbitz.jibbitz_id,
+      name: jibbitz.name,
 
-    image_url: imagemPrincipal,
-    
+      base_price: Number(jibbitz.base_price),
+      price: Number(promotion?.promo_price || jibbitz.base_price),
+      unit_cost: Number(jibbitz.cost_price || 0),
+      quantity: 1,
+      stock_quantity: jibbitz.stock_quantity,
 
-    // 🔥 PROMOÇÃO (CORRETO)
-    is_on_promotion: Boolean(promotion),
-    promotion_id: promotion?.promotion_id || null,
-    discount_percentage: promotion?.discount_percentage || null,
-    promo_price: promotion?.promo_price || null,
-    promo_stock_used: promotion?.promo_stock_used || 0,
-    promo_stock_limit: promotion?.promo_stock_limit || null,
+      image_url: imagemPrincipal,
+
+      // 🔥 PROMOÇÃO (CORRETO)
+      is_on_promotion: Boolean(promotion),
+      promotion_id: promotion?.promotion_id || null,
+      discount_percentage: promotion?.discount_percentage || null,
+      promo_price: promotion?.promo_price || null,
+      promo_stock_used: promotion?.promo_stock_used || 0,
+      promo_stock_limit: promotion?.promo_stock_limit || null,
+    };
+
+    const existing = cart.find((i) => i.cart_item_id === item.cart_item_id);
+
+    if (existing) {
+      if (existing.quantity < existing.stock_quantity) {
+        existing.quantity += 1;
+      }
+    } else {
+      cart.push(item);
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    console.group("🛒 JIBBITZ ADICIONADO AO CARRINHO");
+    console.log("Item enviado para o carrinho:", item);
+    console.log("Carrinho completo agora:", cart);
+    console.groupEnd();
+    alert("Jibbitz adicionado ao carrinho");
   };
 
-  console.log("🛒 JIBBITZ ADICIONADO AO CARRINHO:", item);
-
-  const existing = cart.find(i => i.cart_item_id === item.cart_item_id);
-
-  if (existing) {
-    if (existing.quantity < existing.stock_quantity) {
-      existing.quantity += 1;
+  // =========================
+  // Adicionar/remover favoritos com verificação de login
+  // =========================
+  const handleToggleFavorite = (jib) => {
+    if (!isAuthenticated()) {
+      alert("Precisa estar logado para adicionar aos favoritos");
+      navigate("/login");
+      return;
     }
-  } else {
-    cart.push(item);
-  }
-
-  localStorage.setItem("cart", JSON.stringify(cart));
-   console.group("🛒 JIBBITZ ADICIONADO AO CARRINHO");
-  console.log("Item enviado para o carrinho:", item);
-  console.log("Carrinho completo agora:", cart);
-  console.groupEnd();
-  alert("Jibbitz adicionado ao carrinho");
-};
-
+    toggleFavorite(jib);
+  };
 
   if (!jibbitz)
     return <p style={{ padding: "40px" }}>Carregando detalhes do Jibbitz...</p>;
 
   const promotion = jibbitz.promotion || null;
+  const isPromo = Boolean(promotion?.promo_price);
 
-const isPromo = Boolean(promotion?.promo_price);
-
-const basePrice = Number(jibbitz.base_price);
-const promoPrice = Number(promotion?.promo_price);
-const discountPercentage = promotion?.discount_percentage;
+  const basePrice = Number(jibbitz.base_price);
+  const promoPrice = Number(promotion?.promo_price);
+  const discountPercentage = promotion?.discount_percentage;
 
   return (
     <div className="container-detalhes-produto">
@@ -142,52 +158,51 @@ const discountPercentage = promotion?.discount_percentage;
           <h1>{jibbitz.name}</h1>
 
           {/* PREÇO */}
-         <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
-  {isPromo ? (
-    <>
-      <span
-        style={{
-          textDecoration: "line-through",
-          color: "#888",
-          marginRight: "10px",
-        }}
-      >
-        {basePrice.toLocaleString("pt-MZ", {
-          style: "currency",
-          currency: "MZN",
-        })}
-      </span>
+          <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
+            {isPromo ? (
+              <>
+                <span
+                  style={{
+                    textDecoration: "line-through",
+                    color: "#888",
+                    marginRight: "10px",
+                  }}
+                >
+                  {basePrice.toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </span>
 
-      <span style={{ color: "red" }}>
-        {promoPrice.toLocaleString("pt-MZ", {
-          style: "currency",
-          currency: "MZN",
-        })}
-      </span>
+                <span style={{ color: "red" }}>
+                  {promoPrice.toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </span>
 
-      <span
-        style={{
-          background: "red",
-          color: "white",
-          padding: "4px 8px",
-          borderRadius: "6px",
-          marginLeft: "10px",
-          fontSize: "12px",
-        }}
-      >
-        -{discountPercentage}%
-      </span>
-    </>
-  ) : (
-    <span>
-      {basePrice.toLocaleString("pt-MZ", {
-        style: "currency",
-        currency: "MZN",
-      })}
-    </span>
-  )}
-</p>
-
+                <span
+                  style={{
+                    background: "red",
+                    color: "white",
+                    padding: "4px 8px",
+                    borderRadius: "6px",
+                    marginLeft: "10px",
+                    fontSize: "12px",
+                  }}
+                >
+                  -{discountPercentage}%
+                </span>
+              </>
+            ) : (
+              <span>
+                {basePrice.toLocaleString("pt-MZ", {
+                  style: "currency",
+                  currency: "MZN",
+                })}
+              </span>
+            )}
+          </p>
 
           <p style={{ maxWidth: "600px", fontStyle: "italic" }}>
             {jibbitz.description}
@@ -225,10 +240,12 @@ const discountPercentage = promotion?.discount_percentage;
             Adicionar ao Carrinho
           </button>
 
-          <button onClick={() => toggleFavorite(jibbitz)} className="favor">
-            {favorites.some((f) => f.jibbitz_id === jibbitz.jibbitz_id)
-              ? "Remover dos Favoritos"
-              : "Adicionar aos Favoritos"}
+          <button onClick={() => handleToggleFavorite(jibbitz)} className="favor">
+            {favorites.some((f) => f.jibbitz_id === jibbitz.jibbitz_id) ? (
+              <span style={{ color: "red" }}>Remover dos Favoritos</span>
+            ) : (
+              "Adicionar aos Favoritos"
+            )}
           </button>
         </div>
       </section>
