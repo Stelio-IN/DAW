@@ -8,27 +8,31 @@ import {
   ChevronDown,
   ChevronUp,
   Menu,
+  Users,
+  BarChart3,
 } from 'lucide-react';
-import '../assets/style/adminMenu.css';
+import '../assets/style/adminlayout.css';
 
 const AdminNav = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [expanded, setExpanded] = useState({});
+  const [hovered, setHovered] = useState(false);
 
   const toggleExpand = (label) => {
-    setExpanded((prev) => ({ ...prev, [label]: !prev[label] }));
+    setExpanded((prev) => ({
+      ...prev,
+      [label]: !prev[label],
+    }));
   };
- 
+
   const items = [
-    {
-      label: 'Dashboard', path: 'dashboard', icon: LayoutDashboard,
-    },
+    { label: 'Dashboard', path: 'dashboard', icon: LayoutDashboard },
     {
       label: 'Pedidos',
       icon: Layers,
       children: [
         { label: 'Todos os Pedidos', path: 'pedidos' },
-        { label: 'Detalhe do pedido', path: 'pedido/detalhe' },
+        { label: 'Detalhe do Pedido', path: 'pedido/detalhe' },
       ],
     },
     {
@@ -38,56 +42,74 @@ const AdminNav = () => {
         { label: 'Todos Produtos', path: 'produtos' },
         { label: 'Detalhe do Produto', path: 'produto/detalhe' },
         { label: 'Adicionar Produto', path: 'produto/adicionar' },
+        { label: 'Associar produto a cor', path: 'produto/associar-produto-cor' },
+        { label: 'Associar produto a tamanho', path: 'produto/associar-produto-tamanho' },
+        { label: 'Associar produto a imagem', path: 'produto/associar-produto-imagem' },
       ],
     },
     {
       label: 'Usuários',
-      icon: Palette,
+      icon: Users,
       children: [
-        { label: 'Todos os usuários', path: 'usuarios' },
-        { label: 'Detalhe do Usuario', path: 'usuario/detalhe' },
+        { label: 'Todos os Usuários', path: 'usuarios' },
+        { label: 'Detalhe do Usuário', path: 'usuario/detalhe' },
       ],
     },
     {
       label: 'Gestão de Estoque',
-      icon: Palette,
+      icon: BarChart3,
       children: [
         { label: 'Visão Geral', path: 'produto/estoque-visao-geral' },
         { label: 'Estoque do Produto', path: 'produto/estoque-produto' },
+        { label: 'Promoção', path: 'produto/promotion' },
       ],
     },
   ];
 
   return (
-    <div className={`admin-sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <aside 
+      className={`admin-sidebar ${collapsed ? 'collapsed' : ''}`}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <div className="sidebar-header">
-        <span>Admin</span>
-        <button onClick={() => setCollapsed(!collapsed)} className="toggle-btn">
+        {(!collapsed || hovered) && <span>Admin Panel</span>}
+        <button 
+          className="toggle-btn" 
+          onClick={() => setCollapsed(!collapsed)}
+          title={collapsed ? "Expandir menu" : "Recolher menu"}
+        >
           <Menu size={20} />
         </button>
       </div>
 
       <div className="sidebar-scroll-container">
         <nav>
-          {items.map(({ label, path, icon: Icon, children }) => (
-            <div key={label} className="menu-group">
+          {items.map(({ label, path, icon: Icon, children }, index) => (
+            <div key={label} style={{ '--item-index': index }}>
               {path ? (
-                <Link to={path} className="menu-link">
+                <Link 
+                  to={path} 
+                  className="menu-link"
+                  onClick={() => collapsed && setCollapsed(false)}
+                >
                   <Icon size={20} />
                   {!collapsed && <span>{label}</span>}
                 </Link>
               ) : (
-                <div className="menu-link" onClick={() => toggleExpand(label)}>
+                <div
+                  className="menu-link"
+                  onClick={() => !collapsed && toggleExpand(label)}
+                >
                   <Icon size={20} />
                   {!collapsed && (
                     <>
                       <span>{label}</span>
-                      {children &&
-                        (expanded[label] ? (
-                          <ChevronUp size={16} className="submenu-icon rotate" />
-                        ) : (
-                          <ChevronDown size={16} className="submenu-icon" />
-                        ))}
+                      {expanded[label] ? (
+                        <ChevronUp size={16} className="submenu-icon rotate" />
+                      ) : (
+                        <ChevronDown size={16} className="submenu-icon" />
+                      )}
                     </>
                   )}
                 </div>
@@ -96,8 +118,13 @@ const AdminNav = () => {
               {!collapsed && children && (
                 <div className={`submenu-wrapper ${expanded[label] ? 'open' : 'closed'}`}>
                   <div className="submenu">
-                    {children.map((child) => (
-                      <Link to={child.path} key={child.path} className="submenu-link">
+                    {children.map((child, childIndex) => (
+                      <Link
+                        key={child.path}
+                        to={child.path}
+                        className="submenu-link"
+                        style={{ '--item-index': index + childIndex * 0.1 }}
+                      >
                         {child.label}
                       </Link>
                     ))}
@@ -108,7 +135,16 @@ const AdminNav = () => {
           ))}
         </nav>
       </div>
-    </div>
+      
+      {/* Footer com versão */}
+      {!collapsed && (
+        <div className="sidebar-footer">
+          <div className="version-info">
+            v1.0.0
+          </div>
+        </div>
+      )}
+    </aside>
   );
 };
 

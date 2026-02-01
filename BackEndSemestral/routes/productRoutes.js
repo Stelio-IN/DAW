@@ -6,10 +6,8 @@ const router = Router();
 router.post('/', productController.createProduct);
 router.get('/', productController.getAllProducts);
 router.get('/busca-id/:id', productController.getProductById);
-
 router.put('/:id', productController.updateProduct);
 router.delete('/:id', productController.deleteProduct);
-
 router.get('/pr', productController.products);
 router.get('/pr/filters', productController.filterProducts);
 router.get('/pr/:id', productController.getProductsEspecific);
@@ -22,6 +20,8 @@ router.get('/pr/byPrice/:min/:max', productController.getProductsByPrice);
 router.get('/pr/bySizes/:sizeIds', productController.getProductsBySize);
 router.get('/pr/pr/byNav', productController.getProductsFilteredMenu);
 router.get('/pr/byGender/:genderId', productController.getProductsByGender);
+
+
 router.get('/faturamento/mensal', productController.getFaturamentoMesAtual);
 router.get('/pedido/mensal', productController.getTotalPedidosMensais);
 router.get('/faturamento/diario', productController.getFaturamentoPorDia);

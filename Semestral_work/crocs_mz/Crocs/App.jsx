@@ -35,6 +35,10 @@ import AdminDetalheUsuario from './src/pages/admin/AdminDetalheUsuario.jsx';
 import AdminAdicionarProduto from './src/pages/admin/AdminAdicionarProduto.jsx'; 
 import AdminGestaoEstoque from './src/pages/admin/AdminGestaoEstoque.jsx'; 
 import AdminGerirEstoqueProduto from './src/pages/admin/AdminGerirEstoqueProduto.jsx'; 
+import AdminAssociarProductColor from './src/pages/admin/AdminAssociarProductColor.jsx'; 
+import AdminAssociarTamanho from './src/pages/admin/AdminAssociarTamanho.jsx'; 
+import AdminAssociarImagem from './src/pages/admin/AdminAssociarImagem.jsx'; 
+import AdminPromotion from './src/pages/admin/AdminPromotion.jsx'; 
 
 
 import PrivateRoute from './src/component/PrivateRoute.jsx';
@@ -87,15 +91,19 @@ function MainApp() {
 
             {/* Rotas de admin protegidas */}
             <Route path="/admin" element={
-              <AdminRoute>
+             // <AdminRoute>
                 <AdminLayout />
-              </AdminRoute>
+              // </AdminRoute>
             }>
               <Route path="dashboard" element={<AdminDashBoard />} />
               <Route path="Pedidos" element={<AdminPedidos />} />
               <Route path="pedido/detalhe/:IdPedido?" element={<AdminDetalhePedido />} />
               <Route path="produtos" element={<AdminProduto />} />
+              <Route path="produto/promotion" element={<AdminPromotion />} />
               <Route path="produto/adicionar" element={<AdminAdicionarProduto />} />
+              <Route path="produto/associar-produto-cor" element={<AdminAssociarProductColor />} />
+              <Route path="produto/associar-produto-imagem" element={<AdminAssociarImagem />} />
+              <Route path="produto/associar-produto-tamanho" element={<AdminAssociarTamanho />} />
               <Route path="produto/detalhe/:IdProduto?" element={<AdminDetalheProduto />} />
               <Route path="usuarios" element={<AdminUsuarios />} />
               <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />

@@ -1,271 +1,258 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/style/AdminAdicionarProduto.css';
-import { FiUploadCloud, FiTrash2 } from 'react-icons/fi';
 
 const AdminAdicionarProduto = () => {
-  const [images, setImages] = useState([]);
   const [form, setForm] = useState({
-    nome: '',
-    categoria: '',
-    categoriaNome: '',
-    subcategoria: '',
-    preco: '',
-    descricao: '',
-    tags: [],
+    name: '',
+    description: '',
+    price: '',                 // ✅ CORRETO
+    category_id: '',
+    category_name: '',
+    gender_id: '',
+    status: 'ativo',
   });
 
   const [novaCategoria, setNovaCategoria] = useState('');
   const [descricaoCategoria, setDescricaoCategoria] = useState('');
-const [categorias, setCategorias] = useState([]);
-  // Função atualizada para carregar e mostrar preview das imagens
-  const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files);
+  const [categorias, setCategorias] = useState([]);
 
-    const newImagesPromises = files.map((file) => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          resolve({
-            name: file.name,
-            size: (file.size / 1024).toFixed(1) + ' KB',
-            progress: 100,
-            src: e.target.result,
-          });
-        };
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(newImagesPromises).then((newImages) => {
-      setImages((prev) => [...prev, ...newImages]);
-    });
-  };
-
-  const handleRemoveImage = (name) => {
-    setImages(images.filter((img) => img.name !== name));
-  };
-
- 
-
-  // BACKEND
+  /* ===================== SUBMIT PRODUTO ===================== */
   const handleSubmit = async () => {
+    console.log('📤 SUBMIT CLICKADO');
+    console.log('📦 FORM STATE:', form);
+
+    const payload = {
+      name: form.name,
+      description: form.description,
+      price: Number(form.price),               // ✅ price
+      category_id: Number(form.category_id),
+      gender_id: Number(form.gender_id),
+      status: form.status,
+    };
+
+    console.log('📨 PAYLOAD ENVIADO:', payload);
+    console.log('🔍 TYPES:', {
+      price: typeof payload.price,
+      category_id: typeof payload.category_id,
+      gender_id: typeof payload.gender_id,
+    });
+
     try {
       const response = await fetch('http://localhost:3005/api/products', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: form.nome,
-          description: form.descricao,
-          price: parseFloat(form.preco),
-          stock_quantity: 100, // ou outro valor padrão
-          category_id: 1, // ajuste conforme sua lógica
-          gender_id: 2, // ajuste conforme sua lógica
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
+      console.log('📥 RESPONSE STATUS:', response.status);
+
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ RESPONSE ERROR BODY:', errorText);
         throw new Error('Erro ao criar produto');
       }
 
       const data = await response.json();
+      console.log('✅ RESPONSE DATA:', data);
+
       alert(`✅ Produto criado com sucesso! ID: ${data.product_id}`);
+
       setForm({
-        nome: '',
-        categoria: '',
-        subcategoria: '',
-        preco: '',
-        descricao: '',
-        tags: [],
+        name: '',
+        description: '',
+        price: '',
+        category_id: '',
+        category_name: '',
+        gender_id: '',
+        status: 'ativo',
       });
-      setImages([]);
     } catch (error) {
-      console.error(error);
+      console.error('🔥 CATCH ERROR:', error);
       alert('❌ Erro ao criar produto');
     }
   };
 
-  // Puxar categorias
-    useEffect(() => {
-      const fetchCategorias = async () => {
-        try {
-          const res = await fetch('http://localhost:3005/api/categories');
-          const data = await res.json();
-          setCategorias(data);
-        } catch (err) {
-          console.error('Erro ao buscar categorias:', err);
-        }
-      };
-      fetchCategorias();
-    }, []);
+  /* ===================== CATEGORIAS ===================== */
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      console.log('📡 Buscando categorias...');
+      try {
+        const res = await fetch('http://localhost:3005/api/categories');
+        console.log('📥 STATUS CATEGORIAS:', res.status);
 
-    // Criar nova categoria 
-   const adicionarCategoria = async () => {
-  const nome = novaCategoria.trim();
-  const descricao = descricaoCategoria.trim();
+        const data = await res.json();
+        console.log('📦 CATEGORIAS RECEBIDAS:', data);
 
-  if (!nome) {
-    alert('Digite o nome da categoria.');
-    return;
-  }
+        setCategorias(data);
+      } catch (err) {
+        console.error('❌ Erro ao buscar categorias:', err);
+      }
+    };
+    fetchCategorias();
+  }, []);
 
-  // Verifica se já existe
-  const jaExiste = categorias.some(
-    (cat) => cat.name.toLowerCase() === nome.toLowerCase()
-  );
-  if (jaExiste) {
-    alert('❌ Essa categoria já existe.');
-    return;
-  }
-
-  try {
-    const response = await fetch('http://localhost:3005/api/categories', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: nome,
-        description: descricao,
-      }),
+  const adicionarCategoria = async () => {
+    console.log('➕ ADICIONAR CATEGORIA CLICKADO');
+    console.log('📄 NOVA CATEGORIA:', {
+      name: novaCategoria,
+      description: descricaoCategoria,
     });
 
-    if (!response.ok) throw new Error('Erro ao criar nova categoria.');
+    const nome = novaCategoria.trim();
+    const descricao = descricaoCategoria.trim();
 
-    const novaCategoriaCriada = await response.json();
+    if (!nome) {
+      alert('Digite o nome da categoria.');
+      return;
+    }
 
-    setCategorias((prev) => [...prev, novaCategoriaCriada]);
-    setNovaCategoria('');
-    setDescricaoCategoria('');
-    alert('✅ Categoria adicionada com sucesso!');
-  } catch (error) {
-    console.error(error);
-    alert('❌ Erro ao adicionar categoria.');
-  }
-};
+    const jaExiste = categorias.some(
+      (cat) => cat.name.toLowerCase() === nome.toLowerCase()
+    );
+    console.log('🔎 Categoria já existe?', jaExiste);
 
+    if (jaExiste) {
+      alert('❌ Essa categoria já existe.');
+      return;
+    }
 
+    try {
+      const response = await fetch('http://localhost:3005/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: nome,
+          description: descricao,
+        }),
+      });
 
+      console.log('📥 RESPONSE STATUS CATEGORIA:', response.status);
 
+      if (!response.ok) throw new Error();
+
+      const novaCategoriaCriada = await response.json();
+      console.log('✅ CATEGORIA CRIADA:', novaCategoriaCriada);
+
+      setCategorias((prev) => [...prev, novaCategoriaCriada]);
+      setNovaCategoria('');
+      setDescricaoCategoria('');
+      alert('✅ Categoria adicionada com sucesso!');
+    } catch (error) {
+      console.error('🔥 ERRO AO ADICIONAR CATEGORIA:', error);
+      alert('❌ Erro ao adicionar categoria.');
+    }
+  };
+
+  /* ===================== RENDER ===================== */
   return (
     <div className="add-product-container">
-      {/* Lado esquerdo - Upload */}
-      <div className="upload-section">
-        <h2>Add Images</h2>
-        <div className="dropzone">
-          <FiUploadCloud size={48} className="upload-icon" />
-          <p>
-            Drop your files here. or <span>Browse</span>
-          </p>
-          <input type="file" multiple onChange={handleImageUpload} />
-        </div>
-        <div className="uploaded-list">
-          {images.map((img, index) => (
-            <div key={index} className="file-item">
-              <div className="file-name">
-                <img src={img.src || '/placeholder-shoe.png'} alt="preview" />
-                <div>
-                  <p>{img.name}</p>
-                  <small>{img.size}</small>
-                </div>
-              </div>
-              <div className="progress-bar">
-                <div style={{ width: `${img.progress}%` }} />
-              </div>
-              <button onClick={() => handleRemoveImage(img.name)} className="delete-btn">
-                <FiTrash2 size={18} />
-              </button>
-            </div>
+      <div className="form-section">
+        <h2>Informações do Produto</h2>
+
+        <label>Produto</label>
+        <input
+          value={form.name}
+          onChange={(e) =>
+            setForm({ ...form, name: e.target.value })
+          }
+        />
+
+        <label>Categoria</label>
+        <select
+          value={form.category_id}
+          onChange={(e) => {
+            console.log('📂 CATEGORIA SELECIONADA:', e.target.value);
+            const selected = categorias.find(
+              (c) => c.category_id === Number(e.target.value)
+            );
+            console.log('📂 CATEGORIA OBJ:', selected);
+
+            setForm({
+              ...form,
+              category_id: e.target.value,
+              category_name: selected?.name || '',
+            });
+          }}
+        >
+          <option value="">Selecione</option>
+          {categorias.map((cat) => (
+            <option key={cat.category_id} value={cat.category_id}>
+              {cat.name}
+            </option>
           ))}
+        </select>
+
+        <label>Categoria Selecionada</label>
+        <input value={form.category_name} readOnly />
+
+        <div className="categoria-inserir">
+          <label>➕ Adicionar Nova Categoria</label>
+          <div className="categoria-form">
+            <input
+              value={novaCategoria}
+              onChange={(e) => setNovaCategoria(e.target.value)}
+              placeholder="Category name"
+            />
+            <input
+              value={descricaoCategoria}
+              onChange={(e) =>
+                setDescricaoCategoria(e.target.value)
+              }
+              placeholder="Description"
+            />
+            <button type="button" onClick={adicionarCategoria}>
+              Adicionar
+            </button>
+          </div>
         </div>
+
+        <label>Preço</label>
+        <input
+          type="number"
+          value={form.price}
+          onChange={(e) => {
+            console.log('💰 PREÇO DIGITADO:', e.target.value);
+            setForm({ ...form, price: e.target.value });
+          }}
+        />
+
+        <label>Gênero</label>
+        <select
+          value={form.gender_id}
+          onChange={(e) =>
+            setForm({ ...form, gender_id: e.target.value })
+          }
+        >
+          <option value="">Selecione</option>
+          <option value="1">Masculino</option>
+          <option value="2">Feminino</option>
+          <option value="3">Unissex</option>
+        </select>
+
+        <label>Status</label>
+        <select
+          value={form.status}
+          onChange={(e) =>
+            setForm({ ...form, status: e.target.value })
+          }
+        >
+          <option value="ativo">Ativo</option>
+          <option value="inativo">Inativo</option>
+        </select>
+
+        <label>Descrição</label>
+        <textarea
+          rows={4}
+          value={form.description}
+          onChange={(e) =>
+            setForm({ ...form, description: e.target.value })
+          }
+        />
+
+        <button className="publish-btn" onClick={handleSubmit}>
+          Cadastrar novo produto
+        </button>
       </div>
-
-     <div className="form-section">
-  <h2>Informações do Produto</h2>
-
-  <label>Produto</label>
-  <input
-    type="text"
-    value={form.nome}
-    onChange={(e) => setForm({ ...form, nome: e.target.value })}
-  />
-
-  <label>Categoria</label>
-  <select
-    value={form.categoria}
-    onChange={(e) => {
-      const selectedId = e.target.value;
-      const selected = categorias.find(cat => cat.category_id.toString() === selectedId);
-      setForm({
-        ...form,
-        categoria: selectedId,
-        categoriaNome: selected?.name || '',
-      });
-    }}
-  >
-   
-    {categorias.map((cat) => (
-      <option key={cat.category_id} value={cat.category_id}>
-        {cat.name}
-      </option>
-    ))}
-  </select>
-
-  <label>Categoria Selecionada</label>
-  <input type="text" value={form.categoriaNome} readOnly />
-
-  {/* 🔽 NOVA DIV para inserir categorias */}
-  <div className="categoria-inserir">
-   <label>➕ Adicionar Nova Categoria</label>
-<div className="categoria-form">
-  <input
-    type="text"
-    value={novaCategoria}
-    onChange={(e) => setNovaCategoria(e.target.value)}
-    placeholder="Category Name (e.g. Sports, Classic...)"
-  />
-  <input
-    type="text"
-    value={descricaoCategoria}
-    onChange={(e) => setDescricaoCategoria(e.target.value)}
-    placeholder="Short description..."
-  />
-  <button onClick={adicionarCategoria}>Adicionar</button>
-</div>
-
-    {categorias.length > 0 && (
-      <div className="categorias-lista">
-        {categorias.map((cat) => (
-          <span key={cat.category_id} className="categoria-tag">
-            {cat.name}
-          </span>
-        ))}
-      </div>
-    )}
-  </div>
-
-  
-
-  <label>Preço</label>
-  <input
-    type="text"
-    value={form.preco}
-    onChange={(e) => setForm({ ...form, preco: e.target.value })}
-  />
-
-  <label>Descrição</label>
-  <textarea
-    rows={4}
-    value={form.descricao}
-    onChange={(e) => setForm({ ...form, descricao: e.target.value })}
-  />
-
-
-  <button className="publish-btn" onClick={handleSubmit}>
-    Cadastrar novo produto
-  </button>
-</div>
     </div>
   );
 };

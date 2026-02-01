@@ -7,9 +7,16 @@ export default (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      product_id: DataTypes.INTEGER,
-      color_id: DataTypes.INTEGER,
+      product_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      color_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+     
     },
-    { timestamps: false }
+    { timestamps: false, tableName: 'productcolors' } // garante nome da tabela
   );
 };

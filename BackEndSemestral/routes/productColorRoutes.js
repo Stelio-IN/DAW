@@ -5,6 +5,9 @@ const router = Router();
 
 router.post('/', productColorController.createProductColor);
 router.get('/', productColorController.getAllProductColors);
+router.get('/prod/:id', productColorController.getProductColorsByProductId);
+router.get('/prod/', productColorController.getAllProducts);
+router.get('/prod-info/', productColorController.getAllProductInfo);
 router.get('/:id', productColorController.getProductColorById);
 router.put('/:id', productColorController.updateProductColor);
 router.delete('/:id', productColorController.deleteProductColor);

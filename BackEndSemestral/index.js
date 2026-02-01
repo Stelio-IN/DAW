@@ -22,6 +22,9 @@ import paymentRoutes from './routes/paymentRoutes.js';
 
 import imageUploadRoutes from './routes/imageUpload.js';
 import jibbitzRoutes from './routes/jibbitzRoutes.js';
+import routerProductColorSize from './routes/productColorSizeRoutes.js';
+import routerProductPromotion from './routes/productPromotionRoutes.js';
+import routerPromotion from './routes/promotionRoutes.js';
 
 
 
@@ -46,7 +49,10 @@ app.use('/api/products', routerProduct);
 app.use('/api/categories', routerCategory);
 app.use('/api/colors', routerColor);
 app.use('/api/product-colors', routerProductColor);
+app.use('/api/product-color-size', routerProductColorSize);
 app.use('/api/product-images', routerProductImage);
+app.use('/api/product-product-promotions', routerProductPromotion);
+app.use('/api/product-promotions', routerPromotion);
 app.use('/api/orders', routerOrder);
 app.use('/api/orderitems', routerOrderItem);
 app.use('/api/gender', routerGender);

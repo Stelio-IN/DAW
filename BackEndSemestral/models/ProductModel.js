@@ -9,7 +9,7 @@ export default (sequelize, DataTypes) => {
       },
       name: DataTypes.STRING,
       description: DataTypes.TEXT,
-      base_price: {
+      price: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
       },

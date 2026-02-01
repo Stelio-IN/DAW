@@ -1,0 +1,118 @@
+/* ======================= CONTAINER PRINCIPAL ======================= */
+.cores-produto-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+  color: #333;
+}
+
+/* ======================= TITULOS ======================= */
+.cores-produto-container h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #1f2937; /* cinza escuro */
+}
+
+.cores-produto-container h3 {
+  font-size: 22px;
+  font-weight: 500;
+  margin-top: 30px;
+  margin-bottom: 15px;
+  color: #374151;
+}
+
+/* ======================= LABELS ======================= */
+.cores-produto-container label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+/* ======================= INPUTS E SELECT ======================= */
+.cores-produto-container input,
+.cores-produto-container select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.cores-produto-container input:focus,
+.cores-produto-container select:focus {
+  border-color: #3b82f6; /* azul */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* ======================= BOTÕES ======================= */
+.cores-produto-container button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  background-color: #3b82f6; /* azul principal */
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.cores-produto-container button:hover {
+  background-color: #2563eb; /* azul escuro */
+}
+
+/* ======================= HR ======================= */
+.cores-produto-container hr {
+  margin: 25px 0;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ======================= LISTA DE CORES ======================= */
+.cores-produto-container ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.cores-produto-container ul li {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  background-color: #f3f4f6;
+  border-radius: 6px;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s;
+}
+
+.cores-produto-container ul li:hover {
+  background-color: #e5e7eb;
+}
+
+/* ======================= INPUTS DE NOVA COR E STOCK ======================= */
+.cores-produto-container input[type="number"] {
+  max-width: 150px;
+}
+
+/* ======================= FORM DE NOVA COR ======================= */
+.cores-produto-container .nova-cor-form {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.cores-produto-container .nova-cor-form input {
+  flex: 1;
+}
