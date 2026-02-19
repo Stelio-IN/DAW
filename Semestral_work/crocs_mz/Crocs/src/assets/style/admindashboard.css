@@ -65,17 +65,15 @@ body{
 
 /* Chart cards */
 .chart-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  display: flex;
+  flex-wrap: wrap;        /* Permite quebrar linha */
   gap: 24px;
-  margin-bottom: 24px;
 }
 
 .chart-card {
-  background-color: #ffffff;
-  border: 1px solid rgba(61, 75, 62, 0.1);
-  border-radius: 16px;
-  padding: 24px;
+    flex: 1 1 500px;   /* Cresce, encolhe e tem base de 500px */
+  max-width: 100%;
+  background-color: white;
 }
 
 .chart-title {
@@ -138,9 +136,12 @@ td:nth-child(2), td:nth-child(3) {
   background-color: white;
   padding: 25px;
   border-radius: 12px;
+  flex: 1 1 500px;   /* Cresce, encolhe e tem base de 500px */
+  max-width: 100%;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
   margin-top: 30px;
   font-family: "Segoe UI", sans-serif;
+
 }
 
 .header-filtro {
@@ -180,4 +181,75 @@ td:nth-child(2), td:nth-child(3) {
   object-fit: contain;
   border-radius: 8px;
   background-color: #f3f3f3;
+}
+
+
+/*TabLelas*/
+.tabela-vendas-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.tabela-vendas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tabela-vendas th {
+  text-align: left;
+  padding: 12px;
+  background: #f5f6fa;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tabela-vendas td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.tabela-vendas tr:hover {
+  background-color: #fafafa;
+}
+
+.produto-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.produto-img {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.badge-cor {
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.badge-tamanho {
+  background: #fef3c7;
+  color: #b45309;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.vendas {
+  font-weight: 600;
+}
+
+.faturamento {
+  font-weight: 600;
+  color: #059669;
 }

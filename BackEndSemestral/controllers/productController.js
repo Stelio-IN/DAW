@@ -1073,67 +1073,150 @@ const filterProducts = async (req, res) => {
 
 ///////////////////////////// ADMINISTRAÇÃO ///////////////////////
 
-// Faturamento Mensal
+// Faturamento Mensal (usando tabela orders)
 const getFaturamentoMesAtual = async (req, res) => {
   try {
     const [faturamento] = await db.sequelize.query(
       `
       SELECT 
-        SUM(c.preco_total) AS total_faturado
-      FROM paymentos p
-      JOIN compras c ON c.pagamento_id = p.id
-      WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE())
-        AND YEAR(p.created_at) = YEAR(CURRENT_DATE());
-    `,
+        COALESCE(SUM(total_amount), 0) AS total_faturado
+      FROM orders
+      WHERE MONTH(order_date) = MONTH(CURRENT_DATE())
+        AND YEAR(order_date) = YEAR(CURRENT_DATE())
+        AND payment_status = 'PAID';
+      `,
       {
         type: db.sequelize.QueryTypes.SELECT,
       }
     );
 
-    res.status(200).json(faturamento || { total_faturado: 0 });
+    res.status(200).json(faturamento);
   } catch (error) {
     console.error("Erro ao calcular faturamento do mês atual:", error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// Pedidos Mensal
+
 const getTotalPedidosMensais = async (req, res) => {
   try {
-    const pedidos = await db.sequelize.query(
+    const [resultado] = await db.sequelize.query(
       `
       SELECT COUNT(*) AS total_pedidos
-      FROM paymentos
-      WHERE MONTH(created_at) = MONTH(CURRENT_DATE())
-        AND YEAR(created_at) = YEAR(CURRENT_DATE())
-    `,
+      FROM orders
+      WHERE MONTH(order_date) = MONTH(CURRENT_DATE())
+        AND YEAR(order_date) = YEAR(CURRENT_DATE())
+        AND payment_status = 'PAID';
+      `,
       {
         type: db.sequelize.QueryTypes.SELECT,
       }
     );
 
-    res.status(200).json(pedidos[0]);
+    res.status(200).json(resultado);
   } catch (error) {
     console.error("Erro ao buscar total de pedidos:", error);
     res.status(500).json({ error: "Erro ao buscar total de pedidos" });
   }
 };
 
-//Faturamento diario
+// Lucro do Mês
+const getLucroMesAtual = async (req, res) => {
+  try {
+    const [resultado] = await db.sequelize.query(
+      `
+      SELECT 
+        COALESCE(
+          SUM(
+            COALESCE(oi.lucro_sem_promocao, 0) +
+            COALESCE(oi.lucro_com_promocao, 0)
+          ), 0
+        ) AS lucro_total
+      FROM orderitems oi
+      INNER JOIN orders o ON o.order_id = oi.order_id
+      WHERE MONTH(o.order_date) = MONTH(CURRENT_DATE())
+        AND YEAR(o.order_date) = YEAR(CURRENT_DATE())
+        AND o.payment_status = 'PAID';
+      `,
+      { type: db.sequelize.QueryTypes.SELECT }
+    );
+
+    res.status(200).json(resultado);
+
+  } catch (error) {
+    console.error("Erro ao calcular lucro mensal:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+const getPerdasPromocaoMensal = async (req, res) => {
+  try {
+    const [resultado] = await db.sequelize.query(
+      `
+      SELECT 
+        COALESCE(SUM(oi.total_discount), 0) 
+        AS perda_lucro_promocao
+      FROM orderitems oi
+      INNER JOIN orders o ON o.order_id = oi.order_id
+      WHERE MONTH(o.order_date) = MONTH(CURRENT_DATE())
+        AND YEAR(o.order_date) = YEAR(CURRENT_DATE())
+        AND o.payment_status = 'PAID'
+        AND oi.promotion_id IS NOT NULL;
+      `,
+      { type: db.sequelize.QueryTypes.SELECT }
+    );
+
+    res.status(200).json(resultado);
+
+  } catch (error) {
+    console.error("Erro ao calcular perdas com promoção:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+const getVendasPromocaoMensal = async (req, res) => {
+  try {
+
+    const [resultado] = await db.sequelize.query(
+      `
+      SELECT 
+        COALESCE(SUM(ps.quantity), 0) AS total_itens_promocao
+      FROM promotion_sales ps
+      INNER JOIN orders o ON o.order_id = ps.order_id
+      WHERE MONTH(ps.sold_at) = MONTH(CURRENT_DATE())
+        AND YEAR(ps.sold_at) = YEAR(CURRENT_DATE())
+        AND o.payment_status = 'PAID';
+      `,
+      { type: db.sequelize.QueryTypes.SELECT }
+    );
+
+    res.status(200).json(resultado);
+
+  } catch (error) {
+    console.error("Erro ao calcular vendas na promoção:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+// Faturamento Diário 
 const getFaturamentoPorDia = async (req, res) => {
   try {
     const resultados = await db.sequelize.query(
       `
       SELECT 
-        DATE(p.created_at) AS data,
-        SUM(c.preco_total) AS faturamento_diario
-      FROM paymentos p
-      INNER JOIN compras c ON c.pagamento_id = p.id
-      WHERE MONTH(p.created_at) = MONTH(CURRENT_DATE())
-        AND YEAR(p.created_at) = YEAR(CURRENT_DATE())
-      GROUP BY DATE(p.created_at)
-      ORDER BY DATE(p.created_at)
-    `,
+        DATE(order_date) AS data,
+        COALESCE(SUM(total_amount), 0) AS faturamento_diario
+      FROM orders
+      WHERE order_date >= DATE_FORMAT(CURRENT_DATE(), '%Y-%m-01')
+        AND order_date < DATE_FORMAT(CURRENT_DATE() + INTERVAL 1 MONTH, '%Y-%m-01')
+        AND payment_status = 'PAID'
+      GROUP BY DATE(order_date)
+      ORDER BY DATE(order_date);
+      `,
       {
         type: db.sequelize.QueryTypes.SELECT,
       }
@@ -1173,21 +1256,27 @@ const getCategoriasMaisVendidas = async (req, res) => {
 };
 
 // Categorias Vendidas por mes
+// Categorias mais vendidas por mês (usando orders)
 const getCategoriasVendidasPorMes = async (req, res) => {
   try {
     const resultado = await db.sequelize.query(
       `
       SELECT 
-        DATE_FORMAT(p.created_at, '%Y-%m') AS mes,
+        DATE_FORMAT(o.order_date, '%Y-%m') AS mes,
         cat.name AS categoria,
-        SUM(c.quantidade) AS total_vendido
-      FROM compras c
-      INNER JOIN paymentos p ON c.pagamento_id = p.id
-      INNER JOIN products pr ON c.produto_id = pr.product_id
+        SUM(oi.quantity) AS total_vendido,
+        SUM(oi.total_com_promocao) AS total_faturado
+
+      FROM orderitems oi
+      INNER JOIN orders o ON oi.order_id = o.order_id
+      INNER JOIN products pr ON oi.product_id = pr.product_id
       INNER JOIN categories cat ON pr.category_id = cat.category_id
-      GROUP BY mes, categoria
-      ORDER BY mes DESC, total_vendido DESC
-    `,
+
+      WHERE o.payment_status = 'PAID'
+
+      GROUP BY mes, cat.name
+      ORDER BY mes DESC, total_vendido DESC;
+      `,
       {
         type: db.sequelize.QueryTypes.SELECT,
       }
@@ -1196,15 +1285,15 @@ const getCategoriasVendidasPorMes = async (req, res) => {
     res.status(200).json(resultado);
   } catch (error) {
     console.error("Erro ao buscar vendas por categoria/mês:", error);
-    res
-      .status(500)
-      .json({ error: "Erro ao gerar gráfico por categoria e mês." });
+    res.status(500).json({
+      error: "Erro ao gerar gráfico por categoria e mês.",
+    });
   }
 };
 
-// Produtos mais vendidos
+// Produtos mais vendidos com detalhes completos
 const getProdutosMaisVendidosPorMes = async (req, res) => {
-  const { mes } = req.query; // Formato: YYYY-MM
+  const { mes } = req.query; // formato: YYYY-MM
 
   try {
     const results = await db.sequelize.query(
@@ -1212,20 +1301,42 @@ const getProdutosMaisVendidosPorMes = async (req, res) => {
       SELECT 
         p.product_id,
         p.name AS nome_produto,
-        SUM(c.quantidade) AS total_vendas,
-        SUM(c.preco_total) AS total_faturado,
+
+        c.name AS cor,
+        s.size AS tamanho,
+
+        SUM(oi.quantity) AS total_vendas,
+       SUM(
+  COALESCE(oi.total_com_promocao, 0) +
+  COALESCE(oi.total_sem_promocao, 0)
+) AS total_faturado,
         MAX(pi.image_url) AS imagem_principal
-      FROM compras c
-      INNER JOIN paymentos pay ON c.pagamento_id = pay.id
-      INNER JOIN products p ON c.produto_id = p.product_id
-      LEFT JOIN productcolors pc ON p.product_id = pc.product_id
-      LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE DATE_FORMAT(pay.created_at, '%Y-%m') = :mes
-      GROUP BY p.product_id, p.name
-      ORDER BY total_faturado DESC;
-    `,
+      FROM orderitems oi
+      INNER JOIN orders o ON oi.order_id = o.order_id
+      INNER JOIN products p ON oi.product_id = p.product_id
+      LEFT JOIN product_color_sizes pcs 
+        ON oi.product_color_size_id = pcs.product_color_size_id
+      LEFT JOIN productcolors pc 
+        ON pcs.product_color_id = pc.product_color_id
+      LEFT JOIN colors c 
+        ON pc.color_id = c.color_id
+      LEFT JOIN sizes s 
+        ON pcs.size_id = s.size_id
+      LEFT JOIN productimages pi 
+        ON pc.product_color_id = pi.product_color_id 
+        AND pi.is_primary = 1
+
+      WHERE DATE_FORMAT(o.order_date, '%Y-%m') = :mes
+        AND o.payment_status = 'PAID'
+      GROUP BY 
+        p.product_id,
+        p.name,
+        c.name,
+        s.size
+      ORDER BY total_vendas DESC;
+      `,
       {
-        replacements: { mes }, // Ex: '2025-07'
+        replacements: { mes },
         type: db.sequelize.QueryTypes.SELECT,
       }
     );
@@ -1236,6 +1347,68 @@ const getProdutosMaisVendidosPorMes = async (req, res) => {
     res.status(500).json({ error: "Erro ao obter ranking de produtos." });
   }
 };
+
+const getProdutosMaiorMargemPorMes = async (req, res) => {
+  const { mes } = req.query; // formato YYYY-MM
+
+  try {
+    const results = await db.sequelize.query(
+      `
+      SELECT 
+        p.product_id,
+        p.name AS produto,
+
+        SUM(
+          COALESCE(oi.total_com_promocao, 0) +
+          COALESCE(oi.total_sem_promocao, 0)
+        ) AS receita,
+
+        SUM(oi.custo_total) AS custo,
+
+        SUM(
+          COALESCE(oi.lucro_com_promocao, 0) +
+          COALESCE(oi.lucro_sem_promocao, 0)
+        ) AS lucro,
+
+        MAX(pi.image_url) AS imagem_principal
+
+      FROM orderitems oi
+      INNER JOIN orders o 
+        ON oi.order_id = o.order_id
+
+      INNER JOIN products p 
+        ON oi.product_id = p.product_id
+
+      LEFT JOIN product_color_sizes pcs 
+        ON oi.product_color_size_id = pcs.product_color_size_id
+
+      LEFT JOIN productcolors pc 
+        ON pcs.product_color_id = pc.product_color_id
+
+      LEFT JOIN productimages pi 
+        ON pc.product_color_id = pi.product_color_id 
+        AND pi.is_primary = 1
+
+      WHERE DATE_FORMAT(o.order_date, '%Y-%m') = :mes
+        AND o.payment_status = 'PAID'
+
+      GROUP BY p.product_id, p.name
+
+      ORDER BY lucro DESC;
+      `,
+      {
+        replacements: { mes },
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error("Erro ao buscar produtos com maior margem:", error);
+    res.status(500).json({ error: "Erro ao obter produtos por margem." });
+  }
+};
+
 
 // Faturamento + Pedido por hora
 const getpedidosEReceitaPorHora = async (req, res) => {
@@ -1372,8 +1545,12 @@ export default {
   getProductsByGender,
   ProductHistoryByOrderId,
   getProductsFilteredMenu,
+  getPerdasPromocaoMensal,
+  getVendasPromocaoMensal,
   getFaturamentoMesAtual,
   getTotalPedidosMensais,
+  getLucroMesAtual,
+  getProdutosMaiorMargemPorMes,
   getFaturamentoPorDia,
   getCategoriasMaisVendidas,
   getCategoriasVendidasPorMes,

@@ -21,13 +21,17 @@ router.get('/pr/bySizes/:sizeIds', productController.getProductsBySize);
 router.get('/pr/pr/byNav', productController.getProductsFilteredMenu);
 router.get('/pr/byGender/:genderId', productController.getProductsByGender);
 
-
+// Administração
 router.get('/faturamento/mensal', productController.getFaturamentoMesAtual);
 router.get('/pedido/mensal', productController.getTotalPedidosMensais);
+router.get('/lucro/mensal', productController.getLucroMesAtual);
+router.get('/pedidos-promocao/mensal', productController.getVendasPromocaoMensal);
+router.get('/perdas-promocao/mensal', productController.getPerdasPromocaoMensal);
 router.get('/faturamento/diario', productController.getFaturamentoPorDia);
 router.get('/categorias/mais-vendidas', productController.getCategoriasMaisVendidas);
 router.get('/categorias/mais-vendidas-mensal', productController.getCategoriasVendidasPorMes);
 router.get('/produto/mais-vendidos-mensal', productController.getProdutosMaisVendidosPorMes );
+router.get('/produto/maior-margem', productController.getProdutosMaiorMargemPorMes );
 router.get('/faturamento/por-hora', productController.getpedidosEReceitaPorHora);
 router.get('/estoque/total', productController.estoqueTotal);
 router.get('/estoque/zero', productController.Semestoque);

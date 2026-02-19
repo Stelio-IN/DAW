@@ -135,7 +135,7 @@ export const processCrocsOrderItem = async ({
       discount_amount: totalDiscount,
       total_discount: totalDiscount,
 
-      total_sem_promocao: totalSemPromocao,
+      total_sem_promocao: item.promotion_id ? 0: totalSemPromocao,
       total_com_promocao: item.promotion_id ? totalComPromocao : 0,
 
       custo_unidade: custoUnidade,
@@ -144,10 +144,8 @@ export const processCrocsOrderItem = async ({
       promotion_id: item.promotion_id || 0,
       promotion_name: item.promotion_name || null,
 
-      lucro_sem_promocao: totalSemPromocao - custoTotal,
-      lucro_com_promocao: item.promotion_id
-        ? totalComPromocao - custoTotal
-        : 0,
+      lucro_sem_promocao:  item.promotion_id ? 0: totalSemPromocao - custoTotal,
+      lucro_com_promocao: item.promotion_id ? totalComPromocao - custoTotal : 0,
 
       name: item.name,
       color: item.color,

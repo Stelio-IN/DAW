@@ -19,12 +19,12 @@ export const processOrder = async (customer, cart, paymentMethod) => {
       {
         user_id: customer.id,
         order_date: new Date(),
-        status: "PENDING",
+        status: "PAID",
         subtotal: 0,
         discount_amount: 0,
         total_amount: 0,
         payment_method: paymentMethod,
-        payment_status: "PENDING",
+        payment_status: "PAID",
 
         customer_name: `${customer.deliveryInfo.first_name} ${customer.deliveryInfo.last_name}`,
         phone: customer.deliveryInfo.phone,

@@ -13,7 +13,7 @@ import {
   Cell,
   BarChart,
   Bar,
-   Legend
+  Legend,
 } from "recharts";
 import "../../assets/style/AdminDashboard.css";
 
@@ -28,20 +28,56 @@ const AdminDashboard = () => {
   const [mesSelecionado, setMesSelecionado] = useState("");
   const [dadosHora, setDadosHora] = useState([]);
   const [dados, setDados] = useState([]);
+const [produtosMargem, setProdutosMargem] = useState([]);
+  const [lucroMensal, setLucroMensal] = useState(0);
+  const [lucroSemPromo, setLucroSemPromo] = useState(0);
+  const [perdaPromocao, setPerdaPromocao] = useState(0);
+  const [vendasPromocao, setVendasPromocao] = useState(0);
 
   const [SelecionadoMes, setSelecionadoMes] = useState(() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(
       2,
-      "0"
+      "0",
     )}`;
   });
 
   const [dataSelecionada, setDataSelecionada] = useState(() => {
-  const hoje = new Date();
-  return hoje.toISOString().split("T")[0]; // formato: yyyy-mm-dd
-});
+    const hoje = new Date();
+    return hoje.toISOString().split("T")[0]; // formato: yyyy-mm-dd
+  });
 
+  const ticketMedio = totalPedidos > 0 ? receitaMensal / totalPedidos : 0;
+
+  //lucro mensal
+  useEffect(() => {
+    fetch("http://localhost:3005/api/products/lucro/mensal")
+      .then((res) => res.json())
+      .then((data) => {
+        setLucroMensal(parseFloat(data?.lucro_total || 0));
+      })
+      .catch((err) => console.error("Erro ao buscar lucro mensal:", err));
+  }, []);
+
+  //perda com promocao
+  useEffect(() => {
+    fetch("http://localhost:3005/api/products/perdas-promocao/mensal")
+      .then((res) => res.json())
+      .then((data) => {
+        setPerdaPromocao(parseFloat(data?.perda_lucro_promocao || 0));
+      })
+      .catch((err) => console.error("Erro ao buscar perdas:", err));
+  }, []);
+
+  //Nr de vendas em promocao
+  useEffect(() => {
+    fetch("http://localhost:3005/api/products/pedidos-promocao/mensal")
+      .then((res) => res.json())
+      .then((data) => {
+        setVendasPromocao(data?.total_itens_promocao || 0);
+      })
+      .catch((err) => console.error("Erro ao buscar vendas promoção:", err));
+  }, []);
 
   // Faturamento mensal
   useEffect(() => {
@@ -93,7 +129,7 @@ const AdminDashboard = () => {
         setVendasPorCategoria(formatado);
       })
       .catch((err) =>
-        console.error("Erro ao buscar vendas por categoria:", err)
+        console.error("Erro ao buscar vendas por categoria:", err),
       );
   }, []);
 
@@ -118,7 +154,7 @@ const AdminDashboard = () => {
     const fetchMaisVendidos = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3005/api/products/produto/mais-vendidos-mensal?mes=${SelecionadoMes}`
+          `http://localhost:3005/api/products/produto/mais-vendidos-mensal?mes=${SelecionadoMes}`,
         );
         const data = await response.json();
         setDados(data);
@@ -130,76 +166,48 @@ const AdminDashboard = () => {
     fetchMaisVendidos();
   }, [SelecionadoMes]);
 
-// Faturamento por hora
-const [somaPedidosDia, setSomaPedidosDia] = useState(0);
-const [somaReceitaDia, setSomaReceitaDia] = useState(0);
+  // seleciona o mes actual no grafico categorias
+  useEffect(() => {
+    if (categoriasMensais) {
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, "0");
 
-useEffect(() => {
-  const carregarDadosHora = async () => {
+      const mesAtual = `${ano}-${mes}`;
+
+      if (categoriasMensais[mesAtual]) {
+        setMesSelecionado(mesAtual);
+      } else {
+        // Se não existir o mês atual, pega o primeiro disponível
+        const primeiroMes = Object.keys(categoriasMensais)[0];
+        setMesSelecionado(primeiroMes);
+      }
+    }
+  }, [categoriasMensais]);
+
+  // Productos com Maior margem
+  useEffect(() => {
+  const fetchProdutosMaiorMargem = async () => {
     try {
-      const response = await fetch(`http://localhost:3005/api/products/faturamento/por-hora?data=${dataSelecionada}`);
-      const json = await response.json();
+      const response = await fetch(
+        `http://localhost:3005/api/products/produto/maior-margem?mes=${SelecionadoMes}`
+      );
 
-      const formatado = json.map(item => ({
-        hora: `${item.hora}h`,
-        Pedidos: item.total_pedidos,
-        Receita: item.total_receita
-      }));
-
-      // Calcular os totais do dia
-      const totalPedidoss = formatado.reduce((acc, curr) => acc + curr.Pedidos, 0);
-      const totalReceita = formatado.reduce((acc, curr) => acc + parseFloat(curr.Receita), 0);
-
-      setDadosHora(formatado);
-      setSomaPedidosDia(totalPedidoss);
-      setSomaReceitaDia(totalReceita);
+      const data = await response.json();
+      setProdutosMargem(data);
     } catch (error) {
-      console.error("Erro ao carregar dados por hora:", error);
+      console.error("Erro ao buscar produtos com maior margem:", error);
     }
   };
 
-  carregarDadosHora();
-}, [dataSelecionada]);
+  fetchProdutosMaiorMargem();
+}, [SelecionadoMes]);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  const clientesAtivos = 120;
-  const totalEstoque = 30;
 
   const dataPie = [
     { name: "Homens", value: 60 },
     { name: "Mulheres", value: 40 },
-  ];
-
-  
-
-  const planDistribution = [
-    { name: "Plano A", value: 45 },
-    { name: "Plano B", value: 30 },
-    { name: "Plano C", value: 25 },
-  ];
-
-  const expiracoes = [
-    { cliente: "João", plano: "Plano A", vencimento: "2025-07-10" },
-    { cliente: "Maria", plano: "Plano B", vencimento: "2025-07-12" },
-    { cliente: "Pedro", plano: "Plano C", vencimento: "2025-07-15" },
   ];
 
   return (
@@ -209,18 +217,27 @@ useEffect(() => {
           <div className="kpi-grid">
             {[
               {
-                icon: <FiUsers />,
-                title: "Clientes Ativos",
-                value: clientesAtivos,
+                icon: <FiDollarSign />,
+                title: "Lucro Mensal",
+                value: `MZN ${lucroMensal.toLocaleString("pt-PT", {
+                  minimumFractionDigits: 2,
+                })}`,
               },
               {
-                icon: <FiBox />,
-                title: "Produtos em Estoque",
-                value: totalEstoque,
+                icon: <FiShoppingCart />,
+                title: "Nº vendas em Promoção",
+                value: vendasPromocao,
+              },
+              {
+                icon: <FiShoppingCart />,
+                title: "Perdas Promocionais",
+                value: `MZN ${perdaPromocao.toLocaleString("pt-PT", {
+                  minimumFractionDigits: 2,
+                })}`,
               },
               {
                 icon: <FiDollarSign />,
-                title: "Receita Mensal",
+                title: "Receita Mensal Total",
                 value: `MZN ${receitaMensal.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
@@ -230,6 +247,13 @@ useEffect(() => {
                 icon: <FiShoppingCart />,
                 title: "Pedidos/Compras",
                 value: totalPedidos,
+              },
+              {
+                icon: <FiDollarSign />,
+                title: "Ticket Médio",
+                value: `MZN ${ticketMedio.toLocaleString("pt-PT", {
+                  minimumFractionDigits: 2,
+                })}`,
               },
             ].map((kpi, index) => (
               <div className="kpi-card" key={index}>
@@ -243,41 +267,6 @@ useEffect(() => {
           </div>
 
           <div className="chart-grid">
-
-
-
-          <div className="chart-card">
-            <br />
-  <input
-    type="date"
-    value={dataSelecionada}
-    onChange={(e) => setDataSelecionada(e.target.value)}
-    style={{ marginBottom: "10px", padding: "5px 10px", borderRadius: "6px", border: "1px solid #ccc" }}
-  />
-
-  <h3>Faturamento e Pedidos por Hora</h3>
-
-  <ResponsiveContainer width="100%" height={300}>
-    <BarChart data={dadosHora}>
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="hora" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="Pedidos" fill="#1e88e5" />
-      <Bar dataKey="Receita" fill="#81c784" />
-    </BarChart>
-  </ResponsiveContainer>
-
-  <div style={{ marginTop: 20, textAlign: "right", fontSize: "15px", color: "#333" }}>
-    <p><strong>Total de Pedidos:</strong> {somaPedidosDia}</p>
-    <p><strong>Total de Receita:</strong> MZN {somaReceitaDia.toFixed(2)}</p>
-  </div>
-</div>
-
-
-
-
             <div className="chart-card">
               <h3>Faturamento Diario (Mensal)</h3>
               <ResponsiveContainer width="100%" height={250}>
@@ -289,6 +278,89 @@ useEffect(() => {
                   <Line type="monotone" dataKey="total" stroke="#4EF55F" />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+
+            <div className="tabela-vendas-container">
+              <div className="header-filtro">
+                <h2>📊 Produtos Mais Vendidos</h2>
+                <br />
+
+                <select
+                  value={SelecionadoMes}
+                  onChange={(e) => setSelecionadoMes(e.target.value)}
+                >
+                  {Array.from({ length: 12 }).map((_, i) => {
+                    const hoje = new Date();
+                    const anoAtual = hoje.getFullYear();
+
+                    const date = new Date(anoAtual, i);
+                    const mes = String(i + 1).padStart(2, "0");
+
+                    return (
+                      <option key={mes} value={`${anoAtual}-${mes}`}>
+                        {date.toLocaleString("pt-PT", { month: "long" })}{" "}
+                        {anoAtual}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+
+              <table className="tabela-vendas">
+                <thead>
+                  <tr>
+                    <th>Produto</th>
+                    <th>Cor</th>
+                    <th>Tamanho</th>
+                    <th>Vendas</th>
+                    <th>Faturamento (MZN)</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {dados.length > 0 ? (
+                    dados.map((item, i) => (
+                      <tr key={i}>
+                        <td className="produto-info">
+                          <img
+                            src={item.imagem_principal || "/placeholder.png"}
+                            alt={item.nome_produto}
+                            className="produto-img"
+                          />
+                          <div>
+                            <strong>{item.nome_produto}</strong>
+                          </div>
+                        </td>
+
+                        <td>
+                          <span className="badge-cor">{item.cor || "-"}</span>
+                        </td>
+
+                        <td>
+                          <span className="badge-tamanho">
+                            {item.tamanho || "-"}
+                          </span>
+                        </td>
+
+                        <td className="vendas">{item.total_vendas}</td>
+
+                        <td className="faturamento">
+                          {parseFloat(item.total_faturado).toLocaleString(
+                            "pt-PT",
+                            {
+                              minimumFractionDigits: 2,
+                            },
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5}>Nenhum dado disponível para este mês.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
 
             {categoriasMensais && (
@@ -321,7 +393,7 @@ useEffect(() => {
                               key={`cell-${index}`}
                               fill={COLORS[index % COLORS.length]}
                             />
-                          )
+                          ),
                         )}
                       </Bar>
                     </BarChart>
@@ -330,54 +402,90 @@ useEffect(() => {
               </div>
             )}
 
+            <div className="tabela-vendas-container">
+  <div className="header-filtro">
+    <h2>💰 Produtos com Maior Margem</h2>
+  </div>
 
-              <div className="tabela-vendas-container">
-      <div className="header-filtro">
-        <h2>📊 Produtos Mais Vendidos</h2>
-        <br />
-        <select value={SelecionadoMes} onChange={(e) => setSelecionadoMes(e.target.value)}>
-          {Array.from({ length: 12 }).map((_, i) => {
-            const date = new Date();
-            date.setMonth(i);
-            const mes = String(i + 1).padStart(2, "0");
-            return (
-              <option key={mes} value={`2025-${mes}`}>
-                {date.toLocaleString("pt-PT", { month: "long" })} 2025
-              </option>
-            );
-          })}
-        </select>
-      </div>
+  <table className="tabela-vendas">
+    <thead>
+      <tr>
+        <th>Produto</th>
+        <th>Receita (MZN)</th>
+        <th>Custo (MZN)</th>
+        <th>Lucro (MZN)</th>
+        <th>Margem %</th>
+      </tr>
+    </thead>
 
-      <table className="tabela-vendas">
-        <thead>
-          <tr>
-            <th>Imagem</th>
-            <th>Produto</th>
-            <th>Vendas</th>
-            <th>Faturamento (MZN)</th>
-          </tr>
-        </thead>
-        <tbody>
-          {dados.length > 0 ? (
-            dados.map((item, i) => (
-              <tr key={i}>
-                <td>
-                  <img src={item.imagem_principal} alt={item.nome_produto} className="produto-img" />
-                </td>
-                <td>{item.nome_produto}</td>
-                <td>{item.total_vendas}</td>
-                <td>{parseFloat(item.total_faturado).toLocaleString("pt-PT", { minimumFractionDigits: 2 })}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={4}>Nenhum dado disponível para este mês.</td>
+    <tbody>
+      {produtosMargem.length > 0 ? (
+        produtosMargem.map((item, i) => {
+          const receita = parseFloat(item.receita || 0);
+          const custo = parseFloat(item.custo || 0);
+          const lucro = parseFloat(item.lucro || 0);
+
+          const margem =
+            receita > 0 ? (lucro / receita) * 100 : 0;
+
+          return (
+            <tr key={i}>
+              <td className="produto-info">
+                <img
+                  src={item.imagem_principal || "/placeholder.png"}
+                  alt={item.produto}
+                  className="produto-img"
+                />
+                <div>
+                  <strong>{item.produto}</strong>
+                </div>
+              </td>
+
+              <td>
+                {receita.toLocaleString("pt-PT", {
+                  minimumFractionDigits: 2,
+                })}
+              </td>
+
+              <td>
+                {custo.toLocaleString("pt-PT", {
+                  minimumFractionDigits: 2,
+                })}
+              </td>
+
+              <td className="faturamento">
+                {lucro.toLocaleString("pt-PT", {
+                  minimumFractionDigits: 2,
+                })}
+              </td>
+
+              <td
+                style={{
+                  fontWeight: "600",
+                  color:
+                    margem >= 40
+                      ? "#059669"
+                      : margem < 20
+                      ? "#dc2626"
+                      : "#d97706",
+                }}
+              >
+                {margem.toFixed(2)}%
+              </td>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          );
+        })
+      ) : (
+        <tr>
+          <td colSpan={5}>
+            Nenhum dado disponível para este mês.
+          </td>
+        </tr>
+      )}
+    </tbody>
+  </table>
+</div>
+
 
             <div className="chart-card">
               <h3>Distribuição por Gêneros</h3>
@@ -423,48 +531,10 @@ useEffect(() => {
               </ResponsiveContainer>
             </div>
 
-            <div className="chart-card">
-              <h3>Distribuição de Planos</h3>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={planDistribution}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="value">
-                    {planDistribution.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          
           </div>
 
-          <div className="table-card">
-            <h3>Expirações Próximas</h3>
-            <table className="exp-table">
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Plano</th>
-                  <th>Vencimento</th>
-                </tr>
-              </thead>
-              <tbody>
-                {expiracoes.map((item, i) => (
-                  <tr key={i}>
-                    <td>{item.cliente}</td>
-                    <td>{item.plano}</td>
-                    <td>{new Date(item.vencimento).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+      
         </div>
       </main>
     </div>
