@@ -1,40 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import '../../assets/style/AdminPedidos.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "../../assets/style/AdminPedidos.css";
+import { useNavigate } from "react-router-dom";
 
 const OrdersScreen = () => {
-  const [activeTab, setActiveTab] = useState('All');
+  const [activeTab, setActiveTab] = useState("ALL");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Busca dados da API
+  const navigate = useNavigate();
+
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
+
     try {
-      const response = await fetch('http://localhost:3005/api/products/compras');
-      if (!response.ok) throw new Error('Erro ao buscar pedidos');
+      const response = await fetch(
+        "http://localhost:3005/api/products/compras"
+      );
+
+      if (!response.ok) throw new Error("Erro ao buscar pedidos");
+
       const data = await response.json();
 
-      // Ajustar o mapeamento do que veio da API para seu formato
-      // API retorna: order_id, payer_name, created_at, nome_produto, quantidade, preco_unitario, preco_total, primary_image_url
       const mappedOrders = data.map((item, index) => ({
-        id: index + 1, // usar índice ou outro ID único se tiver
-        product: item.nome_produto,
+        id: index + 1,
+        product: item.nome_produto || "Produto",
         orderId: item.order_id,
-        customer: item.payer_name,
-        date: new Date(item.created_at).toLocaleDateString('pt-BR'),
-        qty: item.quantidade,
-        price: `R$ ${item.preco_total}`,
-        status: 'Pago', // Pode ajustar se tiver status na API
-        imageUrl: item.primary_image_url,
+        customer: item.customer_name || "N/A",
+        date: item.order_date
+          ? new Date(item.order_date).toLocaleDateString("pt-PT")
+          : "—",
+        qty: Number(item.quantidade || 0),
+
+        // 🔥 AGORA USA O TOTAL DO PEDIDO (orders.total_amount)
+        price: Number(item.total_amount || 0).toLocaleString("pt-PT", {
+          minimumFractionDigits: 2,
+        }),
+
+        rawStatus: item.payment_status,
+        imageUrl: item.primary_image_url || null,
       }));
 
       setOrders(mappedOrders);
     } catch (err) {
       setError(err.message);
     }
+
     setLoading(false);
   };
 
@@ -42,94 +54,114 @@ const OrdersScreen = () => {
     fetchOrders();
   }, []);
 
-  const navigate = useNavigate();
+  // 🔥 Filtro por status
+  const filteredOrders =
+    activeTab === "ALL"
+      ? orders
+      : orders.filter((order) => order.rawStatus === activeTab);
 
-  // Função para ir para detalhes do pedido
   const goToDetails = (orderId) => {
-    navigate(`/admin/pedido/detalhe/${orderId}`); // rota exemplo, ajuste conforme sua rota
+    navigate(`/admin/pedido/detalhe/${orderId}`);
   };
 
   return (
     <div className="orders-screen">
       <header className="orders-header">
         <h1>Compras</h1>
-        <div className="tabs">
-          <div className="tab-group">
-            <span>Todas</span>
-            <div className="tab-items">
-              <button 
-                className={activeTab === 'Shipping' ? 'active' : ''}
-                onClick={() => setActiveTab('Shipping')}
-              >
-                Shipping
-              </button>
-              <button 
-                className={activeTab === 'Completed' ? 'active' : ''}
-                onClick={() => setActiveTab('Completed')}
-              >
-                Completas
-              </button>
-              <button 
-                className={activeTab === 'Cancelled' ? 'active' : ''}
-                onClick={() => setActiveTab('Cancelled')}
-              >
-                Canceladas
-              </button>
-            </div>
-          </div>
+
+        <div className="tab-items">
+          <button
+            className={activeTab === "ALL" ? "active" : ""}
+            onClick={() => setActiveTab("ALL")}
+          >
+            Todas
+          </button>
+
+          <button
+            className={activeTab === "PAID" ? "active" : ""}
+            onClick={() => setActiveTab("PAID")}
+          >
+            Pagas
+          </button>
+
+          <button
+            className={activeTab === "PENDING" ? "active" : ""}
+            onClick={() => setActiveTab("PENDING")}
+          >
+            Pendentes
+          </button>
+
+          <button
+            className={activeTab === "CANCELLED" ? "active" : ""}
+            onClick={() => setActiveTab("CANCELLED")}
+          >
+            Canceladas
+          </button>
         </div>
       </header>
 
-      <div className="search-container">
-        <div className="search-input">
-          <input type="text" placeholder="Search by ID, Name" />
-        </div>
-        <div className="actions">
-          <button className="sort-btn">Sort by</button>
-          <button className="filter-btn">Filtrar</button>
-        </div>
-      </div>
-
-      <div className="divider"></div>
-
       {loading && <p>Carregando Pedidos...</p>}
-      {error && <p style={{color: 'red'}}>Error: {error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
-     <div className="orders-grid">
+      <div className="orders-grid">
         <div className="grid-header">
-          <div>Producto</div>
+          <div>Produto</div>
           <div>ID Pedido</div>
-          <div>Nome do Cliente</div>
+          <div>Cliente</div>
           <div>Data</div>
-          <div>Quantidade</div>
-          <div>Preço</div>
+          <div>Qtd</div>
+          <div>Total (MZN)</div>
           <div>Status</div>
         </div>
 
-        {!loading && !error && orders.length === 0 && (
-          <p>No orders found.</p>
+        {!loading && filteredOrders.length === 0 && (
+          <p>Nenhum pedido encontrado.</p>
         )}
 
-        {orders.map(order => (
+        {filteredOrders.map((order) => (
           <div key={order.id} className="order-item">
-            <div className="product-name">{order.product}</div>
-            <div className="order-id">{order.orderId}</div>
-            <div className="customer-name">{order.customer}</div>
-            <div className="date">{order.date}</div>
-            <div className="qty">{order.qty}</div>
-            <div className="price">{order.price}</div>
-            <div className={`status ${order.status === 'Cash On Delivery' ? 'cash' : 'complete'}`}>
-              <span>{order.status}</span>
-              <button 
+            <div className="product-name">
+              <img
+                src={order.imageUrl || "/placeholder.png"}
+                alt={order.product}
                 style={{
-                  marginLeft: '10px',
-                  cursor: 'pointer',
-                  backgroundColor: '#1a73e8',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  padding: '3px 7px',
-                  fontSize: '12px'
+                  width: "40px",
+                  height: "40px",
+                  objectFit: "cover",
+                  marginRight: "8px",
+                  borderRadius: "4px",
+                }}
+              />
+              {order.product}
+            </div>
+
+            <div>{order.orderId}</div>
+            <div>{order.customer}</div>
+            <div>{order.date}</div>
+            <div>{order.qty}</div>
+            <div>{order.price}</div>
+
+            <div
+              className={`status ${
+                order.rawStatus === "PAID"
+                  ? "complete"
+                  : order.rawStatus === "PENDING"
+                  ? "pending"
+                  : "cancelled"
+              }`}
+            >
+              {order.rawStatus}
+
+              <button
+                style={{
+                  marginLeft: "10px",
+                  cursor: "pointer",
+                  backgroundColor: "#1a73e8",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "4px",
+                  padding: "3px 7px",
+                  fontSize: "12px",
                 }}
                 onClick={() => goToDetails(order.orderId)}
               >
@@ -141,7 +173,7 @@ const OrdersScreen = () => {
       </div>
 
       <div className="pagination">
-        Showing 1-{orders.length.toString().padStart(2, '0')} of {orders.length} entries
+        Mostrando {filteredOrders.length} de {orders.length} pedidos
       </div>
     </div>
   );

@@ -460,41 +460,61 @@ const getProductByName = async (req, res) => {
 
 const ProductHistory = async (req, res) => {
   try {
-    // Consulta para buscar o histórico de compras
     const productHistory = await db.sequelize.query(
       `
-SELECT 
-  p.order_id, 
-  p.payer_name, 
-  p.created_at, 
-  c.nome_produto, 
-  c.quantidade, 
-  c.preco_unitario, 
-  c.preco_total, 
-  MAX(pi.image_url) AS primary_image_url  -- Garantir que traga a imagem principal (única)
-FROM paymentos p
-INNER JOIN compras c ON c.pagamento_id = p.id
-INNER JOIN products pr ON c.produto_id = pr.product_id  -- Junção com a tabela Products
-LEFT JOIN productcolors pc ON pr.product_id = pc.product_id
-LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-GROUP BY p.order_id, p.payer_name, p.created_at, c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total
-ORDER BY p.order_id;  -- Ordena pelos order_id
-    `,
+      SELECT 
+        o.order_id,
+        o.customer_name,
+        o.order_date,
+        o.payment_status,
+        o.total_amount,
+
+        -- 🔢 TOTAL DE ITENS DO PEDIDO
+        SUM(oi.quantity) AS quantidade,
+
+        -- 🔥 UM PRODUTO QUALQUER DO PEDIDO (apenas para exibir na lista)
+        (
+          SELECT p.name
+          FROM orderitems oi2
+          INNER JOIN products p ON oi2.product_id = p.product_id
+          WHERE oi2.order_id = o.order_id
+          LIMIT 1
+        ) AS nome_produto,
+
+        -- 🔥 IMAGEM PRINCIPAL DO PRIMEIRO PRODUTO
+        (
+          SELECT pi.image_url
+          FROM orderitems oi3
+          INNER JOIN productcolors pc ON oi3.product_id = pc.product_id
+          INNER JOIN productimages pi 
+            ON pi.product_color_id = pc.product_color_id
+          WHERE oi3.order_id = o.order_id
+            AND pi.is_primary = 1
+          LIMIT 1
+        ) AS primary_image_url
+
+      FROM orders o
+      LEFT JOIN orderitems oi 
+        ON o.order_id = oi.order_id
+
+      GROUP BY 
+        o.order_id,
+        o.customer_name,
+        o.order_date,
+        o.payment_status,
+        o.total_amount
+
+      ORDER BY o.order_date DESC
+      `,
       {
-        type: db.sequelize.QueryTypes.SELECT, // Tipo de consulta
+        type: db.sequelize.QueryTypes.SELECT,
       }
     );
- 
-    if (productHistory.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "Nenhum histórico de compras encontrado." });
-    }
 
-    // Retorna o histórico de compras
     res.status(200).json(productHistory);
+
   } catch (error) {
-    console.error("Erro ao buscar histórico de compras:", error);
+    console.error("Erro ao buscar histórico de pedidos:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -554,48 +574,59 @@ const ProductHistoryByOrderId = async (req, res) => {
     const result = await db.sequelize.query(
       `
       SELECT 
-        p.order_id, 
-        p.payer_name, 
-        p.created_at, 
+        -- 📝 Dados do Pedido
+        o.order_id,
+        o.customer_name,
+        o.phone,
+        o.address,
+        o.city,
+        o.province,
+        o.country,
+        o.postal_code,
+        o.subtotal,
+        o.discount_amount,
+        o.shipping_amount,
+        o.total_amount,
+        o.payment_method,
+        o.payment_status,
+        o.order_date,
 
-        c.nome_produto, 
-        c.quantidade, 
-        c.preco_unitario, 
-        c.preco_total,
-
-        pr.product_id,
-        pr.description,
-        pr.price,
-        pr.gender_id,
-
+        -- 🛒 Dados dos Itens
+        oi.order_item_id,
+        oi.product_id,
+        p.name AS nome_produto,
+        p.description,
+        p.price AS preco_unitario,
+        g.gender_id,
         g.name AS gender_name,
+        oi.quantity,
+        COALESCE(oi.total_com_promocao, oi.total_sem_promocao, 0) AS valor_pago,
 
         pc.product_color_id,
         col.name AS color_name,
         col.hex_code,
-        pc.stock_quantity,
+        pcs.stock_quantity,
 
-        MAX(pi.image_url) AS primary_image_url
-      
-      FROM paymentos p
-      INNER JOIN compras c ON c.pagamento_id = p.id
-      INNER JOIN products pr ON c.produto_id = pr.product_id
-      LEFT JOIN genders g ON pr.gender_id = g.gender_id
-      LEFT JOIN productcolors pc ON pr.product_id = pc.product_id
+        -- 🔥 Imagem Principal do Produto por cor
+        (
+          SELECT pi.image_url
+          FROM productimages pi
+          WHERE pi.product_color_id = pc.product_color_id
+            AND pi.is_primary = 1
+          LIMIT 1
+        ) AS primary_image_url
+
+      FROM orders o
+      INNER JOIN orderitems oi ON o.order_id = oi.order_id
+      INNER JOIN products p ON oi.product_id = p.product_id
+      LEFT JOIN genders g ON p.gender_id = g.gender_id
+      LEFT JOIN product_color_sizes pcs ON oi.product_color_size_id = pcs.product_color_size_id
+      LEFT JOIN productcolors pc ON pcs.product_color_id = pc.product_color_id
       LEFT JOIN colors col ON pc.color_id = col.color_id
-      LEFT JOIN productimages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      
-      WHERE p.order_id = :orderId
 
-      GROUP BY 
-        p.order_id, p.payer_name, p.created_at,
-        c.nome_produto, c.quantidade, c.preco_unitario, c.preco_total,
-        pr.product_id, pr.description, pr.price, pr.gender_id,
-        g.name,
-        pc.product_color_id, pc.stock_quantity,
-        col.name, col.hex_code
+      WHERE o.order_id = :orderId
 
-      ORDER BY c.nome_produto
+      ORDER BY oi.order_item_id
       `,
       {
         replacements: { orderId },
@@ -604,18 +635,54 @@ const ProductHistoryByOrderId = async (req, res) => {
     );
 
     if (result.length === 0) {
-      return res
-        .status(404)
-        .json({ error: "Nenhum produto encontrado para esse pedido." });
+      return res.status(404).json({
+        error: "Nenhum item encontrado para esse pedido.",
+      });
     }
 
-    res.status(200).json(result);
+    // 🏗 Organiza a resposta agrupando info do pedido e itens
+    const orderInfo = {
+      order_id: result[0].order_id,
+      customer_name: result[0].customer_name,
+      phone: result[0].phone,
+      address: result[0].address,
+      city: result[0].city,
+      province: result[0].province,
+      country: result[0].country,
+      postal_code: result[0].postal_code,
+      subtotal: result[0].subtotal,
+      discount_amount: result[0].discount_amount,
+      shipping_amount: result[0].shipping_amount,
+      total_amount: result[0].total_amount,
+      payment_method: result[0].payment_method,
+      payment_status: result[0].payment_status,
+      order_date: result[0].order_date,
+    };
+
+    const items = result.map(item => ({
+      order_item_id: item.order_item_id,
+      product_id: item.product_id,
+      nome_produto: item.nome_produto,
+      description: item.description,
+      preco_unitario: item.preco_unitario,
+      gender_id: item.gender_id,
+      gender_name: item.gender_name,
+      quantity: item.quantity,
+      valor_pago: item.valor_pago,
+      product_color_id: item.product_color_id,
+      color_name: item.color_name,
+      hex_code: item.hex_code,
+      stock_quantity: item.stock_quantity,
+      primary_image_url: item.primary_image_url,
+    }));
+
+    res.status(200).json({ orderInfo, items });
+
   } catch (error) {
-    console.error("Erro ao buscar os produtos do pedido:", error);
+    console.error("Erro ao buscar os itens do pedido:", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 // Controller para obter produtos por categoria
 const getProductsByCategories = async (req, res) => {
   const { categoryIds } = req.params;
