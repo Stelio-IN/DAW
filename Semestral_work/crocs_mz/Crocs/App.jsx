@@ -108,7 +108,7 @@ function MainApp() {
               <Route path="usuarios" element={<AdminUsuarios />} />
               <Route path="usuario/detalhe" element={<AdminDetalheUsuario />} />
               <Route path="produto/estoque-visao-geral" element={<AdminGestaoEstoque />} />
-              <Route path="produto/estoque-produto" element={<AdminGerirEstoqueProduto />} />
+              <Route path="produto/estoque-produto/:id" element={<AdminGerirEstoqueProduto />} />
             </Route>
 
           </Routes>

@@ -391,70 +391,84 @@ const getProductsEspecific = async (req, res) => {
   }
 };
 
-
+// gestao de estoque de um produto por id 
 const getProductByName = async (req, res) => {
-  const { nome } = req.query;
+  const { id } = req.params;
 
   try {
     const [produto] = await db.sequelize.query(
       `
       SELECT 
-        p.product_id, 
-        p.name AS product_name, 
-        p.price,
-        g.name AS category_name, 
+        p.product_id,
+        p.name,
         p.description,
-        p.stock_quantity AS estoque,
-        MAX(pi.image_url) AS primary_image_url,
-        (
-  SELECT JSON_ARRAYAGG(
-    JSON_OBJECT(
-      'product_color_id', pc.product_color_id,
-      'name', c.name,
-      'hex_code', c.hex_code,
-      'stock_quantity', pc.stock_quantity,
-      'images', (
-        SELECT JSON_ARRAYAGG(pi.image_url)
-        FROM ProductImages pi
-        WHERE pi.product_color_id = pc.product_color_id
-      )
-    )
-  )
-  FROM ProductColors pc
-  JOIN Colors c ON pc.color_id = c.color_id
-  WHERE pc.product_id = p.product_id
-) AS colors
+        p.price,
+        p.status,
+        p.createdAt,
+        p.updatedAt,
+        c.name AS category_name,
+        g.name AS gender_name,
 
-      FROM Products p
-      INNER JOIN categories g ON g.category_id = p.category_id
-      LEFT JOIN ProductColors pc ON p.product_id = pc.product_id
-      LEFT JOIN ProductImages pi ON pc.product_color_id = pi.product_color_id AND pi.is_primary = true
-      WHERE p.name LIKE :nome
-      GROUP BY p.product_id
-      LIMIT 1;
-    `,
+        -- 🔥 CORES COM TAMANHOS
+        (
+          SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'product_color_id', pc.product_color_id,
+              'color_name', col.name,
+              'hex_code', col.hex_code,
+
+              'images', (
+                SELECT JSON_ARRAYAGG(pi.image_url)
+                FROM productimages pi
+                WHERE pi.product_color_id = pc.product_color_id
+              ),
+
+              'sizes', (
+                SELECT JSON_ARRAYAGG(
+                  JSON_OBJECT(
+                    'product_color_size_id', pcs.product_color_size_id,
+                    'size', s.size,
+                    'size_type', st.name,
+                    'stock_quantity', pcs.stock_quantity,
+                    'sku', pcs.sku,
+                    'price_override', pcs.price_override,
+                    'cost_price', pcs.cost_price
+                  )
+                )
+                FROM product_color_sizes pcs
+                JOIN sizes s ON pcs.size_id = s.size_id
+                JOIN size_types st ON s.size_type_id = st.size_type_id
+                WHERE pcs.product_color_id = pc.product_color_id
+              )
+
+            )
+          )
+          FROM productcolors pc
+          JOIN colors col ON pc.color_id = col.color_id
+          WHERE pc.product_id = p.product_id
+        ) AS colors
+
+      FROM products p
+      LEFT JOIN categories c ON c.category_id = p.category_id
+      LEFT JOIN genders g ON g.gender_id = p.gender_id
+      WHERE p.product_id = :id
+      LIMIT 1
+      `,
       {
-        replacements: { nome: `%${nome}%` },
+        replacements: { id },
         type: db.sequelize.QueryTypes.SELECT,
       }
     );
 
-    if (!produto)
+    if (!produto) {
       return res.status(404).json({ error: "Produto não encontrado" });
+    }
 
-    res.json({
-      product_id: produto.product_id,
-      name: produto.product_name,
-      price: produto.price,
-      description: produto.description,
-      category_name: produto.category_name,
-      stock_quantity: produto.estoque,
-      primary_image_url: produto.primary_image_url,
-      colors: produto.colors,
-    });
-  } catch (err) {
-    console.error("Erro ao buscar produto:", err);
-    res.status(500).json({ error: err.message });
+    res.status(200).json(produto);
+
+  } catch (error) {
+    console.error("Erro ao buscar produto:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -1513,25 +1527,41 @@ const getpedidosEReceitaPorHora = async (req, res) => {
 const estoqueTotal = async (req, res) => {
   try {
     const [resultado] = await db.sequelize.query(`
-      SELECT SUM(stock_quantity) AS total_estoque FROM ProductColors
+      SELECT 
+        COALESCE(SUM(stock_quantity), 0) AS total_estoque
+      FROM product_color_sizes
     `);
 
-    res.status(200).json({ totalEstoque: resultado[0].total_estoque });
+    res.status(200).json({
+      totalEstoque: Number(resultado[0].total_estoque)
+    });
+
   } catch (error) {
     console.error("Erro ao calcular estoque total:", error);
     res.status(500).json({ error: error.message });
   }
 };
+
 // Produtos Sem Estoque
 const Semestoque = async (req, res) => {
   try {
     const [resultado] = await db.sequelize.query(`
-      SELECT COUNT(*) AS sem_estoque FROM ProductColors where stock_quantity = 0
+      SELECT 
+        COUNT(*) AS sem_estoque
+      FROM (
+        SELECT product_color_id
+        FROM product_color_sizes
+        GROUP BY product_color_id
+        HAVING COALESCE(SUM(stock_quantity), 0) = 0
+      ) AS produtos_sem_estoque
     `);
 
-    res.status(200).json({ semEstoque: resultado[0].sem_estoque });
+    res.status(200).json({
+      semEstoque: Number(resultado[0].sem_estoque)
+    });
+
   } catch (error) {
-    console.error("Erro ao calcular produtos sem estoque :", error);
+    console.error("Erro ao calcular produtos sem estoque:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -1570,16 +1600,18 @@ const ProdutosComEstoquePorCor = async (req, res) => {
       SELECT 
         p.product_id,
         p.name AS product_name,
-        c.name AS color_name,
-        pc.stock_quantity,
+        p.price as price,
+        COUNT(DISTINCT pc.product_color_id) AS total_cores,
         MAX(pi.image_url) AS primary_image_url
-      FROM ProductColors pc
-      INNER JOIN Products p ON p.product_id = pc.product_id
-      LEFT JOIN Colors c ON c.color_id = pc.color_id
-      LEFT JOIN ProductImages pi ON pi.product_color_id = pc.product_color_id AND pi.is_primary = true
-      GROUP BY p.product_id, pc.product_color_id, c.name, pc.stock_quantity
-      ORDER BY p.product_id ASC, c.name ASC;
-    `,
+      FROM Products p
+      LEFT JOIN ProductColors pc 
+        ON pc.product_id = p.product_id
+      LEFT JOIN ProductImages pi 
+        ON pi.product_color_id = pc.product_color_id 
+        AND pi.is_primary = true
+      GROUP BY p.product_id, p.name
+      ORDER BY p.product_id ASC;
+      `,
       {
         type: db.sequelize.QueryTypes.SELECT,
       }
@@ -1587,7 +1619,94 @@ const ProdutosComEstoquePorCor = async (req, res) => {
 
     res.status(200).json(resultado);
   } catch (error) {
-    console.error("Erro ao buscar estoque por cor:", error);
+    console.error("Erro ao buscar resumo de produtos:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Produtos com estoque crítico
+const ProdutosEstoqueCritico = async (req, res) => {
+  try {
+    const produtos = await db.sequelize.query(
+      `
+      SELECT 
+        p.product_id,
+        p.name,
+        p.description,
+        p.price,
+        p.status,
+        c.name AS category_name,
+        g.name AS gender_name,
+
+        (
+          SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'product_color_id', pc.product_color_id,
+              'color_name', col.name,
+              'hex_code', col.hex_code,
+
+              'images', (
+                SELECT JSON_ARRAYAGG(pi.image_url)
+                FROM productimages pi
+                WHERE pi.product_color_id = pc.product_color_id
+              ),
+
+              -- 🔥 SOMENTE TAMANHOS CRÍTICOS
+              'sizes', (
+                SELECT JSON_ARRAYAGG(
+                  JSON_OBJECT(
+                    'product_color_size_id', pcs.product_color_size_id,
+                    'size', s.size,
+                    'size_type', st.name,
+                    'stock_quantity', pcs.stock_quantity,
+                    'sku', pcs.sku,
+                    'price_override', pcs.price_override,
+                    'cost_price', pcs.cost_price
+                  )
+                )
+                FROM product_color_sizes pcs
+                JOIN sizes s ON pcs.size_id = s.size_id
+                JOIN size_types st ON s.size_type_id = st.size_type_id
+                WHERE pcs.product_color_id = pc.product_color_id
+                AND pcs.stock_quantity <= 5
+              )
+
+            )
+          )
+          FROM productcolors pc
+          JOIN colors col ON pc.color_id = col.color_id
+          WHERE pc.product_id = p.product_id
+          AND EXISTS (
+              SELECT 1
+              FROM product_color_sizes pcs2
+              WHERE pcs2.product_color_id = pc.product_color_id
+              AND pcs2.stock_quantity <= 5
+          )
+        ) AS colors
+
+      FROM products p
+      LEFT JOIN categories c ON c.category_id = p.category_id
+      LEFT JOIN genders g ON g.gender_id = p.gender_id
+
+      -- 🔥 SOMENTE PRODUTOS QUE TENHAM ESTOQUE CRÍTICO
+      WHERE EXISTS (
+        SELECT 1
+        FROM productcolors pc
+        JOIN product_color_sizes pcs ON pcs.product_color_id = pc.product_color_id
+        WHERE pc.product_id = p.product_id
+        AND pcs.stock_quantity <= 5
+      )
+      `
+      ,
+      {
+        type: db.sequelize.QueryTypes.SELECT,
+      }
+    );
+
+    res.status(200).json(produtos);
+
+  } catch (error) {
+    console.error("Erro ao buscar produtos com estoque crítico:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -1626,4 +1745,5 @@ export default {
   ProdutosSemEstoqueDetalhado,
   ProdutosComEstoquePorCor,
   getProductByName,
+  ProdutosEstoqueCritico,
 };

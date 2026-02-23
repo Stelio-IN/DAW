@@ -1,252 +1,170 @@
+/* ==========================
+   CONTAINER PRINCIPAL
+========================== */
 .produto-detalhe-container {
-  max-width: 900px;
-  margin: 40px auto;
+  max-width: 1200px;
+  margin: 20px auto;
   padding: 20px;
-  background: #f8fafc;
+  background-color: #f9f9f9;
   border-radius: 12px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: "Arial", sans-serif;
 }
 
-.search-input {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  margin-top: 10px;
+/* ==========================
+   HEADER DO PRODUTO
+========================== */
+.produto-header {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
   margin-bottom: 30px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
-.produto-detalhe {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.produto-header h2 {
+  margin-bottom: 10px;
+  font-size: 26px;
+  color: #333;
 }
 
-.produto-img {
-  max-width: 200px;
-  border-radius: 12px;
-}
-
-.produto-info h3 {
-  margin: 0;
-  font-size: 22px;
-}
-
-.produto-info p {
+.produto-header p {
   margin: 4px 0;
-}
-
-.cores-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.cores-table th,
-.cores-table td {
-  padding: 12px;
-  border: 1px solid #e0e0e0;
-  text-align: center;
-}
-
-.cores-table input[type="number"] {
-  width: 80px;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-.cores-table button {
-  padding: 6px 12px;
-  border: none;
-  background-color: #2563eb;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.cores-table button:hover {
-  background-color: #1d4ed8;
-}
-.produto-pesquisa-container {
-  max-width: 960px;
-  margin: 40px auto;
-  padding: 24px;
-  background: #f8fafc;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.search-section {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
-}
-
-.search-section input {
-  flex: 1;
-  padding: 12px;
   font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  color: #555;
 }
 
-.search-section button {
-  padding: 12px 20px;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: background 0.3s ease;
-}
-
-.search-section button:hover {
-  background-color: #1d4ed8;
-}
-
-.produto-detalhes {
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  background: white;
+/* ==========================
+   CARTÃO DE COR
+========================== */
+.color-card {
+  background-color: #fff;
   padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-
-.produto-detalhes img {
-  width: 180px;
-  height: auto;
+  margin-bottom: 25px;
   border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.color-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.color-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 1px solid #ccc;
+}
+
+.color-header h3 {
+  font-size: 20px;
+  color: #333;
+  margin: 0;
+}
+
+/* ==========================
+   IMAGENS DO PRODUTO
+========================== */
+.color-images {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.color-images img {
+  width: 100px;
+  height: 100px;
   object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
-.info {
-  flex: 1;
+.color-images p {
+  color: #777;
+  font-style: italic;
 }
 
-.info h3 {
-  margin-top: 0;
-  font-size: 24px;
-}
-
-.info p {
-  margin: 6px 0;
-  font-size: 16px;
-}
-
-.info h4 {
-  margin-top: 24px;
-}
-
-table {
+/* ==========================
+   TABELA DE TAMANHOS
+========================== */
+.sizes-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 16px;
-  background: white;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  margin-top: 10px;
 }
 
-table th, table td {
-  padding: 12px;
+.sizes-table th,
+.sizes-table td {
+  padding: 10px 12px;
   text-align: center;
-  border: 1px solid #e0e0e0;
-  vertical-align: middle;
-}
-
-table input[type="number"] {
-  width: 80px;
-  padding: 6px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
-
-table input[type="file"] {
-  border: none;
-  font-size: 14px;
-}
-
-table button {
-  padding: 6px 12px;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background 0.3s ease;
-}
-
-table button:hover {
-  background-color: #1d4ed8;
-}
-
-.cor-box {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  margin-right: 8px;
-  border: 1px solid #ccc;
-  vertical-align: middle;
-}
-
-td img {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  margin-right: 6px;
-  border-radius: 6px;
   border: 1px solid #ddd;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-td img:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(37, 99, 235, 0.5);
-}
-
-/* Upload button and input inline */
-td > input[type="file"] {
-  display: block;
-  margin: 0 auto 6px auto;
-  cursor: pointer;
-}
-
-td > button {
-  width: 100%;
   font-size: 14px;
 }
 
-/* Responsividade simples */
+.sizes-table th {
+  background-color: #f0f0f0;
+  font-weight: 600;
+  color: #333;
+}
+
+.sizes-table input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.sizes-table button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sizes-table button:hover {
+  background-color: #0056b3;
+}
+
+.no-sizes {
+  color: #aa0000;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* ==========================
+   RESPONSIVIDADE
+========================== */
+@media (max-width: 1024px) {
+  .color-images img {
+    width: 80px;
+    height: 80px;
+  }
+
+  .sizes-table th, .sizes-table td {
+    font-size: 12px;
+    padding: 6px 8px;
+  }
+}
+
 @media (max-width: 768px) {
-  .produto-detalhes {
-    flex-direction: column;
+  .produto-detalhe-container {
+    padding: 15px;
   }
 
-  table th, table td {
-    font-size: 14px;
-    padding: 8px;
+  .produto-header h2 {
+    font-size: 22px;
   }
 
-  td img {
-    width: 40px;
-    height: 40px;
-  }
-
-  table input[type="number"] {
-    width: 60px;
+  .color-header h3 {
+    font-size: 18px;
   }
 }

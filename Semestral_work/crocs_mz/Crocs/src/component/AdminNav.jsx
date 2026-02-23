@@ -60,7 +60,7 @@ const AdminNav = () => {
       icon: BarChart3,
       children: [
         { label: 'Visão Geral', path: 'produto/estoque-visao-geral' },
-        { label: 'Estoque do Produto', path: 'produto/estoque-produto' },
+      //  { label: 'Estoque do Produto', path: 'produto/estoque-produto' },
         { label: 'Promoção', path: 'produto/promotion' },
       ],
     },

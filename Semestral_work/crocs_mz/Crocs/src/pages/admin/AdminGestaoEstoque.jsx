@@ -15,6 +15,9 @@ import {
   ResponsiveContainer
 } from "recharts";
 import "../../assets/style/AdminGestaoProdutos.css";
+import { useNavigate } from "react-router-dom";
+
+
 
 const AdminGestaoProdutos = () => {
 const [totalProdutos, setTotalProdutos] = useState(0);
@@ -23,6 +26,8 @@ const [totalCategorias, setTotalCategorias] = useState(0);
 const [semEstoque, setSemEstoque] = useState(0);
 const [produtosSemEstoque, setProdutosSemEstoque] = useState([]);
 const [estoquePorCor, setEstoquePorCor] = useState([]);
+const [estoqueCritico, setEstoqueCritico] = useState([]);
+const navigate = useNavigate();
 // Produtos cadastrados
 useEffect(() => {
   const fetchProdutos = async () => {
@@ -117,45 +122,21 @@ useEffect(() => {
   fetchEstoquePorCor();
 }, []);
 
-
-
-
-
-
-
-
-  const [dadosKPIs, setDadosKPIs] = useState({
-    totalProdutosn: 0,
-    totalEstoque: 0,
-    produtosCriticos: 0,
-    categorias: 0
-  });
-  const [dadosGrafico, setDadosGrafico] = useState([]);
-  const [produtosCriticos, setProdutosCriticos] = useState([]);
-
-  useEffect(() => {
-    const carregarKPIs = async () => {
-      const res = await fetch("http://localhost:3005/api/products/dashboard-kpi");
+// Produto estoque critico
+useEffect(() => {
+  const fetchProdutoEstoqueCritico = async () => {
+    try {
+      const res = await fetch("http://localhost:3005/api/products/produto/estoque-critico");
       const json = await res.json();
-      setDadosKPIs(json);
-    };
+      setEstoqueCritico(json);
+    } catch (err) {
+      console.error("Erro ao buscar estoque por cor:", err);
+    }
+  };
 
-    const carregarGrafico = async () => {
-      const res = await fetch("http://localhost:3005/api/products/estoque-por-categoria");
-      const json = await res.json();
-      setDadosGrafico(json);
-    };
+  fetchProdutoEstoqueCritico();
+}, []);
 
-    const carregarCriticos = async () => {
-      const res = await fetch("http://localhost:3005/api/products/estoque-critico");
-      const json = await res.json();
-      setProdutosCriticos(json);
-    };
-
-    carregarKPIs();
-    carregarGrafico();
-    carregarCriticos();
-  }, []);
 
   return (
     <div className="produto-dashboard">
@@ -188,37 +169,62 @@ useEffect(() => {
   <h3>Detalhe de Estoque por Produto e Cor</h3>
 
   <div className="scroll-table-container custom-scrollbar">
-    <table className="exp-table">
-      <thead>
-        <tr>
-          <th>Imagem</th>
-          <th>Produto</th>
-          <th>Cor</th>
-          <th>Quantidade</th>
-        </tr>
-      </thead>
-      <tbody>
-        {estoquePorCor.map((item, index) => (
-          <tr key={index}>
-            <td>
-              <img
-                src={item.primary_image_url || '/no-image.png'}
-                alt={item.product_name}
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  objectFit: "cover",
-                  borderRadius: "8px"
-                }}
-              />
-            </td>
-            <td>{item.product_name}</td>
-            <td>{item.color_name || "N/A"}</td>
-            <td>{item.stock_quantity}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+   <table className="exp-table">
+  <thead>
+    <tr>
+      <th>Imagem</th>
+      <th>Produto</th>
+      <th>Nº de Cores</th>
+      <th>Preço Base</th>
+      <th>Ação</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {estoquePorCor.map((item) => (
+      <tr
+        key={item.product_id}
+        onClick={() =>
+          navigate(`/admin/produto/estoque-produto/${item.product_id}`)
+        }
+        style={{ cursor: "pointer" }}
+        className="table-row-hover"
+      >
+        <td>
+          <img
+            src={item.primary_image_url || "/no-image.png"}
+            alt={item.product_name}
+            style={{
+              width: "50px",
+              height: "50px",
+              objectFit: "cover",
+              borderRadius: "8px",
+            }}
+          />
+        </td>
+
+        <td>{item.product_name}</td>
+
+        <td>{item.total_cores || "N/A"}</td>
+
+        <td>{Number(item.price).toFixed(2)} MZN</td>
+
+        {/* BOTÃO */}
+        <td>
+          <button
+            className="btn-detalhes"
+            onClick={(e) => {
+              e.stopPropagation(); // 🔥 impede conflito com clique da linha
+              navigate(`/admin/produto/estoque-produto/${item.product_id}`);
+            }}
+          >
+            Detalhes
+          </button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
   </div>
       </div>
 
@@ -227,34 +233,66 @@ useEffect(() => {
       {/* Produtos com estoque critico*/}
     <div className="table-card">
   <h3>Produtos Com Estoque Crítico</h3>
-  <table className="exp-table">
-    <thead>
-      <tr>
-        <th>Imagem</th>
-        <th>Produto</th>
-        <th>Cor</th>
-        <th>Preço</th>
-        <th>Estoque</th>
-      </tr>
-    </thead>
-    <tbody>
-      {produtosSemEstoque.map((item, i) => (
-        <tr key={i}>
-          <td>
-            <img
-              src={item.primary_image_url || '/no-image.png'}
-              alt={item.product_name}
-              style={{ width: "50px", height: "50px", objectFit: "cover", borderRadius: "8px" }}
-            />
-          </td>
-          <td>{item.product_name}</td>
-          <td>{item.color_name || "Sem cor"}</td>
-          <td>{Number(item.price).toFixed(2)} MZN</td>
-           <td>{item.stock_quantity}</td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
+
+<table className="exp-table">
+  <thead>
+    <tr>
+      <th>Imagem</th>
+      <th>Produto</th>
+      <th>Cor</th>
+      <th>Tamanho</th>
+      <th>Preço</th>
+      <th>Estoque</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {estoqueCritico.map((produto) =>
+      produto.colors?.map((cor) =>
+        cor.sizes?.map((size) => (
+          <tr
+            key={size.product_color_size_id}
+            onClick={() =>
+              navigate(`/admin/produto/estoque-produto/${produto.product_id}`)
+            }
+            style={{ cursor: "pointer" }}
+          >
+            {/* IMAGEM */}
+            <td>
+              <img
+                src={cor.images?.[0] || "/no-image.png"}
+                alt={produto.name}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  objectFit: "cover",
+                  borderRadius: "8px",
+                }}
+              />
+            </td>
+
+            {/* PRODUTO */}
+            <td>{produto.name}</td>
+
+            {/* COR */}
+            <td>{cor.color_name}</td>
+
+            {/* TAMANHO */}
+            <td>{size.size}</td>
+
+            {/* PREÇO */}
+            <td>{Number(produto.price).toFixed(2)} MZN</td>
+
+            {/* ESTOQUE CRÍTICO */}
+            <td style={{ color: "red", fontWeight: "bold" }}>
+              {size.stock_quantity}
+            </td>
+          </tr>
+        ))
+      )
+    )}
+  </tbody>
+</table>
     </div>
 
     </div>
