@@ -361,7 +361,7 @@ html, body {
   width: 100%;
   background-color: rgb(252, 252, 252);
   height: 100vh;
-  padding: 20px;
+  padding: 0px;
 }
 .categorias .social{
   display: flex;

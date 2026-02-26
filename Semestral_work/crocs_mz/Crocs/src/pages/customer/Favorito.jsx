@@ -29,9 +29,9 @@ const Favoritos = () => {
                   <button onClick={() => toggleFavorite(product)} className="remove">
                     Remover
                   </button>
-                  <button onClick={() => toggleFavorite(product)} className="add">
+                 {/* <button onClick={() => toggleFavorite(product)} className="add">
                  Adicionar ao carrinho
-                  </button>
+                  </button>*/}
                 </div>
               ))
             ) : (

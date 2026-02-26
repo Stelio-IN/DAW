@@ -62,20 +62,29 @@ const HistoricoCompras = () => {
 
   // Função para calcular o total de cada pedido
   const calcOrderTotal = (order) => {
-    let total = 0;
+  let total = 0;
 
-    order.items.products.forEach((item) => {
-      const value = item.total_com_promocao ?? item.total_sem_promocao ?? 0;
-      total += Number(value);
-    });
+  // PRODUTOS
+  order.items.products.forEach((item) => {
+    const unit =
+      Number(item.unit_price ?? 0);
 
-    order.items.jibbitz.forEach((item) => {
-      const value = item.total_promo_price ?? item.total_base_price ?? 0;
-      total += Number(value);
-    });
+    const quantity = Number(item.quantity ?? 0);
 
-    return total.toFixed(2);
-  };
+    total += unit * quantity;
+  });
+
+  // JIBBITZ (CORRIGIDO)
+  order.items.jibbitz.forEach((item) => {
+    const unit =
+      item.promo_unit_price && item.promo_unit_price > 0
+        ? Number(item.promo_unit_price)
+        : Number(item.base_price ?? 0);
+    const quantity = Number(item.quantity ?? 0);
+    total += unit * quantity;
+  });
+  return total.toFixed(2);
+};
 
   return (
     <div className="content-about">
@@ -130,14 +139,10 @@ const HistoricoCompras = () => {
                             <strong>Preço unitário:</strong>{" "}
                             {Number(item.unit_price).toFixed(2)} MT
                           </p>
-                          <p>
-                            <strong>Total:</strong>{" "}
-                            {Number(
-                              item.total_com_promocao ??
-                                item.total_sem_promocao
-                            ).toFixed(2)}{" "}
-                            MT
-                          </p>
+                        <p>
+  <strong>Total:</strong>{" "}
+  {(Number(item.unit_price ?? 0) * Number(item.quantity ?? 0)).toFixed(2)} MT
+</p>
                         </div>
                       </div>
                     ))}
@@ -159,21 +164,22 @@ const HistoricoCompras = () => {
                           <p>
                             <strong>Quantidade:</strong> {item.quantity}
                           </p>
-                          <p>
-                            <strong>Preço unitário:</strong>{" "}
-                            {Number(
-                              item.promo_unit_price ?? item.base_price
-                            ).toFixed(2)}{" "}
-                            MT
-                          </p>
-                          <p>
-                            <strong>Total:</strong>{" "}
-                            {Number(
-                              item.total_promo_price ??
-                                item.total_base_price
-                            ).toFixed(2)}{" "}
-                            MT
-                          </p>
+                         <p>
+  <strong>Preço unitário:</strong>{" "}
+  {Number(
+    item.promo_unit_price > 0
+      ? item.promo_unit_price
+      : item.base_price
+  ).toFixed(2)} MT
+</p>
+                         <p>
+  <strong>Total:</strong>{" "}
+  {Number(
+    item.total_promo_price > 0
+      ? item.total_promo_price
+      : item.total_base_price
+  ).toFixed(2)} MT
+</p>
                         </div>
                       </div>
                     ))}

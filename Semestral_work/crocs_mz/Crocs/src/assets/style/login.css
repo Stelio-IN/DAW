@@ -1,136 +1,152 @@
-/* RESET BÁSICO */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
-
-html, body {
-  height: 100%;
   font-family: Arial, sans-serif;
 }
 
 /* CONTAINER PRINCIPAL */
-.container {
+.login-container {
+  margin-top: 20px;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f3f4f6;
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-color: #3d0505; /* fundo escuro */
 }
 
-/* FORMULÁRIO (LOGIN + REGISTRO) */
-.form {
+/* CARD */
+.login-card {
+  width: 90%;
+  max-width: 1100px;
+  height: 600px;
+  background: white;
   display: flex;
-  justify-content: space-around;
-  align-items: flex-start;
-  background-color: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  width: 80%;
-  max-width: 900px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
-/* ÁREAS LOGIN E REGISTRO */
-.login_area, .sign_in_area {
-  width: 45%;
+/* LADO ESQUERDO */
+.login-left {
+  width: 50%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  transition: all 0.3s ease-in-out;
-  padding: 20px;
+  padding: 40px;
 }
 
-/* TÍTULOS */
-.login_area p, .sign_in_area p {
-  font-size: 1.4rem;
-  margin-bottom: 15px;
-  text-align: center;
+.login-box {
+  width: 100%;
+  max-width: 350px;
+}
+
+.login-box h2 {
+  margin-bottom: 30px;
+  font-size: 22px;
 }
 
 /* INPUTS */
-.login_area input, .sign_in_area input {
+.login-box input {
   width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid rgba(14,14,14,0.6);
+  padding: 14px;
+  margin-bottom: 15px;
   border-radius: 8px;
-  font-size: 1rem;
+  border: 1px solid #ddd;
   outline: none;
+  transition: 0.3s;
+  background-color: rgb(253, 252, 252);
 }
 
-.login_area input:focus, .sign_in_area input:focus {
-  border-color: #64fac5;
+.login-box input:focus {
+  border-color: #0bcd3c;
 }
 
-/* BOTÕES */
-#btn_logar, #btn_registrar {
-  background-color: #000;
-  color: #fff;
+/* BOTÃO */
+.btn-login {
   width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 6px;
+  padding: 14px;
+  border-radius: 8px;
   border: none;
+  background-color: #51bc34;
+  color: white;
+  font-weight: bold;
   cursor: pointer;
-  font-size: 1rem;
+  transition: 0.3s;
 }
 
-#btn_logar:hover, #btn_registrar:hover {
+.btn-login:hover {
   opacity: 0.9;
 }
 
-/* LINK E CRIAR CONTA */
-.login_area p[style*="cursor: pointer"] {
-  margin-top: 10px;
-  color: #000;
+/* LINK */
+.register-link {
+  margin-top: 15px;
+  text-align: center;
   cursor: pointer;
-  font-weight: bold;
+  color: #5e5b58;
+  font-weight: 100;
+  text-decoration: underline;
 }
 
-/* ÁREA REGISTRO CHECKBOX */
-.sign_in_area label {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-  font-size: 0.9rem;
+/* LADO DIREITO */
+.login-right {
+  width: 50%; /* estava 100%, isso quebra o layout */
+  height: 100%;
+  background-color: #eef0f3;
+  overflow: hidden;
 }
 
-.sign_in_area label input {
-  margin-right: 5px;
+/* IMAGEM OCUPANDO 100% */
+.login-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* mantém proporção e preenche */
+  display: block;
 }
 
 /* ERRO */
-.form p.error {
+.error {
   color: red;
-  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
 }
 
-/* ÁREA LOGADO */
-.logged_in_area {
+.login-logo {
+  width: 90px;
+  margin-bottom: 20px;
+  border-radius: 50px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.terms {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
+  gap: 6px; /* espaço pequeno entre checkbox e texto */
+  font-size: 13px;
+  font-weight: 100;
 }
 
-.logged_in_area p {
-  margin-bottom: 15px;
-  font-size: 1.2rem;
+.terms p {
+  margin: 0;
 }
 
 /* RESPONSIVO */
-@media (max-width: 800px) {
-  .form {
+@media (max-width: 900px) {
+  .login-card {
     flex-direction: column;
-    align-items: center;
-    width: 90%;
+    height: auto;
   }
-  .login_area, .sign_in_area {
+
+  .login-left, .login-right {
     width: 100%;
-    margin-bottom: 20px;
+  }
+
+  .login-right {
+    padding: 30px;
   }
 }

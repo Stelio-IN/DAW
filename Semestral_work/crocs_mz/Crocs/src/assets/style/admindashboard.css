@@ -3,7 +3,7 @@ body{
 }
 .admin-dashboard {
   min-height: 100vh;
-  background-color: #f8fafc;
+  background-color: #ffffff;
   display: flex;
   flex-direction: column;
   padding-top: 4rem;
@@ -168,11 +168,13 @@ td:nth-child(2), td:nth-child(3) {
   padding: 12px;
   text-align: left;
   border-bottom: 1px solid #eee;
+  
 }
 
 .tabela-vendas th {
   background-color: #f5f5f5;
   color: #333;
+  
 }
 
 .produto-img {
@@ -196,6 +198,7 @@ td:nth-child(2), td:nth-child(3) {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  
 }
 
 .tabela-vendas th {
@@ -252,4 +255,44 @@ td:nth-child(2), td:nth-child(3) {
 .faturamento {
   font-weight: 600;
   color: #059669;
+}
+/* Scroll nas tabelas */
+.tabela-scroll {
+  max-height: 350px;
+  overflow-y: auto;
+  overflow-x: auto;
+  border-radius: 12px;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #19551f #f1f1f1;
+}
+
+/* Chrome, Edge e Safari */
+.tabela-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.tabela-scroll::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.tabela-scroll::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.tabela-scroll::-webkit-scrollbar-thumb:hover {
+  background: #1c5221;
+}
+
+/* Cabeçalho fixo */
+.tabela-scroll thead th {
+  position: sticky;
+  top: 0;
+ 
+  z-index: 2;
 }

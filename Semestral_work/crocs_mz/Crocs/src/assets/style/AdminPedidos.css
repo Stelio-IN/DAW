@@ -8,180 +8,196 @@
   color: #333;
 }
 
+/* =========================
+   HEADER
+========================= */
 .orders-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
 }
 
 .orders-header h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
 }
 
-.tabs {
-  display: flex;
-  gap: 20px;
-}
-
-.tab-group {
-  display: flex;
-  align-items: center;
-}
-
-.tab-group > span {
-  font-weight: 600;
-  margin-right: 16px;
-}
-
+/* =========================
+   TABS MODERNAS
+========================= */
 .tab-items {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  background: white;
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .tab-items button {
-  background: none;
   border: none;
-  padding: 8px 12px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: transparent;
   font-size: 14px;
   cursor: pointer;
-  color: #666;
-  border-radius: 4px;
-  transition: all 0.2s;
+  color: #6b7280;
+  transition: all 0.2s ease;
 }
 
 .tab-items button:hover {
-  background-color: #f5f5f5;
+  background: #f3f4f6;
 }
 
 .tab-items button.active {
-  background-color: #f0f7ff;
-  color: #1a73e8;
+  background: #111827;
+  color: white;
   font-weight: 500;
 }
 
-.search-container {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.search-input {
-  flex: 1;
-  max-width: 400px;
-}
-
-.search-input input {
-  width: 100%;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.search-input input:focus {
-  outline: none;
-  border-color: #1a73e8;
-  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-}
-
-.actions button {
-  padding: 10px 20px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  background: white;
-  font-size: 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-}
-
-.actions button:hover {
-  background-color: #f5f5f5;
-}
-
-.sort-btn::after {
-  content: "▼";
-  font-size: 10px;
-  margin-left: 4px;
-}
-
-.divider {
-  height: 1px;
-  background-color: #eee;
-  margin: 20px 0;
-}
-
+/* =========================
+   GRID TABELA MODERNA
+========================= */
 .orders-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr 1fr 0.7fr 1fr 1.5fr;
-  border: 1px solid #eee;
-  border-radius: 8px;
+  background: white;
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }
 
+/* Cabeçalho */
 .grid-header {
   display: contents;
 }
 
 .grid-header > div {
-  background-color: #f8f9fa;
-  padding: 14px 16px;
+  background: #111827;
+  color: white;
+  padding: 16px;
   font-weight: 600;
-  font-size: 14px;
-  border-bottom: 1px solid #eee;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
+/* Linhas */
 .order-item {
   display: contents;
 }
 
 .order-item > div {
   padding: 16px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f3f4f6;
   display: flex;
   align-items: center;
   font-size: 14px;
+  color: #374151;
+  transition: background 0.2s ease;
 }
 
-.order-item:last-child > div {
-  border-bottom: none;
+.order-item:hover > div {
+  background: #f9fafb;
 }
 
+/* Produto */
 .product-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-weight: 500;
 }
 
+.product-name img {
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #f3f4f6;
+}
+
+/* =========================
+   STATUS BADGES
+========================= */
 .status {
-  padding: 6px 12px;
-  border-radius: 16px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
   display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
+/* Pago */
 .status.complete {
-  background-color: #e6f4ea;
-  color: #137333;
+  background: #ecfdf5;
+  color: #059669;
 }
 
-.status.cash {
-  background-color: #fce8e6;
-  color: #a50e0e;
+/* Pendente */
+.status.pending {
+  background: #fffbeb;
+  color: #d97706;
 }
 
+/* Cancelado */
+.status.cancelled {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+/* =========================
+   BOTÃO DETALHES MODERNO
+========================= */
+.status button {
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 5px 10px;
+  font-size: 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status button:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   PAGINAÇÃO
+========================= */
 .pagination {
-  margin-top: 24px;
+  margin-top: 20px;
   text-align: right;
-  font-size: 14px;
-  color: #666;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* =========================
+   SCROLL MODERNO
+========================= */
+.orders-grid {
+  max-height: 500px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #d1d5db transparent;
+}
+
+.orders-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.orders-grid::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.orders-grid::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
 }

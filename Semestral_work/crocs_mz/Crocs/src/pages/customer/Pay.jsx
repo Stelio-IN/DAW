@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../../assets/style/pagamento.css";
-import "../../assets/style/loja.css";
+//import "../../assets/style/loja.css";
 import paypal from "../../assets/img/paypal-logo.png";
 import cartao from "../../assets/img/card.svg";
 import mpesa from "../../assets/img/mpesa.png";
@@ -288,7 +288,7 @@ if (invalidItems.length > 0) {
                 flexDirection: "column",
               }}
             >
-              <button onClick={handleSubmitOrder}>Finalizarrrrr Compra</button>
+    
             </div>
 
             <section className="Payments">

@@ -63,7 +63,6 @@ const deleteOrderItem = async (req, res) => {
   }
 };
 
-
 const getOrderDetails = async (req, res) => {
   try {
     // 🔐 USER VINDO DO AUTH STORAGE (TOKEN)
@@ -153,10 +152,7 @@ const getOrderDetails = async (req, res) => {
 
       -- IMAGEM (SIZE > COLOR)
       LEFT JOIN productimages pi
-        ON (
-             pi.product_color_size_id = pcs.product_color_size_id
-             OR pi.product_color_id = pc.product_color_id
-           )
+        ON pi.product_color_id = pc.product_color_id
        AND pi.is_primary = 1
 
       WHERE oi.order_id IN (:orderIds)
@@ -237,10 +233,6 @@ const getOrderDetails = async (req, res) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
-
-
-
 
 
 export default {

@@ -306,61 +306,58 @@ const [produtosMargem, setProdutosMargem] = useState([]);
                 </select>
               </div>
 
-              <table className="tabela-vendas">
-                <thead>
-                  <tr>
-                    <th>Produto</th>
-                    <th>Cor</th>
-                    <th>Tamanho</th>
-                    <th>Vendas</th>
-                    <th>Faturamento (MZN)</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {dados.length > 0 ? (
-                    dados.map((item, i) => (
-                      <tr key={i}>
-                        <td className="produto-info">
-                          <img
-                            src={item.imagem_principal || "/placeholder.png"}
-                            alt={item.nome_produto}
-                            className="produto-img"
-                          />
-                          <div>
-                            <strong>{item.nome_produto}</strong>
-                          </div>
-                        </td>
-
-                        <td>
-                          <span className="badge-cor">{item.cor || "-"}</span>
-                        </td>
-
-                        <td>
-                          <span className="badge-tamanho">
-                            {item.tamanho || "-"}
-                          </span>
-                        </td>
-
-                        <td className="vendas">{item.total_vendas}</td>
-
-                        <td className="faturamento">
-                          {parseFloat(item.total_faturado).toLocaleString(
-                            "pt-PT",
-                            {
-                              minimumFractionDigits: 2,
-                            },
-                          )}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
+              <div className="tabela-scroll">
+                <table className="tabela-vendas">
+                  <thead>
                     <tr>
-                      <td colSpan={5}>Nenhum dado disponível para este mês.</td>
+                      <th>Produto</th>
+                      <th>Cor</th>
+                      <th>Tamanho</th>
+                      <th>Vendas</th>
+                      <th>Faturamento (MZN)</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {dados.length > 0 ? (
+                      dados.map((item, i) => (
+                        <tr key={i}>
+                          <td className="produto-info">
+                            <img
+                              src={item.imagem_principal || "/placeholder.png"}
+                              alt={item.nome_produto}
+                              className="produto-img"
+                            />
+                            <div>
+                              <strong>{item.nome_produto}</strong>
+                            </div>
+                          </td>
+                          <td>
+                            <span className="badge-cor">{item.cor || "-"}</span>
+                          </td>
+                          <td>
+                            <span className="badge-tamanho">
+                              {item.tamanho || "-"}
+                            </span>
+                          </td>
+                          <td className="vendas">{item.total_vendas}</td>
+                          <td className="faturamento">
+                            {parseFloat(item.total_faturado).toLocaleString(
+                              "pt-PT",
+                              {
+                                minimumFractionDigits: 2,
+                              },
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan={5}>Nenhum dado disponível para este mês.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
             {categoriasMensais && (
@@ -407,83 +404,78 @@ const [produtosMargem, setProdutosMargem] = useState([]);
     <h2>💰 Produtos com Maior Margem</h2>
   </div>
 
-  <table className="tabela-vendas">
-    <thead>
-      <tr>
-        <th>Produto</th>
-        <th>Receita (MZN)</th>
-        <th>Custo (MZN)</th>
-        <th>Lucro (MZN)</th>
-        <th>Margem %</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      {produtosMargem.length > 0 ? (
-        produtosMargem.map((item, i) => {
-          const receita = parseFloat(item.receita || 0);
-          const custo = parseFloat(item.custo || 0);
-          const lucro = parseFloat(item.lucro || 0);
-
-          const margem =
-            receita > 0 ? (lucro / receita) * 100 : 0;
-
-          return (
-            <tr key={i}>
-              <td className="produto-info">
-                <img
-                  src={item.imagem_principal || "/placeholder.png"}
-                  alt={item.produto}
-                  className="produto-img"
-                />
-                <div>
-                  <strong>{item.produto}</strong>
-                </div>
-              </td>
-
-              <td>
-                {receita.toLocaleString("pt-PT", {
-                  minimumFractionDigits: 2,
-                })}
-              </td>
-
-              <td>
-                {custo.toLocaleString("pt-PT", {
-                  minimumFractionDigits: 2,
-                })}
-              </td>
-
-              <td className="faturamento">
-                {lucro.toLocaleString("pt-PT", {
-                  minimumFractionDigits: 2,
-                })}
-              </td>
-
-              <td
-                style={{
-                  fontWeight: "600",
-                  color:
-                    margem >= 40
-                      ? "#059669"
-                      : margem < 20
-                      ? "#dc2626"
-                      : "#d97706",
-                }}
-              >
-                {margem.toFixed(2)}%
-              </td>
-            </tr>
-          );
-        })
-      ) : (
+  <div className="tabela-scroll">
+    <table className="tabela-vendas">
+      <thead>
         <tr>
-          <td colSpan={5}>
-            Nenhum dado disponível para este mês.
-          </td>
+          <th>Produto</th>
+          <th>Receita (MZN)</th>
+          <th>Custo (MZN)</th>
+          <th>Lucro (MZN)</th>
+          <th>Margem %</th>
         </tr>
-      )}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {produtosMargem.length > 0 ? (
+          produtosMargem.map((item, i) => {
+            const receita = parseFloat(item.receita || 0);
+            const custo = parseFloat(item.custo || 0);
+            const lucro = parseFloat(item.lucro || 0);
+            const margem =
+              receita > 0 ? (lucro / receita) * 100 : 0;
+            return (
+              <tr key={i}>
+                <td className="produto-info">
+                  <img
+                    src={item.imagem_principal || "/placeholder.png"}
+                    alt={item.produto}
+                    className="produto-img"
+                  />
+                  <div>
+                    <strong>{item.produto}</strong>
+                  </div>
+                </td>
+                <td>
+                  {receita.toLocaleString("pt-PT", {
+                    minimumFractionDigits: 2,
+                  })}
+                </td>
+                <td>
+                  {custo.toLocaleString("pt-PT", {
+                    minimumFractionDigits: 2,
+                  })}
+                </td>
+                <td className="faturamento">
+                  {lucro.toLocaleString("pt-PT", {
+                    minimumFractionDigits: 2,
+                  })}
+                </td>
+                <td
+                  style={{
+                    fontWeight: "600",
+                    color:
+                      margem >= 40
+                        ? "#059669"
+                        : margem < 20
+                        ? "#dc2626"
+                        : "#d97706",
+                  }}
+                >
+                  {margem.toFixed(2)}%
+                </td>
+              </tr>
+            );
+          })
+        ) : (
+          <tr>
+            <td colSpan={5}>
+              Nenhum dado disponível para este mês.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
 </div>
 
 

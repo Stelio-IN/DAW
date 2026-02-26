@@ -79,7 +79,6 @@
     padding-bottom: 13px;
 }
 
-  
 .product_{
   display: flex;
   width: 100%;
@@ -91,7 +90,7 @@
     list-style: none;
     padding: 0;
     width: 60vw;
-    background-color: rgb(56, 162, 63);
+    background-color: rgb(255, 255, 255);
     max-height: 100vh;
     overflow-y: auto;
     scrollbar-width: none;
@@ -114,7 +113,6 @@
     width: 55%;
   }
 
-
   .productDetails_2 {
     width: 100%;
   }
@@ -131,9 +129,6 @@
     width: 170px;
   }
 
-
-  
-
   .buttons_ {
     display: flex;
     background-color: rgb(255, 255, 255);
@@ -147,10 +142,27 @@
     border: 1px solid rgb(0, 0, 0);
     text-align: center;
     margin: auto;
-  
+  margin-left: 8px;
+  width: 110px;
   }
   
-  .removeButton_, .addWishList_ {
+  .button_:hover {
+    background-color: #8be095;
+    border: 1px solid #8be095;
+  }
+  
+  .removeButton_ {
+    background-color: rgb(255, 255, 255);
+    text-decoration: underline;
+    width: 80px;
+    font-size: 10pt;
+    font-family: 'Courier New', Courier, monospace;
+    color: black;
+    border: none;
+  }
+  
+  
+ .addWishList_ {
     background-color: rgb(255, 255, 255);
     text-decoration: underline;
     width: 70px;
@@ -158,6 +170,7 @@
     font-family: 'Courier New', Courier, monospace;
     color: black;
     border: none;
+    display: none;
   }
   
   .total_ {
@@ -262,6 +275,7 @@
  color: rgb(72, 72, 72);
  margin-top: 2px;
 }
+
 .order_{
   display: flex;
   flex-direction: column;
@@ -294,7 +308,6 @@
   font-size: 13pt;
 }
 
-
   }
 @media screen and (max-width: 860px){
   .button_ {
@@ -304,13 +317,11 @@
     border: 1px solid rgb(0, 0, 0);
     text-align: center;
     margin: auto;
-  
   }
   .removeButton_, .addWishList_ {
     border: none;
   }
 
-  
 .buttons_ {
   display: flex;
   background-color: rgb(255, 255, 255);

@@ -12,6 +12,7 @@ import {
   BarChart3,
 } from 'lucide-react';
 import '../assets/style/adminlayout.css';
+import logo from '../../public/img/crocs_log.png'
 
 const AdminNav = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -47,14 +48,14 @@ const AdminNav = () => {
         { label: 'Associar produto a imagem', path: 'produto/associar-produto-imagem' },
       ],
     },
-    {
+    /*{
       label: 'Usuários',
       icon: Users,
       children: [
         { label: 'Todos os Usuários', path: 'usuarios' },
         { label: 'Detalhe do Usuário', path: 'usuario/detalhe' },
       ],
-    },
+    },*/
     {
       label: 'Gestão de Estoque',
       icon: BarChart3,
@@ -83,8 +84,12 @@ const AdminNav = () => {
         </button>
       </div>
 
-      <div className="sidebar-scroll-container">
-        <nav>
+  
+        <nav className='navbar'>
+
+          <div className='logo-admin'>
+            <img src={logo} alt="" id="imagem"/>
+          </div>
           {items.map(({ label, path, icon: Icon, children }, index) => (
             <div key={label} style={{ '--item-index': index }}>
               {path ? (
@@ -134,7 +139,7 @@ const AdminNav = () => {
             </div>
           ))}
         </nav>
-      </div>
+      
       
       {/* Footer com versão */}
       {!collapsed && (

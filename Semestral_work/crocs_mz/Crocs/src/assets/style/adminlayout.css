@@ -12,24 +12,51 @@
    SIDEBAR
 ========================= */
 .admin-sidebar {
-  width: 220px;
-  max-width: 220px;
+  width: 250px;
   height: 100vh;
-  background-color: #126c5d;
+  background-color: #f34ecf;
   color: #fff;
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease;
-  flex-shrink: 0;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden; /* impede clique fora da área visível */
+  overflow-y: auto; 
+  margin-top: 0;
 }
 
 .admin-sidebar.collapsed {
   width: 60px;
   max-width: 60px;
 }
+
+.navbar{
+  width: 300px;
+  background-color: #7d896a;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.logo-admin{
+ height: 150px;
+ width: 160px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0);
+  border-radius: 100px;
+  right: 20px;
+  position: relative;
+  margin-top: 30px;
+}
+
+#imagem{
+  width: 200px;
+  height: 200px;
+  right: 20px;
+  bottom: 5px;
+  position: relative;
+}
+/** #74B708  crocs cor*/
+
 
 /* =========================
    HEADER SIDEBAR
@@ -43,8 +70,11 @@
   flex-shrink: 0;
   width: 100%;
   box-sizing: border-box;
-  background-color: #126c5d; /* cor do header */
+  background-color: #e8e9e9; /* cor do header */
+  display: none;
 }
+
+
 
 .toggle-btn {
   background: none;
@@ -62,8 +92,12 @@
   overflow-x: hidden; /* impede clique ou scroll horizontal fora */
   padding: 8px;
   width: 100%;
+  height: 200px;
   box-sizing: border-box;
   scrollbar-width: thin;
+  margin-top: 120px;
+  background-color: rgb(255, 255, 10);
+  display: none;
 }
 
 .sidebar-scroll-container::-webkit-scrollbar {
@@ -82,17 +116,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  margin-top: 8px;
-  width: 100%;
+  margin: 8px;
+  width: 77%;
+  margin-right: 10px;
   max-width: 100%;
+  z-index: 0;
   color: #fff;
   text-decoration: none;
   cursor: pointer;
   border-radius: 8px;
+  background-color: rgb(247, 245, 245);
   transition: background-color 0.2s ease;
-  box-sizing: border-box;
-  position: relative; /* corrige área de clique */
+  position: relative;
 }
 
 .menu-link:hover {
@@ -105,6 +140,7 @@
 .submenu-wrapper {
   overflow: hidden;
   transition: max-height 0.35s ease, opacity 0.25s ease;
+  width: 90%;
 }
 
 .submenu-wrapper.closed {
@@ -130,15 +166,19 @@
 
 .submenu-link {
   padding: 8px 10px;
-  font-size: 14px;
-  color: #e6e6e6;
+  font-size: 15px;
+  font-weight: 500;
+  color: #142c1e;
   text-decoration: none;
   border-radius: 6px;
-  width: 100%;
-  max-width: 100%;
+  width: 90%;
+  max-width: 90%;
   box-sizing: border-box;
   transition: background-color 0.2s ease;
   position: relative;
+  background-color: rgba(255, 255, 255, 0.89);
+  border-radius: 10px;
+  margin: 3px;
 }
 
 .submenu-link:hover {
@@ -162,12 +202,15 @@
 ========================= */
 .admin-content {
   flex: 1;
-  padding: 20px;
-  background-color: #f6f6f6;
-  color: #333;
+  background-color: #ffffff;
+  padding: 15px;
+  color: #ae7d7d;
   overflow-y: auto;
   position: relative;
   z-index: 1;
+  border-radius: 40px;
+  height: 100vh;
+  box-shadow: 3px 3px 3px black;
 }
 
 /* =========================

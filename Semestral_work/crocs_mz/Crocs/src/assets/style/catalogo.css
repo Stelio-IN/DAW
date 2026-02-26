@@ -88,6 +88,7 @@ section .product {
     height: 70%;
     margin: 0 10px 0 0;
     border-radius: 20px;
+    padding: 10px;
     position: relative;
     transition: 0.5s;
     background-color: rgb(255, 255, 255);
@@ -97,9 +98,9 @@ section .product {
 
 picture {
     margin: auto;
-    width: 100%;
+    width: 70%;
     border-radius: 4px;
-    height: 100%;
+    height: 70%;
     padding: 20px;
     background: rgb(255, 255, 255);
     display: flex;
@@ -168,19 +169,27 @@ small {
     width: 115px;
     font-size: 0.9rem;
     position: relative;
-    left: 90px;
+    left: 0px;
     text-align: right;
 
+}
+.product-button:hover {
+    background-color: rgb(233, 231, 231);
 }
 
 
 
 .btn_favoritoo{
-    margin-left: 140px;
+    margin-left: 150px;
   position: absolute;
   top: 2px;
   background: rgb(255, 255, 255);
     z-index: auto;
+    width: 100px;
+}
+
+.btn_favoritoo:hover{
+  background: rgb(246, 240, 240);
 }
 
 #seta_esquerda {

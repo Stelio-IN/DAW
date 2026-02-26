@@ -114,6 +114,8 @@ const Home = () => {
                 <FiArrowRight size={40} id="seta_direita" />
               </span>
             </header>
+
+            {/**Carrosel produtos */}
             <section>
               {products.length > 0 ? (
                 products.map((product, index) => (
@@ -551,13 +553,26 @@ const Home = () => {
             <div className="categore">
               <div className="categor">
                 <img src={template} alt="" />
-                <h2>Cartões</h2>
-                <button>Solicitar</button>
+                <h2>Crocs</h2>
+                <button>
+                   <Link to="/loja" className="desktop-item" style={{
+                  color: 'white',
+                  fontWeight: "bold",
+                }}>
+                     Comprar
+                    </Link>
+                  </button>
               </div>
               <div className="categor">
                 <img src={template4} alt="" />
                 <h2>jibbitz</h2>
-                <button>Comprar</button>
+                <button> 
+                  <Link to="/jibbitz" className="desktop-item" style={{
+                  color: 'white',
+                  fontWeight: "bold",
+                }}>
+                            Comprar
+                  </Link></button>
               </div>
               <div className="categor">
                 <img src={template4} alt="" />

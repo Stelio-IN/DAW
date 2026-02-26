@@ -11,7 +11,6 @@
     flex-direction: column;
     width: 100vw;
     background-color: rgb(255, 255, 255);
-    
   }
 
   .pagamento{
@@ -24,8 +23,6 @@
     border-radius: 20px;
 }
 
-
-
 .delivery{
   display: flex;
   flex-direction: column;
@@ -34,7 +31,6 @@
   width: 50vw;
   background-color: rgb(255, 255, 255);
  margin-top: 30px;
-
 }
 
 .delivery div{
@@ -48,9 +44,12 @@
   height: 50px;
   background-color: rgb(255, 255, 255);
   width: 100%;
+  color: rgb(0, 0, 0);
+  font-size: 12pt;
   border-radius: 7px;
   border: 1px solid rgb(184, 183, 183);
 }
+
  #newsletter{
   padding: 15px;
   background-color: rgb(255, 255, 255);
@@ -334,6 +333,15 @@ flex-direction: row;
   animation: fadeIn 0.3s ease-in-out;
   transition: all 0.3s ease-in-out;
   opacity: 1;
+}
+
+
+#btn_paypal:hover, 
+#btn_pay:hover, 
+#btn_emola:hover,
+#btn_card:hover,
+#btn_mpesa:hover {
+ background-color: rgb(255, 255, 255);
 }
 
 #btn_paypal img, 
