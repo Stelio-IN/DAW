@@ -111,102 +111,136 @@ const AdminCoresProduto = () => {
 
   /* ================= RENDER ================= */
   return (
-    <div className="cores-produto-container">
-      <h2>Cores do Produto</h2>
+  <div className="cores-produto-container">
+    <h2>Cores do Produto</h2>
 
-      <div className="produtos-table">
+    <div className="cores-produto-grid">
+      {/* Coluna esquerda - Produtos */}
+      <div className="produtos-col">
         <h3>Produtos</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th>Categoria</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {produtos.map((p) => (
-              <tr
-                key={p.product_id}
-                className={produtoSelecionado === p.product_id ? 'selected' : ''}
-                onClick={() => handleProdutoClick(p)}
-              >
-                <td>{p.name}</td>
-                <td>{p.category_name || '-'}</td>
-                <td>{p.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="produtos-table">
+         <table>
+  <thead>
+    <tr>
+      <th>Imagem</th>
+      <th>Produto</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {produtos.map((p) => (
+      <tr
+        key={p.product_id}
+        className={produtoSelecionado === p.product_id ? 'selected' : ''}
+        onClick={() => handleProdutoClick(p)}
+      >
+
+        {/* IMAGEM */}
+        <td>
+          {p.primary_image_url ? (
+            <img
+              src={p.primary_image_url}
+              alt={p.name}
+              style={{
+                width: "45px",
+                height: "45px",
+                objectFit: "cover",
+                borderRadius: "6px"
+              }}
+            />
+          ) : (
+            "Sem imagem"
+          )}
+        </td>
+
+        {/* NOME */}
+        <td>{p.name}</td>
+
+        {/* STATUS */}
+        <td>{p.status}</td>
+
+      </tr>
+    ))}
+  </tbody>
+</table>
+        </div>
       </div>
 
-      <hr />
+      {/* Coluna direita - Detalhes e ações */}
+      <div className="detalhes-col">
+        <h3>Produto Selecionado</h3>
+        <div className="produto-selecionado">
+          <span>
+            {produtos.find((p) => p.product_id === produtoSelecionado)?.name || 'Nenhum produto selecionado'}
+          </span>
+        </div>
 
-      <label>Produto Selecionado</label>
-      <input
-        value={
-          produtos.find((p) => p.product_id === produtoSelecionado)?.name || ''
-        }
-        readOnly
-      />
+        <h3>Associar Nova Cor</h3>
+        <div className="form-associar">
+          <div>
+            <label>Cor</label>
+            <select
+              value={corSelecionada}
+              onChange={(e) => setCorSelecionada(e.target.value)}
+            >
+              <option value="">Selecione</option>
+              {cores.map((c) => (
+                <option key={c.color_id} value={c.color_id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-      <label>Cor</label>
-      <select
-        value={corSelecionada}
-        onChange={(e) => setCorSelecionada(e.target.value)}
-      >
-        <option value="">Selecione</option>
-        {cores.map((c) => (
-          <option key={c.color_id} value={c.color_id}>
-            {c.name}
-          </option>
-        ))}
-      </select>
+          <div>
+            <label>Stock (opcional)</label>
+            <input
+              type="number"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              placeholder="Quantidade em stock"
+            />
+          </div>
 
-      <label>Stock</label>
-      <input
-        type="number"
-        value={stock}
-        onChange={(e) => setStock(e.target.value)}
-      />
+          <button onClick={associarCor}>Associar Cor</button>
+        </div>
 
-      <button onClick={associarCor}>Associar Cor</button>
-
-      <h3>Cores associadas</h3>
-      {coresProduto.length === 0 ? (
-        <p>Este produto não possui cores associadas.</p>
-      ) : (
-        <table className="cores-produto-table">
-          <thead>
-            <tr>
-              <th>Cor</th>
-              <th>Hex</th>
-            </tr>
-          </thead>
-          <tbody>
-            {coresProduto.map((cp) => (
-              <tr key={cp.product_color_id}>
-                <td>{cp.Color?.name || 'Não definido'}</td>
-                <td>
-                  <span
-                    style={{
-                      display: 'inline-block',
-                      width: '20px',
-                      height: '20px',
-                      backgroundColor: cp.Color?.hex_code || '#fff',
-                      border: '1px solid #000',
-                    }}
-                  />
-                  {cp.Color?.hex_code || '-'}
-                </td>
-               
+        <h3>Cores Associadas</h3>
+        {coresProduto.length === 0 ? (
+          <div className="empty-message">
+            Este produto ainda não possui cores associadas.
+          </div>
+        ) : (
+          <table className="cores-produto-table">
+            <thead>
+              <tr>
+                <th>Cor</th>
+                <th>Hex</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {coresProduto.map((cp) => (
+                <tr key={cp.product_color_id}>
+                  <td>
+                    <div className="color-badge">
+                      <div
+                        className="color-dot"
+                        style={{ backgroundColor: cp.Color?.hex_code || '#ccc' }}
+                      />
+                      {cp.Color?.name || 'Não definido'}
+                    </div>
+                  </td>
+                  <td>{cp.Color?.hex_code || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default AdminCoresProduto;

@@ -4,10 +4,10 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #fff;
+  background-color: #ffffff;
   color: #333;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
+  border-radius: 18px;
 }
 
 .order-header {
@@ -19,8 +19,9 @@
 
 .order-title h1 {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   margin: 0;
+  color: rgb(110, 150, 49);
 }
 
 .order-title h2 {
@@ -44,9 +45,9 @@
 }
 
 .print-btn {
-  background-color: #1a73e8;
+  background-color: #659c2d;
   color: white;
-  border: 1px solid #1a73e8;
+  border: 1px solid #659c2d;
 }
 
 .print-btn:hover {
@@ -82,17 +83,17 @@
 }
 
 .products-section, .customer-section {
-  background-color: #fafafa;
-  border-radius: 8px;
+  background-color: #ffffff;
+  border-radius: 15px;
   padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.352);
 }
 
 .products-section h3, .customer-section h3 {
   font-size: 18px;
   margin-top: 0;
   margin-bottom: 15px;
-  color: #333;
+  color: #4b3737;
 }
 
 .products-list {
@@ -101,7 +102,7 @@
   border: 1px solid #eee;
   border-radius: 8px;
   padding: 10px;
-  background-color: white;
+  background-color: #ffffff52;
 }
 
 .product-item {
@@ -254,6 +255,24 @@
 
 .address-section, .payment-section {
   margin-top: 25px;
+}
+.address-section input{
+  background-color: rgb(243, 242, 242);
+  width: 220px;
+  color: black;
+  height: 40px;
+  border: 1px solid rgb(162, 158, 158);
+  border-radius: 30px;
+  margin: 5px;
+}
+
+.address-section button{
+  width: 100px;
+  height: 40px;
+  border-radius: 30px;
+  background-color: #659c2d;
+  margin: 5px;
+
 }
 
 .address-details, .payment-details {

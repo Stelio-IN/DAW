@@ -67,7 +67,6 @@ const OrderDetailScreen = () => {
         </div>
         <div className="order-actions">
           <button className="print-btn" onClick={() => window.print()}>Imprimir</button>
-          <button className="options-btn">Mais opções</button>
         </div>
       </header>
 
@@ -125,11 +124,11 @@ const OrderDetailScreen = () => {
 
           {/* 🧾 Resumo do Pedido */}
           <div className="order-summary">
-            <div className="summary-item"><span>Subtotal:</span><span>MZN {subtotal}</span></div>
+         {/*   <div className="summary-item"><span>Subtotal:</span><span>MZN {subtotal}</span></div>
             <div className="summary-item"><span>Shipping fee:</span><span>MZN {orderInfo.shipping_amount || '0.00'}</span></div>
-            <div className="summary-item"><span>Discount:</span><span>MZN {orderInfo.discount_amount || '0.00'}</span></div>
-            <div className="summary-item"><span>Tax:</span><span>MZN {tax}</span></div>
-            <div className="summary-item total"><span>Total:</span><span>MZN {orderInfo.total_amount}</span></div>
+            <div className="summary-item"><span>Discount:</span><span>MZN {orderInfo.discount_amount || '0.00'}</span></div>*/}
+            <div className="summary-item"><span>Total:</span><span>MZN {orderInfo.total_amount}</span></div> 
+            <div className="summary-item total"><span>Total:</span><span>MZN {orderInfo.total_amount}</span></div> 
             <div className="summary-item"><span>Amount Paid:</span><span>MZN {orderInfo.total_amount}</span></div>
           </div>
         </div>
@@ -184,7 +183,7 @@ const OrderDetailScreen = () => {
               type="text"
               value={inputPedido}
               onChange={(e) => setInputPedido(e.target.value)}
-              placeholder="Ex: 60J91788AG2905626"
+              placeholder=" Pesquise o Nr do pedido (Ex: 300) "
             />
             <button onClick={() => navigate(`/admin/pedido/detalhe/${inputPedido.trim()}`)}>
               Pesquisar

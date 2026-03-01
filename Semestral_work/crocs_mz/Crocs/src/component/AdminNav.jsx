@@ -33,7 +33,7 @@ const AdminNav = () => {
       icon: Layers,
       children: [
         { label: 'Todos os Pedidos', path: 'pedidos' },
-        { label: 'Detalhe do Pedido', path: 'pedido/detalhe' },
+       // { label: 'Detalhe do Pedido', path: 'pedido/detalhe' },
       ],
     },
     {
@@ -41,7 +41,7 @@ const AdminNav = () => {
       icon: Package,
       children: [
         { label: 'Todos Produtos', path: 'produtos' },
-        { label: 'Detalhe do Produto', path: 'produto/detalhe' },
+        //{ label: 'Detalhe do Produto', path: 'produto/detalhe' },
         { label: 'Adicionar Produto', path: 'produto/adicionar' },
         { label: 'Associar produto a cor', path: 'produto/associar-produto-cor' },
         { label: 'Associar produto a tamanho', path: 'produto/associar-produto-tamanho' },

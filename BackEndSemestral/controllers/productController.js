@@ -13,9 +13,31 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.findAll();
+
+    const products = await Product.findAll({
+      attributes: {
+        include: [
+          [
+            db.sequelize.literal(`(
+              SELECT pi.image_url
+              FROM productcolors pc
+              JOIN productimages pi 
+                ON pi.product_color_id = pc.product_color_id
+              WHERE pc.product_id = Product.product_id
+              ORDER BY pi.is_primary DESC
+              LIMIT 1
+            )`),
+            "primary_image_url"
+          ]
+        ]
+      },
+      order: [["product_id", "DESC"]]
+    });
+
     res.status(200).json(products);
+
   } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -148,223 +170,110 @@ const getProductsEspecific = async (req, res) => {
   try {
     const [produto] = await db.sequelize.query(
       `
-      SELECT 
-        p.product_id,
-        p.name AS product_name,
-        p.price AS base_price,
-        g.name AS category_name,
-        p.description,
-        p.status,
-        MAX(pi.image_url) AS primary_image_url,
+SELECT 
+  p.product_id,
+  p.name AS product_name,
+  p.price AS base_price,
+  p.description,
+  p.status,
+  c.name AS category_name,
 
-        (
+  (
+    SELECT image_url
+    FROM productimages pi
+    JOIN productcolors pc ON pc.product_color_id = pi.product_color_id
+    WHERE pc.product_id = p.product_id
+      AND pi.is_primary = 1
+    LIMIT 1
+  ) AS primary_image_url,
+
+  (
+    SELECT JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'product_color_id', pc.product_color_id,
+        'name', col.name,
+        'hex_code', col.hex_code,
+
+        'images', (
           SELECT JSON_ARRAYAGG(
             JSON_OBJECT(
-              'product_color_id', pc.product_color_id,
-              'name', c.name,
-              'hex_code', c.hex_code,
-
-              'images', (
-                SELECT JSON_ARRAYAGG(
-                  JSON_OBJECT(
-                    'image_id', pi2.image_id,
-                    'image_url', pi2.image_url,
-                    'is_primary', pi2.is_primary
-                  )
-                )
-                FROM productimages pi2
-                WHERE pi2.product_color_id = pc.product_color_id
-              ),
-
-              'sizes', (
-                SELECT JSON_ARRAYAGG(
-                  JSON_OBJECT(
-                    'product_color_size_id', pcs.product_color_size_id,
-                    'sku', pcs.sku,
-                    'size_id', pcs.size_id,
-                    'size', s.size,
-                    'size_type', st.name,
-                    'stock_quantity', pcs.stock_quantity,
-
-                    'base_price', COALESCE(pcs.price_override, p.price),
-                    'cost_price', pcs.cost_price,
-
-                    -- Aqui pegamos os valores da tabela promotions com COALESCE
-                    'promo_stock_used', COALESCE(
-                      (SELECT pr.promo_stock_used
-                       FROM product_promotions pp
-                       JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                       WHERE (pp.product_color_size_id = pcs.product_color_size_id
-                              OR pp.product_color_id = pcs.product_color_id
-                              OR pp.product_id = p.product_id)
-                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                       ORDER BY
-                         CASE 
-                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                           WHEN pp.product_color_id IS NOT NULL THEN 2
-                           WHEN pp.product_id IS NOT NULL THEN 3
-                         END
-                       LIMIT 1), 0
-                    ),
-
-                    'promo_stock_limit', COALESCE(
-                      (SELECT pr.promo_stock_limit
-                       FROM product_promotions pp
-                       JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                       WHERE (pp.product_color_size_id = pcs.product_color_size_id
-                              OR pp.product_color_id = pcs.product_color_id
-                              OR pp.product_id = p.product_id)
-                         AND NOW() BETWEEN pr.start_date AND pr.end_date
-                       ORDER BY
-                         CASE 
-                           WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                           WHEN pp.product_color_id IS NOT NULL THEN 2
-                           WHEN pp.product_id IS NOT NULL THEN 3
-                         END
-                       LIMIT 1), 999999
-                    ),
-
-                    'promo_price', (
-                      SELECT ROUND(COALESCE(pcs.price_override, p.price) * (1 - pr.discount_percentage / 100), 2)
-                      FROM product_promotions pp
-                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                      WHERE 
-                        (pp.product_color_size_id = pcs.product_color_size_id
-                          OR pp.product_color_id = pcs.product_color_id
-                          OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
-                      ORDER BY
-                        CASE 
-                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                          WHEN pp.product_color_id IS NOT NULL THEN 2
-                          WHEN pp.product_id IS NOT NULL THEN 3
-                        END
-                      LIMIT 1
-                    ),
-
-                    'discount_percentage', (
-                      SELECT pr.discount_percentage
-                      FROM product_promotions pp
-                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                      WHERE 
-                        (pp.product_color_size_id = pcs.product_color_size_id
-                          OR pp.product_color_id = pcs.product_color_id
-                          OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
-                      ORDER BY
-                        CASE 
-                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                          WHEN pp.product_color_id IS NOT NULL THEN 2
-                          WHEN pp.product_id IS NOT NULL THEN 3
-                        END
-                      LIMIT 1
-                    ),
-
-                    'promotion_id', (
-                      SELECT pr.promotion_id
-                      FROM product_promotions pp
-                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                      WHERE 
-                        (pp.product_color_size_id = pcs.product_color_size_id
-                          OR pp.product_color_id = pcs.product_color_id
-                          OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
-                      ORDER BY
-                        CASE 
-                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                          WHEN pp.product_color_id IS NOT NULL THEN 2
-                          WHEN pp.product_id IS NOT NULL THEN 3
-                        END
-                      LIMIT 1
-                    ),
-
-                    'promotion_name', (
-                      SELECT pr.name
-                      FROM product_promotions pp
-                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                      WHERE 
-                        (pp.product_color_size_id = pcs.product_color_size_id
-                          OR pp.product_color_id = pcs.product_color_id
-                          OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
-                      ORDER BY
-                        CASE 
-                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                          WHEN pp.product_color_id IS NOT NULL THEN 2
-                          WHEN pp.product_id IS NOT NULL THEN 3
-                        END
-                      LIMIT 1
-                    ),
-
-                    'promotion_description', (
-                      SELECT pr.description
-                      FROM product_promotions pp
-                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                      WHERE 
-                        (pp.product_color_size_id = pcs.product_color_size_id
-                          OR pp.product_color_id = pcs.product_color_id
-                          OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
-                      ORDER BY
-                        CASE 
-                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                          WHEN pp.product_color_id IS NOT NULL THEN 2
-                          WHEN pp.product_id IS NOT NULL THEN 3
-                        END
-                      LIMIT 1
-                    ),
-
-                    'is_on_promotion', (
-                      SELECT 1
-                      FROM product_promotions pp
-                      JOIN promotions pr ON pr.promotion_id = pp.promotion_id
-                      WHERE 
-                        (pp.product_color_size_id = pcs.product_color_size_id
-                          OR pp.product_color_id = pcs.product_color_id
-                          OR pp.product_id = p.product_id)
-                        AND NOW() BETWEEN pr.start_date AND pr.end_date
-                      ORDER BY
-                        CASE 
-                          WHEN pp.product_color_size_id IS NOT NULL THEN 1
-                          WHEN pp.product_color_id IS NOT NULL THEN 2
-                          WHEN pp.product_id IS NOT NULL THEN 3
-                        END
-                      LIMIT 1
-                    )
-                  )
-                )
-                FROM product_color_sizes pcs
-                INNER JOIN sizes s ON pcs.size_id = s.size_id
-                INNER JOIN size_types st ON s.size_type_id = st.size_type_id
-                WHERE pcs.product_color_id = pc.product_color_id AND pcs.stock_quantity > 0
-
-                ORDER BY
-                  CASE 
-                    WHEN s.size REGEXP '^[0-9]+$' THEN CAST(s.size AS UNSIGNED)
-                    ELSE s.size
-                  END ASC
-              )
+              'image_id', pi.image_id,
+              'image_url', pi.image_url,
+              'is_primary', pi.is_primary
             )
           )
-          FROM productcolors pc
-          INNER JOIN colors c ON pc.color_id = c.color_id
-          WHERE pc.product_id = p.product_id
-          AND EXISTS (
-            SELECT 1
-            FROM product_color_sizes pcs
-            WHERE pcs.product_color_id = pc.product_color_id
-            AND pcs.stock_quantity > 0
-          )
-        ) AS colors
+          FROM productimages pi
+          WHERE pi.product_color_id = pc.product_color_id
+        ),
 
-      FROM products p
-      INNER JOIN categories g ON g.category_id = p.category_id
-      LEFT JOIN productcolors pc ON p.product_id = pc.product_id
-      LEFT JOIN productimages pi 
-        ON pc.product_color_id = pi.product_color_id AND pi.is_primary = 1
-      WHERE p.product_id = :id
-      GROUP BY p.product_id, p.name, p.price, p.description, g.name, p.status
-      `,
+        'sizes', (
+          SELECT JSON_ARRAYAGG(
+            JSON_OBJECT(
+              'product_color_size_id', pcs.product_color_size_id,
+              'sku', pcs.sku,
+              'size_id', pcs.size_id,
+              'size', s.size,
+              'size_type', st.name,
+              'stock_quantity', pcs.stock_quantity,
+
+              'base_price', COALESCE(pcs.price_override, p.price),
+              'cost_price', pcs.cost_price,
+
+              'promotion', (
+                SELECT JSON_OBJECT(
+                  'promotion_id', pr.promotion_id,
+                  'name', pr.name,
+                  'description', pr.description,
+                  'discount_percentage', pr.discount_percentage,
+                  'promo_price', ROUND(
+                    COALESCE(pcs.price_override, p.price) * 
+                    (1 - pr.discount_percentage / 100), 2
+                  ),
+                  'promo_stock_used', pr.promo_stock_used,
+                  'promo_stock_limit', pr.promo_stock_limit
+                )
+                FROM product_promotions pp
+                JOIN promotions pr 
+                  ON pr.promotion_id = pp.promotion_id
+                WHERE 
+                  (pp.product_color_size_id = pcs.product_color_size_id
+                  OR pp.product_color_id = pc.product_color_id
+                  OR pp.product_id = p.product_id)
+                  AND NOW() BETWEEN pr.start_date AND pr.end_date
+                ORDER BY
+                  CASE 
+                    WHEN pp.product_color_size_id IS NOT NULL THEN 1
+                    WHEN pp.product_color_id IS NOT NULL THEN 2
+                    WHEN pp.product_id IS NOT NULL THEN 3
+                  END
+                LIMIT 1
+              )
+
+            )
+          )
+          FROM product_color_sizes pcs
+          JOIN sizes s ON s.size_id = pcs.size_id
+          JOIN size_types st ON st.size_type_id = s.size_type_id
+          WHERE pcs.product_color_id = pc.product_color_id
+          AND pcs.stock_quantity > 0
+          ORDER BY
+            CASE 
+              WHEN s.size REGEXP '^[0-9]+$'
+              THEN CAST(s.size AS UNSIGNED)
+              ELSE s.size
+            END
+        )
+      )
+    )
+    FROM productcolors pc
+    JOIN colors col ON col.color_id = pc.color_id
+    WHERE pc.product_id = p.product_id
+  ) AS colors
+
+FROM products p
+JOIN categories c ON c.category_id = p.category_id
+WHERE p.product_id = :id
+`,
       {
         replacements: { id },
         type: db.sequelize.QueryTypes.SELECT,
@@ -385,8 +294,9 @@ const getProductsEspecific = async (req, res) => {
       primary_image_url: produto.primary_image_url,
       colors: produto.colors || [],
     });
+
   } catch (error) {
-    console.error("Erro ao buscar produto específico:", error);
+    console.error("Erro ao buscar produto:", error);
     res.status(500).json({ error: error.message });
   }
 };

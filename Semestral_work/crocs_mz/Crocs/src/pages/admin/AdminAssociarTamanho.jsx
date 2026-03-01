@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../../assets/style/AdminCoresTamanhos.css';
+import '../../assets/style/AdminTamanhos.css';
 
 const AdminCoresTamanhos = () => {
   const [produtos, setProdutos] = useState([]);
@@ -159,95 +159,85 @@ const AdminCoresTamanhos = () => {
         </div>
 
         {/* ================== FORM + DIV CORES ================== */}
-        <div className="form-div-section">
-          <div className="form-wrapper">
-            <h3>Adicionar Variação (SKU)</h3>
+        {/* ================== FORM + DIV CORES ================== */}
+<div className="form-div-section">
+  <div className="form-wrapper">
+    <h3>Adicionar Variação (SKU)</h3>
 
-            <div className="form-row">
-              <label>Cor:</label>
-              <select value={coresSelecionada} onChange={(e) => setCorSelecionada(e.target.value)}>
-                <option value="">Selecione</option>
-                {coresProduto.map((c) => (
-                  <option key={c.product_color_id} value={c.product_color_id}>
-                    {c.Color?.name} ({c.stock_quantity_total ?? 0} em stock)
-                  </option>
-                ))}
-              </select>
-            </div>
+    <div className="form-grid">
+      <div className="form-group">
+        <label>Cor</label>
+        <select value={coresSelecionada} onChange={(e) => setCorSelecionada(e.target.value)}>
+          <option value="">Selecione</option>
+          {coresProduto.map((c) => (
+            <option key={c.product_color_id} value={c.product_color_id}>
+              {c.Color?.name} ({c.stock_quantity_total ?? 0} em stock)
+            </option>
+          ))}
+        </select>
+      </div>
 
-            <div className="form-row">
-              <label>Tamanho:</label>
-              <select name="size_id" value={formData.size_id} onChange={handleInputChange}>
-                <option value="">Selecione</option>
-                {sizes.map((s) => (
-                  <option key={s.size_id} value={s.size_id}>
-                    {s.size}
-                  </option>
-                ))}
-              </select>
-            </div>
+      <div className="form-group">
+        <label>Tamanho</label>
+        <select name="size_id" value={formData.size_id} onChange={handleInputChange}>
+          <option value="">Selecione</option>
+          {sizes.map((s) => (
+            <option key={s.size_id} value={s.size_id}>{s.size}</option>
+          ))}
+        </select>
+      </div>
 
-            <div className="form-row">
-              <label>Gênero:</label>
-              <select name="gender_id" value={formData.gender_id} onChange={handleInputChange}>
-                <option value="">Selecione</option>
-                {genders.map((g) => (
-                  <option key={g.gender_id} value={g.gender_id}>
-                    {g.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+      <div className="form-group">
+        <label>Gênero</label>
+        <select name="gender_id" value={formData.gender_id} onChange={handleInputChange}>
+          <option value="">Selecione</option>
+          {genders.map((g) => (
+            <option key={g.gender_id} value={g.gender_id}>{g.name}</option>
+          ))}
+        </select>
+      </div>
 
-            <div className="form-row">
-              <label>Stock:</label>
-              <input type="number" name="stock_quantity" value={formData.stock_quantity} onChange={handleInputChange} />
-            </div>
+      <div className="form-group">
+        <label>Stock</label>
+        <input type="number" name="stock_quantity" value={formData.stock_quantity} onChange={handleInputChange} />
+      </div>
 
-            <div className="form-row">
-              <label>SKU:</label>
-              <input type="text" name="sku" value={formData.sku} onChange={handleInputChange} />
-            </div>
+      <div className="form-group">
+        <label>SKU</label>
+        <input type="text" name="sku" value={formData.sku} onChange={handleInputChange} />
+      </div>
 
-            <div className="form-row">
-              <label>Preço:</label>
-              <input type="number" name="price_override" value={formData.price_override} onChange={handleInputChange} />
-            </div>
+      <div className="form-group">
+        <label>Preço (override)</label>
+        <input type="number" name="price_override" value={formData.price_override} onChange={handleInputChange} />
+      </div>
 
-            <div className="form-row">
-              <label>Custo:</label>
-              <input type="number" name="cost_price" value={formData.cost_price} onChange={handleInputChange} />
-            </div>
+      <div className="form-group">
+        <label>Custo</label>
+        <input type="number" name="cost_price" value={formData.cost_price} onChange={handleInputChange} />
+      </div>
+    </div>
 
-            <button onClick={handleSubmit}>Salvar Variação</button>
-          </div>
+    <button onClick={handleSubmit}>Salvar Variação</button>
+  </div>
 
-          {/* ================== DIV DE CORES ================== */}
-          <div className="cores-stock-div">
-            <h3>Cores do Produto e Stock</h3>
-            {coresProduto.length === 0 ? (
-              <p>Selecione um produto para ver as cores disponíveis.</p>
-            ) : (
-              <ul>
-                {coresProduto.map((c) => (
-                  <li key={c.product_color_id}>
-                    <span
-                      style={{
-                        display: 'inline-block',
-                        width: '20px',
-                        height: '20px',
-                        backgroundColor: c.Color?.hex_code || '#fff',
-                        border: '1px solid #000',
-                        marginRight: '5px',
-                      }}
-                    ></span>
-                    {c.Color?.name} — {c.stock_quantity_total ?? 0} em stock
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
+  {/* ================== DIV DE CORES ================== */}
+  <div className="cores-stock-div">
+    <h3>Cores do Produto e Stock</h3>
+    {coresProduto.length === 0 ? (
+      <p>Selecione um produto para ver as cores disponíveis.</p>
+    ) : (
+      <ul>
+        {coresProduto.map((c) => (
+          <li key={c.product_color_id}>
+            <span className="color-dot" style={{ backgroundColor: c.Color?.hex_code || '#ccc' }} />
+            {c.Color?.name} — {c.stock_quantity_total ?? 0} em stock
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</div>
       </div>
     </div>
   );

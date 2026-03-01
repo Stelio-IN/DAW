@@ -57,6 +57,12 @@
   font-weight: 500;
 }
 
+
+#paid-detalhes{
+  width: 150px;
+  height: 50px;
+  margin: auto;
+}
 /* =========================
    GRID TABELA MODERNA
 ========================= */

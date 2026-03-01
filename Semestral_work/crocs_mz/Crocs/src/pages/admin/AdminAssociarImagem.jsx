@@ -112,14 +112,20 @@ const AdminProductImages = () => {
 
   /* ================= RENDER ================= */
   return (
-    <div className="admin-images-container">
-      <h2>Gestão de Imagens</h2>
+  <div className="admin-images-container">
+    <h2>Gestão de Imagens</h2>
 
-      <div className="layout">
-        {/* PRODUTOS */}
-        <div className="card">
-          <h3>Produtos</h3>
+    <div className="layout">
+      {/* PRODUTOS */}
+      <div className="card">
+        <h3>Produtos</h3>
+        <div className="produtos-table scrollable">
           <table>
+            <thead>
+              <tr>
+                <th>Produto</th>
+              </tr>
+            </thead>
             <tbody>
               {[...new Map(data.map(p => [p.product_id, p])).values()].map(p => (
                 <tr
@@ -133,102 +139,117 @@ const AdminProductImages = () => {
             </tbody>
           </table>
         </div>
+      </div>
 
-        {/* CORES */}
-        <div className="card">
-          <h3>Cores</h3>
-          {!produtoSelecionado ? (
-            <p className="hint">Selecione um produto</p>
-          ) : (
-            <div className="cores-list">
-              {coresProduto.map(c => (
-                <div
-                  key={c.product_color_id}
-                  className={`cor-item ${corSelecionada?.product_color_id === c.product_color_id ? 'active' : ''}`}
-                  onClick={() => handleCorClick(c)}
-                >
-                  <span className="color-box" style={{ background: c.Color.hex_code }} />
-                  <strong>{c.Color.name}</strong><small>Stock: {c.stock_quantity_total}</small>
+      {/* CORES */}
+      <div className="card">
+        <h3>Cores</h3>
+        {!produtoSelecionado ? (
+          <p className="hint">Selecione um produto</p>
+        ) : (
+          <div className="cores-list scrollable">
+            {coresProduto.map(c => (
+              <div
+                key={c.product_color_id}
+                className={`cor-item ${corSelecionada?.product_color_id === c.product_color_id ? 'active' : ''}`}
+                onClick={() => handleCorClick(c)}
+              >
+                <span className="color-dot" style={{ backgroundColor: c.Color.hex_code }} />
+                <div className="cor-info">
+                  <strong>{c.Color.name}</strong>
+                  <small>Stock: {c.stock_quantity_total}</small>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
+      {/* IMAGENS */}
+      <div className="card">
+        <h3>Imagens</h3>
+
+        {!corSelecionada ? (
+          <p className="hint">Selecione uma cor</p>
+        ) : (
+          <>
+            {/* ADD */}
+            <div className="form-group-row">
+              <input
+                type="text"
+                value={imageUrl}
+                onChange={e => setImageUrl(e.target.value)}
+                placeholder="URL da imagem"
+              />
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={isPrimary}
+                  onChange={e => setIsPrimary(e.target.checked)}
+                />
+                Primária
+              </label>
+              <button className="btn-primary" onClick={handleSalvarImagem}>
+                Adicionar
+              </button>
+            </div>
+
+            {/* GALERIA */}
+            <div className="gallery">
+              {corSelecionada.Images.map(img => (
+                <div key={img.image_id} className="img-card">
+                  <img src={img.image_url} alt="" />
+                  {img.is_primary && <span className="badge-primary">Primária</span>}
+
+                  <div className="img-actions">
+                    <button
+                      className="btn-icon"
+                      onClick={() => handleSetPrimary(img.image_id)}
+                      title="Definir como principal"
+                    >
+                      ⭐
+                    </button>
+                    <button
+                      className="btn-icon"
+                      onClick={() => {
+                        setEditImageId(img.image_id);
+                        setEditImageUrl(img.image_url);
+                      }}
+                      title="Editar URL"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="btn-icon"
+                      onClick={() => handleDeleteImage(img.image_id)}
+                      title="Eliminar"
+                    >
+                      🗑
+                    </button>
+                  </div>
+
+                  {editImageId === img.image_id && (
+                    <div className="edit-box">
+                      <input
+                        type="text"
+                        value={editImageUrl}
+                        onChange={e => setEditImageUrl(e.target.value)}
+                        placeholder="Nova URL"
+                      />
+                      <button className="btn-small" onClick={() => handleUpdateImage(img.image_id)}>
+                        Salvar
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
-          )}
-        </div>
-
-        {/* IMAGENS */}
-        <div className="card">
-          <h3>Imagens</h3>
-
-          {!corSelecionada ? (
-            <p className="hint">Selecione uma cor</p>
-          ) : (
-            <>
-              {/* ADD */}
-              <div className="form">
-                <input
-                  value={imageUrl}
-                  onChange={e => setImageUrl(e.target.value)}
-                  placeholder="URL da imagem"
-                />
-                <label className="checkbox">
-                  <input
-                    type="checkbox"
-                    checked={isPrimary}
-                    onChange={e => setIsPrimary(e.target.checked)}
-                  />
-                  Primária
-                </label>
-                <button onClick={handleSalvarImagem}>Adicionar</button>
-              </div>
-
-              {/* GALERIA */}
-              <div className="gallery">
-                {corSelecionada.Images.map(img => (
-                  <div key={img.image_id} className="img-card">
-                    <img src={img.image_url} alt="" />
-
-                    {img.is_primary && <span className="badge">Primária</span>}
-
-                    <div className="img-actions">
-                      <button onClick={() => handleSetPrimary(img.image_id)}>
-                        ⭐
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setEditImageId(img.image_id);
-                          setEditImageUrl(img.image_url);
-                        }}
-                      >
-                        ✏️
-                      </button>
-
-                      <button onClick={() => handleDeleteImage(img.image_id)}>
-                        🗑
-                      </button>
-                    </div>
-
-                    {editImageId === img.image_id && (
-                      <div className="edit-box">
-                        <input
-                          value={editImageUrl}
-                          onChange={e => setEditImageUrl(e.target.value)}
-                        />
-                        <button onClick={() => handleUpdateImage(img.image_id)}>
-                          Salvar
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default AdminProductImages;

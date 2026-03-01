@@ -148,7 +148,7 @@ const OrdersScreen = () => {
                   : order.rawStatus === "PENDING"
                   ? "pending"
                   : "cancelled"
-              }`}
+              }`} id="paid-detalhes"
             >
               {order.rawStatus}
 
@@ -159,8 +159,8 @@ const OrdersScreen = () => {
                   backgroundColor: "#1a73e8",
                   color: "white",
                   border: "none",
-                  borderRadius: "4px",
-                  padding: "3px 7px",
+                  borderRadius: "14px",
+                  padding: "7px 7px",
                   fontSize: "12px",
                 }}
                 onClick={() => goToDetails(order.orderId)}
