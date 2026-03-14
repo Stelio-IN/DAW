@@ -290,13 +290,15 @@ db.JibbitzPromotionSale.belongsTo(db.Jibbitz, { foreignKey: 'jibbitz_id' });
     await db.ProductImage.sync();
 
     // Promoções
-    await db.Promotion.sync();
-    await db.ProductPromotion.sync();
-    await db.PromotionSale.sync();
+      await db.Promotion.sync();
+      await db.ProductPromotion.sync();
 
     // Pedidos
-    await db.Order.sync();
-    await db.OrderItem.sync();
+      await db.Order.sync();
+      await db.OrderItem.sync();
+
+      // PromotionSale depende de Order
+      await db.PromotionSale.sync();
 
         // =====================
     // Jibbitz
