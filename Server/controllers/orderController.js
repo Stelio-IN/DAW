@@ -21,11 +21,17 @@ import { processOrder } from './services/orderService.js';
 
 const createOrder = async (req, res) => {
   try {
-    const { customer, cart, paymentMethod } = req.body;
+    const { customer, cart, paymentMethod, paymentData } = req.body;
+
+    if (paymentMethod === 'mpesa' && !paymentData?.success) {
+      return res.status(400).json({
+        error: 'Pagamento M-Pesa deve ser confirmado antes de criar o pedido.',
+      });
+    }
 
     // Para teste, não chamamos nenhuma API externa
     // Só simulamos que o pagamento foi concluído
-    const result = await processOrder(customer, cart, paymentMethod);
+    const result = await processOrder(customer, cart, paymentMethod, paymentData);
 
     // Simula que o pagamento foi bem sucedido
     // Atualizamos o status do pedido para 'paid' apenas para teste

@@ -4,7 +4,7 @@ import { processJibbitzOrderItem } from "./JibbitzOrderitem.js";
 
 const { Order, sequelize } = db;
 
-export const processOrder = async (customer, cart, paymentMethod) => {
+export const processOrder = async (customer, cart, paymentMethod, paymentData = null) => {
   const transaction = await sequelize.transaction();
 
   try {
@@ -25,6 +25,11 @@ export const processOrder = async (customer, cart, paymentMethod) => {
         total_amount: 0,
         payment_method: paymentMethod,
         payment_status: "PAID",
+        mpesa_reference: paymentMethod === "mpesa" ? paymentData?.reference || null : null,
+        payment_gateway_response:
+          paymentMethod === "mpesa" && paymentData?.gatewayResponse
+            ? JSON.stringify(paymentData.gatewayResponse)
+            : null,
 
         customer_name: `${customer.deliveryInfo.first_name} ${customer.deliveryInfo.last_name}`,
         phone: customer.deliveryInfo.phone,

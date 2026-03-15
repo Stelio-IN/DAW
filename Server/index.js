@@ -118,9 +118,7 @@ app.post('/api/mpesa/pay', async (req, res) => {
     const result = await mpesaService.pagamentoMpesa(parsedAmount, sanitizedPhone);
 
     if (!result?.success) {
-      const timeoutCodes = new Set(['UND_ERR_CONNECT_TIMEOUT', 'UND_ERR_HEADERS_TIMEOUT', 'ETIMEDOUT', 'ABORT_ERR']);
-      const statusCode = timeoutCodes.has(result?.cause_code) ? 504 : 502;
-      return res.status(statusCode).json(result);
+      return res.status(502).json(result);
     }
 
     res.status(200).json(result);

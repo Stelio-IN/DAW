@@ -8,6 +8,7 @@ import emola from "../../assets/img/emola.png";
 import Timeline from "../../component/TimeLine";
 import PayPalButton from "../customer/Paypal";
 import { getUser } from "../../services/userStorage.js";
+import { payWithMpesa } from "../../services/mpesaApi.js";
 const Pay = () => {
   //const [selectedSize, setSelectedSize] = useState(null);
   const [currentStep] = useState(1);
@@ -26,7 +27,7 @@ const Pay = () => {
   const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("Moçambique");
 
-  const handleSubmitOrder = async () => {
+  const handleSubmitOrder = async (paymentData = null) => {
   // Verifica se há método de pagamento
   if (!activeMethod) {
     alert("Selecione um método de pagamento");
@@ -122,6 +123,7 @@ if (invalidItems.length > 0) {
         customer,
         cart: cartPrepared,   // envia cart preparado
         paymentMethod: activeMethod,
+        paymentData,
       }),
     });
 
@@ -179,23 +181,22 @@ if (invalidItems.length > 0) {
     }
     setMpesaLoading(true);
     try {
-      const mpesaRes = await fetch("http://localhost:3005/api/mpesa/pay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: Number(totalAmount.toFixed(2)),
-          phoneNumber: sanitizedPhone,
-        }),
+      const mpesaData = await payWithMpesa({
+        amount: Number(totalAmount.toFixed(2)),
+        phoneNumber: sanitizedPhone,
       });
-      const mpesaData = await mpesaRes.json();
-      if (!mpesaRes.ok || !mpesaData.success) {
-        alert(mpesaData.message || "Erro ao processar pagamento M-Pesa");
-        return;
-      }
-      await handleSubmitOrder();
+
+      await handleSubmitOrder({
+        success: true,
+        method: "mpesa",
+        reference: mpesaData.reference,
+        gatewayResponse: mpesaData.data,
+      });
+
+      alert(`Pagamento M-Pesa confirmado. Referência: ${mpesaData.reference}`);
     } catch (err) {
       console.error("Erro M-Pesa:", err);
-      alert("Erro de ligação ao servidor M-Pesa");
+      alert(err.details?.message || err.message || "Erro de ligação ao servidor M-Pesa");
     } finally {
       setMpesaLoading(false);
     }
