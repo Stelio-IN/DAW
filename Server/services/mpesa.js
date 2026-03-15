@@ -1,5 +1,34 @@
 import crypto from 'crypto';
 
+const DEFAULT_REQUEST_TIMEOUT_MS = 15000;
+const DEFAULT_RETRY_ATTEMPTS = 2;
+
+const isTrue = (value) => String(value).toLowerCase() === 'true';
+
+const toPositiveInt = (value, fallback) => {
+    const parsed = Number(value);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const sanitizePhone = (phoneNumber) => {
+    const digits = String(phoneNumber || '').replace(/\D/g, '');
+    return digits.startsWith('+258') ? digits.slice(3) : digits;
+};
+
+const isTransientNetworkError = (error) => {
+    const code = error?.cause?.code || error?.code || '';
+    return [
+        'UND_ERR_CONNECT_TIMEOUT',
+        'UND_ERR_HEADERS_TIMEOUT',
+        'UND_ERR_SOCKET',
+        'ECONNRESET',
+        'ECONNREFUSED',
+        'ENOTFOUND',
+        'ETIMEDOUT',
+        'ABORT_ERR',
+    ].includes(code);
+};
+
 /**
  * Simula resposta M-Pesa em modo de desenvolvimento (MPESA_MOCK=true)
  */
@@ -60,17 +89,20 @@ const pagamentoMpesa = async (amount, phoneNumber) => {
         if (!amount || isNaN(amount) || Number(amount) <= 0) {
             throw new Error('Valor inválido informado');
         }
-        if (!phoneNumber || String(phoneNumber).replace(/\s/g, '').length < 8) {
+        const normalizedPhone = sanitizePhone(phoneNumber);
+        if (!normalizedPhone || normalizedPhone.length < 8) {
             throw new Error('Número de telefone inválido');
         }
 
         // Usa mock somente quando ativado explicitamente
-        if (process.env.MPESA_MOCK === 'true') {
-            return mockPagamento(amount, String(phoneNumber).replace(/\s/g, ''));
+        if (isTrue(process.env.MPESA_MOCK)) {
+            return mockPagamento(amount, normalizedPhone);
         }
 
-        const fullPhoneNumber = `258${String(phoneNumber).replace(/\s/g, '')}`;
+        const fullPhoneNumber = `258${normalizedPhone}`;
         const token = getBearerToken();
+        const timeoutMs = toPositiveInt(process.env.MPESA_REQUEST_TIMEOUT_MS, DEFAULT_REQUEST_TIMEOUT_MS);
+        const maxAttempts = toPositiveInt(process.env.MPESA_RETRY_ATTEMPTS, DEFAULT_RETRY_ATTEMPTS);
 
         const url = `https://${process.env.MPESA_API_HOST}/ipg/v1x/c2bPayment/singleStage/`;
 
@@ -82,15 +114,34 @@ const pagamentoMpesa = async (amount, phoneNumber) => {
             input_ServiceProviderCode: process.env.MPESA_SERVICE_PROVIDER_CODE,
         };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-                'Origin': process.env.MPESA_ORIGIN,
-            },
-            body: JSON.stringify(body),
-        });
+        let response;
+        let lastError;
+
+        for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+            try {
+                response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        'Origin': process.env.MPESA_ORIGIN,
+                    },
+                    body: JSON.stringify(body),
+                    signal: AbortSignal.timeout(timeoutMs),
+                });
+                lastError = null;
+                break;
+            } catch (err) {
+                lastError = err;
+                if (!isTransientNetworkError(err) || attempt === maxAttempts) {
+                    throw err;
+                }
+            }
+        }
+
+        if (!response && lastError) {
+            throw lastError;
+        }
 
         const data = await response.json();
 
@@ -111,10 +162,28 @@ const pagamentoMpesa = async (amount, phoneNumber) => {
         };
 
     } catch (error) {
-        console.error('Erro no pagamento M-Pesa:', error);
+        const causeCode = error?.cause?.code || error?.code || null;
+        const isNetworkTimeout = [
+            'UND_ERR_CONNECT_TIMEOUT',
+            'UND_ERR_HEADERS_TIMEOUT',
+            'ETIMEDOUT',
+            'ABORT_ERR',
+        ].includes(causeCode);
 
-        const causeCode = error?.cause?.code || null;
-        const isNetworkTimeout = causeCode === 'UND_ERR_CONNECT_TIMEOUT';
+        if (isNetworkTimeout && isTrue(process.env.MPESA_TIMEOUT_FALLBACK_MOCK)) {
+            console.warn('M-Pesa indisponível por timeout de rede; usando fallback mock');
+            const fallback = mockPagamento(amount, sanitizePhone(phoneNumber));
+            return {
+                ...fallback,
+                fallback_used: true,
+                fallback_reason: 'network_timeout',
+                original_error: error.message,
+                cause_code: causeCode,
+                host: process.env.MPESA_API_HOST,
+            };
+        }
+
+        console.error('Erro no pagamento M-Pesa:', error);
 
         return {
             success: false,
