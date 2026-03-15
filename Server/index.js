@@ -25,6 +25,7 @@ import jibbitzRoutes from './routes/jibbitzRoutes.js';
 import routerProductColorSize from './routes/productColorSizeRoutes.js';
 import routerProductPromotion from './routes/productPromotionRoutes.js';
 import routerPromotion from './routes/promotionRoutes.js';
+import * as mpesaService from './services/mpesa.js';
 
 
 
@@ -94,6 +95,39 @@ app.post('/create-order', async (req, res) => {
 
   const response = await client.execute(request);
   res.json({ id: response.result.id });
+});
+
+// ================= MPESA =================
+app.post('/api/mpesa/pay', async (req, res) => {
+  try {
+    const { amount, phoneNumber } = req.body;
+    const parsedAmount = Number(amount);
+    const sanitizedPhone = String(phoneNumber || '').replace(/\D/g, '');
+
+    if (!Number.isFinite(parsedAmount) || parsedAmount <= 0 || sanitizedPhone.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Dados inválidos para M-Pesa',
+        details: {
+          amount,
+          phoneNumber,
+        },
+      });
+    }
+
+    const result = await mpesaService.pagamentoMpesa(parsedAmount, sanitizedPhone);
+
+    if (!result?.success) {
+      const statusCode = result?.cause_code === 'UND_ERR_CONNECT_TIMEOUT' ? 504 : 502;
+      return res.status(statusCode).json(result);
+    }
+
+    res.status(200).json(result);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Erro no pagamento' });
+  }
 });
 
 app.post('/capture-order', async (req, res) => {

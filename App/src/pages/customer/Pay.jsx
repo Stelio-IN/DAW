@@ -153,10 +153,52 @@ if (invalidItems.length > 0) {
   // Estado para controlar qual método está ativo
   // Estado para controlar qual método está ativo
   const [activeMethod, setActiveMethod] = useState(null);
+  const [mpesaPhone, setMpesaPhone] = useState("");
+  const [mpesaLoading, setMpesaLoading] = useState(false);
 
   // Função para definir o método ativo (e fechar outros)
   const toggleMethod = (method) => {
     setActiveMethod((prevMethod) => (prevMethod === method ? null : method));
+  };
+
+  const handleMpesaPayment = async () => {
+    const sanitizedPhone = String(mpesaPhone || "").replace(/\D/g, "");
+    const totalAmount = calculateTotal();
+
+    if (!mpesaPhone || mpesaPhone.replace(/\s/g, "").length < 8) {
+      alert("Insira um número de celular válido (mínimo 8 dígitos)");
+      return;
+    }
+    if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
+      alert("O total do carrinho é inválido para pagamento");
+      return;
+    }
+    if (!firstName || !lastName || !address1 || !city) {
+      alert("Preencha todos os dados de entrega obrigatórios antes de pagar");
+      return;
+    }
+    setMpesaLoading(true);
+    try {
+      const mpesaRes = await fetch("http://localhost:3005/api/mpesa/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: Number(totalAmount.toFixed(2)),
+          phoneNumber: sanitizedPhone,
+        }),
+      });
+      const mpesaData = await mpesaRes.json();
+      if (!mpesaRes.ok || !mpesaData.success) {
+        alert(mpesaData.message || "Erro ao processar pagamento M-Pesa");
+        return;
+      }
+      await handleSubmitOrder();
+    } catch (err) {
+      console.error("Erro M-Pesa:", err);
+      alert("Erro de ligação ao servidor M-Pesa");
+    } finally {
+      setMpesaLoading(false);
+    }
   };
 
   // carrinho
@@ -187,10 +229,18 @@ if (invalidItems.length > 0) {
   };
 
   const calculateTotal = () => {
-    return cart.reduce(
-      (total, product) => total + product.price * product.quantity,
-      0
-    );
+    return cart.reduce((total, product) => {
+      const price = Number(
+        product?.price ?? product?.unit_cost ?? product?.sale_price ?? 0
+      );
+      const quantity = Number(product?.quantity ?? 1);
+
+      if (!Number.isFinite(price) || !Number.isFinite(quantity)) {
+        return total;
+      }
+
+      return total + price * quantity;
+    }, 0);
   };
 
   return (
@@ -368,11 +418,25 @@ if (invalidItems.length > 0) {
 
                 {activeMethod === "mpesa" && (
                   <div className="M-pesa_payment">
-                    <p>Clique no botão abaixo e confirme o pagamento.</p>
-
-                    <button id="btn_pay" onClick={handleSubmitOrder}>
-                      <span>Pagar com </span>
-                      <img src={mpesa} alt="" />
+                    <p>Insira o seu número M-Pesa para confirmar o pagamento.</p>
+                    <label>Número de Celular</label>
+                    <input
+                      type="tel"
+                      placeholder="8X XXX XXXX"
+                      value={mpesaPhone}
+                      onChange={(e) => setMpesaPhone(e.target.value)}
+                      style={{ width: "100%", marginBottom: "10px" }}
+                    />
+                    <button
+                      id="btn_pay"
+                      onClick={handleMpesaPayment}
+                      disabled={mpesaLoading}
+                    >
+                      {mpesaLoading ? (
+                        <span>A processar...</span>
+                      ) : (
+                        <><span>Pagar com </span><img src={mpesa} alt="" /></>
+                      )}
                     </button>
                   </div>
                 )}
@@ -534,34 +598,26 @@ if (invalidItems.length > 0) {
                 </button>
                 {activeMethod === "mpesa" && (
                   <div className="M-pesa_payment">
-                    <p>Clique no botão abaixo e confirme o pagamento..</p>
-
-                    <button id="btn_pay" onClick={handleSubmitOrder}>
-                      <span>Pagar com</span>
-                      <img src={mpesa} alt="" />
+                    <p>Insira o seu número M-Pesa para confirmar o pagamento.</p>
+                    <label>Número de Celular</label>
+                    <input
+                      type="tel"
+                      placeholder="8X XXX XXXX"
+                      value={mpesaPhone}
+                      onChange={(e) => setMpesaPhone(e.target.value)}
+                      style={{ width: "100%", marginBottom: "10px" }}
+                    />
+                    <button
+                      id="btn_pay"
+                      onClick={handleMpesaPayment}
+                      disabled={mpesaLoading}
+                    >
+                      {mpesaLoading ? (
+                        <span>A processar...</span>
+                      ) : (
+                        <><span>Pagar com </span><img src={mpesa} alt="" /></>
+                      )}
                     </button>
-
-                    {/* Modal de Pagamento */}
-                    {showPaymentModal && (
-                      <div className="modal" onClick={handleCloseModal}>
-                        <div
-                          className="modalContent"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <h2>Pagamento</h2>
-                          <p>Total a Pagar: {calculateTotal()}$</p>
-                          <label>
-                            Celular:
-                            <input type="text" placeholder="Seu celular" />
-                          </label>
-                          <button onClick={handleSubmitOrder}>
-                            Finalizar Compra
-                          </button>
-
-                          <button onClick={handleCloseModal}>Fechar</button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 )}
 
