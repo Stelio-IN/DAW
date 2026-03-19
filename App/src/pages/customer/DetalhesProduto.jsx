@@ -109,15 +109,17 @@ const ProdutoDetalhado = () => {
       sku: tamanhoSelecionado.sku,
 
       // Promoção
-      promotion_id: tamanhoSelecionado.promotion_id || null,
       promo_stock_limit: tamanhoSelecionado.promo_stock_limit || null,
       promo_stock_used: tamanhoSelecionado.promo_stock_used || null,
-      promotion_name: tamanhoSelecionado.promotion_name || null,
       cost_price: tamanhoSelecionado.cost_price,
       base_price: tamanhoSelecionado.base_price,
-      promo_price: tamanhoSelecionado.promo_price,
-      discount_percentage: tamanhoSelecionado.discount_percentage,
       is_on_promotion: tamanhoSelecionado.is_on_promotion,
+
+      promotion_id: tamanhoSelecionado.promotion?.promotion_id || null,
+promo_price: tamanhoSelecionado.promotion?.promo_price,
+discount_percentage: tamanhoSelecionado.promotion?.discount_percentage,
+promotion_name: tamanhoSelecionado.promotion?.name,
+promotion_description: tamanhoSelecionado.promotion?.description,
 
       price: tamanhoSelecionado.is_on_promotion
         ? tamanhoSelecionado.promo_price
@@ -210,70 +212,61 @@ const ProdutoDetalhado = () => {
 
           {/* PREÇO */}
           <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
-            {tamanhoSelecionado?.is_on_promotion ? (
-              <>
-                <span
-                  style={{
-                    textDecoration: "line-through",
-                    color: "#888",
-                    marginRight: "10px",
-                  }}
-                >
-                  {tamanhoSelecionado.base_price.toLocaleString("pt-MZ", {
-                    style: "currency",
-                    currency: "MZN",
-                  })}
-                </span>
-                <span style={{ color: "red" }}>
-                  {tamanhoSelecionado.promo_price.toLocaleString("pt-MZ", {
-                    style: "currency",
-                    currency: "MZN",
-                  })}
-                </span>
-                <span
-                  style={{
-                    background: "red",
-                    color: "white",
-                    padding: "4px 8px",
-                    borderRadius: "6px",
-                    marginLeft: "10px",
-                    fontSize: "12px",
-                  }}
-                >
-                  -{tamanhoSelecionado.discount_percentage}%
-                </span>
-                {tamanhoSelecionado.promotion_name && (
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#555",
-                      marginTop: "4px",
-                    }}
-                  >
-                    Promoção: {tamanhoSelecionado.promotion_name}
-                  </div>
-                )}
-                {tamanhoSelecionado.promotion_description && (
-                  <div
-                    style={{
-                      fontSize: "12px",
-                      color: "#777",
-                      marginTop: "2px",
-                    }}
-                  >
-                    {tamanhoSelecionado.promotion_description}
-                  </div>
-                )}
-              </>
-            ) : (
-              <span>
-                {(tamanhoSelecionado?.base_price || product.base_price).toLocaleString("pt-MZ", {
-                  style: "currency",
-                  currency: "MZN",
-                })}
-              </span>
-            )}
-          </p>
+  {tamanhoSelecionado?.promotion ? (
+    <>
+      <span
+        style={{
+          textDecoration: "line-through",
+          color: "#888",
+          marginRight: "10px",
+        }}
+      >
+        {tamanhoSelecionado.base_price.toLocaleString("pt-MZ", {
+          style: "currency",
+          currency: "MZN",
+        })}
+      </span>
+
+      <span style={{ color: "red" }}>
+        {tamanhoSelecionado.promotion.promo_price.toLocaleString("pt-MZ", {
+          style: "currency",
+          currency: "MZN",
+        })}
+      </span>
+
+      <span
+        style={{
+          background: "red",
+          color: "white",
+          padding: "4px 8px",
+          borderRadius: "6px",
+          marginLeft: "10px",
+          fontSize: "12px",
+        }}
+      >
+        -{tamanhoSelecionado.promotion.discount_percentage}%
+      </span>
+
+      <div style={{ fontSize: "12px", color: "#555", marginTop: "4px" }}>
+        Promoção: {tamanhoSelecionado.promotion.name}
+      </div>
+
+      <div style={{ fontSize: "12px", color: "#777", marginTop: "2px" }}>
+        {tamanhoSelecionado.promotion.description}
+      </div>
+    </>
+  ) : (
+    <span>
+      {(tamanhoSelecionado?.base_price || product.base_price).toLocaleString(
+        "pt-MZ",
+        {
+          style: "currency",
+          currency: "MZN",
+        }
+      )}
+    </span>
+  )}
+</p>
 
           <p style={{ maxWidth: "600px", fontStyle: "italic" }}>
             {product.description}
