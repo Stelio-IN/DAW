@@ -40,7 +40,7 @@ const ProdutoDetalhado = () => {
           }
         })
         .catch((err) =>
-          console.error("Erro ao buscar detalhes do produto:", err)
+          console.error("Erro ao buscar detalhes do produto:", err),
         );
     }
   }, [productID]);
@@ -49,7 +49,7 @@ const ProdutoDetalhado = () => {
   useEffect(() => {
     if (product?.colors?.length > 0) {
       const corComStock = product.colors.find(
-        (cor) => cor.sizes && cor.sizes.length > 0
+        (cor) => cor.sizes && cor.sizes.length > 0,
       );
 
       setCorSelecionada(corComStock || null);
@@ -113,25 +113,24 @@ const ProdutoDetalhado = () => {
       promo_stock_used: tamanhoSelecionado.promo_stock_used || null,
       cost_price: tamanhoSelecionado.cost_price,
       base_price: Number(tamanhoSelecionado.base_price),
-      is_on_promotion: tamanhoSelecionado.is_on_promotion,
+      is_on_promotion: tamanhoSelecionado.promotion ? true : false,
 
       promotion_id: tamanhoSelecionado.promotion?.promotion_id || null,
-promo_price: Number(tamanhoSelecionado.promotion?.promo_price || 0),
-discount_percentage: tamanhoSelecionado.promotion?.discount_percentage,
-promotion_name: tamanhoSelecionado.promotion?.name,
-promotion_description: tamanhoSelecionado.promotion?.description,
-
-      price: tamanhoSelecionado.is_on_promotion
-        ? Number(tamanhoSelecionado.promotion?.promo_price)
-        : tamanhoSelecionado.base_price,
-
+      promo_price: Number(tamanhoSelecionado.promotion?.promo_price || 0),
+      discount_percentage:
+        tamanhoSelecionado.promotion?.discount_percentage || 0,
+      promotion_name: tamanhoSelecionado.promotion?.name || null,
+      promotion_description: tamanhoSelecionado.promotion?.description,
+      price: tamanhoSelecionado.promotion
+        ? Number(tamanhoSelecionado.promotion.promo_price)
+        : Number(tamanhoSelecionado.base_price),
       stock_quantity: tamanhoSelecionado.stock_quantity,
       quantity: 1,
       image_url: imagemPrincipal,
     };
 
     const existingIndex = currentCart.findIndex(
-      (item) => item.cart_item_id === itemToAdd.cart_item_id
+      (item) => item.cart_item_id === itemToAdd.cart_item_id,
     );
 
     if (existingIndex >= 0) {
@@ -212,61 +211,67 @@ promotion_description: tamanhoSelecionado.promotion?.description,
 
           {/* PREÇO */}
           <p style={{ fontWeight: "bold", fontSize: "20pt" }}>
-  {tamanhoSelecionado?.promotion ? (
-    <>
-      <span
-        style={{
-          textDecoration: "line-through",
-          color: "#888",
-          marginRight: "10px",
-        }}
-      >
-        {tamanhoSelecionado.base_price.toLocaleString("pt-MZ", {
-          style: "currency",
-          currency: "MZN",
-        })}
-      </span>
+            {tamanhoSelecionado?.promotion ? (
+              <>
+                <span
+                  style={{
+                    textDecoration: "line-through",
+                    color: "#888",
+                    marginRight: "10px",
+                  }}
+                >
+                  {tamanhoSelecionado.base_price.toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </span>
 
-      <span style={{ color: "red" }}>
-        {tamanhoSelecionado.promotion.promo_price.toLocaleString("pt-MZ", {
-          style: "currency",
-          currency: "MZN",
-        })}
-      </span>
+                <span style={{ color: "red" }}>
+                  {tamanhoSelecionado.promotion.promo_price.toLocaleString(
+                    "pt-MZ",
+                    {
+                      style: "currency",
+                      currency: "MZN",
+                    },
+                  )}
+                </span>
 
-      <span
-        style={{
-          background: "red",
-          color: "white",
-          padding: "4px 8px",
-          borderRadius: "6px",
-          marginLeft: "10px",
-          fontSize: "12px",
-        }}
-      >
-        -{tamanhoSelecionado.promotion.discount_percentage}%
-      </span>
+                <span
+                  style={{
+                    background: "red",
+                    color: "white",
+                    padding: "4px 8px",
+                    borderRadius: "6px",
+                    marginLeft: "10px",
+                    fontSize: "12px",
+                  }}
+                >
+                  -{tamanhoSelecionado.promotion.discount_percentage}%
+                </span>
 
-      <div style={{ fontSize: "12px", color: "#555", marginTop: "4px" }}>
-        Promoção: {tamanhoSelecionado.promotion.name}
-      </div>
+                <div
+                  style={{ fontSize: "12px", color: "#555", marginTop: "4px" }}
+                >
+                  Promoção: {tamanhoSelecionado.promotion.name}
+                </div>
 
-      <div style={{ fontSize: "12px", color: "#777", marginTop: "2px" }}>
-        {tamanhoSelecionado.promotion.description}
-      </div>
-    </>
-  ) : (
-    <span>
-      {(tamanhoSelecionado?.base_price || product.base_price).toLocaleString(
-        "pt-MZ",
-        {
-          style: "currency",
-          currency: "MZN",
-        }
-      )}
-    </span>
-  )}
-</p>
+                <div
+                  style={{ fontSize: "12px", color: "#777", marginTop: "2px" }}
+                >
+                  {tamanhoSelecionado.promotion.description}
+                </div>
+              </>
+            ) : (
+              <span>
+                {(
+                  tamanhoSelecionado?.base_price || product.base_price
+                ).toLocaleString("pt-MZ", {
+                  style: "currency",
+                  currency: "MZN",
+                })}
+              </span>
+            )}
+          </p>
 
           <p style={{ maxWidth: "600px", fontStyle: "italic" }}>
             {product.description}
@@ -276,7 +281,9 @@ promotion_description: tamanhoSelecionado.promotion?.description,
           <p className="label">Cores disponíveis</p>
           <div className="alternativas">
             {product.colors
-              ?.filter((c) => c.sizes && c.sizes.some((s) => s.stock_quantity > 0))
+              ?.filter(
+                (c) => c.sizes && c.sizes.some((s) => s.stock_quantity > 0),
+              )
               .map((cor) => {
                 const imagem =
                   cor.images?.find((i) => i.is_primary) || cor.images?.[0];
@@ -290,7 +297,8 @@ promotion_description: tamanhoSelecionado.promotion?.description,
                     style={{
                       cursor: "pointer",
                       border:
-                        corSelecionada?.product_color_id === cor.product_color_id
+                        corSelecionada?.product_color_id ===
+                        cor.product_color_id
                           ? "2px solid black"
                           : "1px solid #ccc",
                       borderRadius: "6px",
@@ -353,7 +361,10 @@ promotion_description: tamanhoSelecionado.promotion?.description,
             Adicionar ao Carrinho
           </button>
 
-          <button onClick={() => handleToggleFavorite(product)} className="favor">
+          <button
+            onClick={() => handleToggleFavorite(product)}
+            className="favor"
+          >
             {favorites.some((f) => f.product_id === product.product_id) ? (
               <span style={{ color: "red" }}>Remover dos Favoritos</span>
             ) : (

@@ -1,23 +1,145 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.about {
+  width: 100%;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
 }
 
-html, body {
-  height: 100%;
+/* ================= BANNER ================= */
+.about-banner {
+  height: 260px;
+  background: linear-gradient(120deg, #ffffff, #ffffff);
+  color: white;
   display: flex;
-  flex-direction: column; /* Permite que o conteúdo cresça na vertical */
-  background-color: white;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
-.content-about{
-flex: 1; /* Faz com que o conteúdo preencha o espaço restante */
-display: flex;
-flex-direction: column;
-width: 100vw;
-background-color: white;
+.about-banner h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
 }
 
+.about-banner p {
+  font-size: 18px;
+  opacity: 0.9;
+}
 
-  
+/* ================= SECTION ================= */
+.about-section {
+  padding: 70px 10%;
+}
+
+/* ================= GRID ================= */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.about-grid.reverse {
+  direction: rtl;
+}
+
+.about-grid.reverse .about-text {
+  direction: ltr;
+}
+
+/* ================= IMAGE ================= */
+.about-image {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.about-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.about-image:hover img {
+  transform: scale(1.05);
+}
+
+/* ================= TEXT ================= */
+.about-text h2 {
+  margin-bottom: 15px;
+  font-size: 30px;
+}
+
+.about-text p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #555;
+}
+
+/* ================= VALORES ================= */
+.about-values {
+  text-align: center;
+  padding: 10px 10%;
+  height: 210px;
+  background-color: #ffffff;
+}
+
+.about-values h2 {
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.values-grid {
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.value-card {
+  background: rgb(255, 255, 255);
+  padding: 25px 45px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  font-size: 18px;
+  transition: 0.3s;
+}
+
+.value-card:hover {
+  transform: translateY(-5px);
+}
+/* ================= RESPONSIVO ================= */
+@media (max-width: 900px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .about-grid.reverse {
+    direction: ltr;
+  }
+
+  .about-image {
+    height: 250px;
+  }
+
+  .about-banner h1 {
+    font-size: 28px;
+  }
+
+  .about-banner p {
+    font-size: 16px;
+  }
+
+  .about-section {
+    padding: 50px 5%;
+  }
+
+  .about-values {
+    padding: 50px 5%;
+  }
+}

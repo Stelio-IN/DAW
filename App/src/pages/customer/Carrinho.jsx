@@ -10,10 +10,17 @@ function Carrinho() {
   // Recupera o estado do carrinho do localStorage ao carregar a página
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    console.log("=== CARRINHO LIDO DO LOCALSTORAGE ===");
+  console.log(storedCart);
+
     const cartWithQuantities = storedCart.map((product) => ({
       ...product,
       quantity: product.quantity || 1, // Se não existir quantity, define 1
     }));
+
+    console.log("=== CARRINHO COM QUANTIDADES ===");
+  console.log(cartWithQuantities);
     setCart(cartWithQuantities);
   }, []);
 
@@ -64,14 +71,14 @@ function Carrinho() {
   };
 
   // Quanto o cliente poupou
- const calculateDiscount = () => {
-  return cart.reduce((total, product) => {
-    if (product.is_on_promotion) {
-      return total + (product.base_price - product.price) * product.quantity;
-    }
-    return total;
-  }, 0);
-};
+  const calculateDiscount = () => {
+    return cart.reduce((total, product) => {
+      if (product.is_on_promotion) {
+        return total + (product.base_price - product.price) * product.quantity;
+      }
+      return total;
+    }, 0);
+  };
 
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
@@ -103,7 +110,6 @@ function Carrinho() {
 
                           {/* Cor */}
                           {/* ===== DETALHES ESPECÍFICOS POR TIPO ===== */}
-
                           {product.type === "product" && (
                             <>
                               <p className="cart-info-line">
@@ -114,7 +120,7 @@ function Carrinho() {
                                     alignItems: "center",
                                     gap: "8px",
                                   }}
-                                >
+                                >       
                                   <span
                                     style={{
                                       width: "14px",
@@ -123,18 +129,18 @@ function Carrinho() {
                                       backgroundColor: product.hex_code,
                                       border: "1px solid #ccc",
                                     }}
-                                  />
+                                  /> 
                                   {product.color}
                                 </span>
                               </p>
-
+                                    
                               <p className="cart-info-line">
                                 <span>Tamanho:</span>
                                 <span>
                                   {product.size} ({product.size_type})
                                 </span>
                               </p>
-
+                  
                               <p className="cart-info-line">
                                 <span>SKU:</span>
                                 <span>{product.sku}</span>
@@ -150,23 +156,29 @@ function Carrinho() {
                           )}
 
                           {/* Preço */}
-                         <p>
-  <span>Preço</span>
-  <span>
-    {product.promotion?.is_on_promotion ? (
-      <>
-        <span style={{ textDecoration: "line-through", color: "#888", marginRight: "8px" }}>
-          {product.promo_price} Mzn
-        </span>
-        <span style={{ color: "red" }}>
-          {product.price} Mzn
-        </span>
-      </>
-    ) : (
-      <span>{product.price} Mzn</span>
-    )}
-  </span>
-</p>
+                          <p>
+                            <span>Preço</span>
+                            <span>
+                              {product.is_on_promotion ? (
+                                <>
+                                  <span
+                                    style={{
+                                      textDecoration: "line-through",
+                                      color: "#888",
+                                      marginRight: "8px",
+                                    }}
+                                  >
+                                    {product.base_price} Mzn
+                                  </span>
+                                  <span style={{ color: "red" }}>
+                                    {product.price} Mzn
+                                  </span>
+                                </>
+                              ) : (
+                                <span>{product.price} Mzn</span>
+                              )}
+                            </span>
+                          </p>
 
                           {/* Quantidade */}
                           <p>
@@ -174,7 +186,7 @@ function Carrinho() {
                             <span>{product.quantity}</span>
                           </p>
 
-                          {/* Stock 
+                         {/* Stock 
                           <p className="cart-stock">
                             <span>Disponível:</span>
                             <span>{product.stock_quantity}</span>

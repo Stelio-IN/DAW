@@ -28,121 +28,120 @@ const Pay = () => {
   const [country, setCountry] = useState("Moçambique");
 
   const handleSubmitOrder = async (paymentData = null) => {
-  // Verifica se há método de pagamento
-  if (!activeMethod) {
-    alert("Selecione um método de pagamento");
-    return;
-  }
-
-  // Verifica dados obrigatórios de entrega
-  if (!firstName || !lastName || !address1 || !city || !phone) {
-    alert("Preencha todos os dados de entrega obrigatórios");
-    return;
-  }
-
-  // Prepara o carrinho para envio
-  const cartPrepared = cart.map(item => {
-  if (item.type === "product") {
-    return {
-    ...item,
-    type: "product",
-    product_id: Number(item.product_id),
-    product_color_id: Number(item.product_color_id),
-    product_color_size_id: Number(item.product_color_size_id),
-    quantity: Number(item.quantity || 1),
-    price: Number(item.price || 0),
-    };
-  }
-
-  if (item.type === "jibbitz") {
-    return {
-      type: "jibbitz",
-      cart_item_id: item.cart_item_id,
-      jibbitz_id: Number(item.jibbitz_id),
-      unit_cost: Number(item.unit_cost),
-      quantity: Number(item.quantity),
-      price: Number(item.price),
-      stock_quantity: Number(item.stock_quantity || 0),
-      is_on_promotion: item.is_on_promotion || false,
-      promotion_id: item.promotion_id || null,
-      discount_percentage: item.discount_percentage || null,
-      promo_stock_used: Number(item.promo_stock_used) || 0,
-      promo_stock_limit: Number(item.promo_stock_limit) || null,
-    };
-  }
-
-  return null;
-}).filter(Boolean);
-
-
-
-  // Validação simples
-const invalidItems = cartPrepared.filter(item => {
-  if (item.type === "product") return !item.product_color_size_id;
-  if (item.type === "jibbitz") return !item.jibbitz_id;
-  return true; // qualquer outro tipo é inválido
-});
-
-if (invalidItems.length > 0) {
-  console.error("Itens inválidos no carrinho:", invalidItems);
-  alert("Há produtos inválidos no carrinho.");
-  return;
-}
-
-
-  // Verifica se o carrinho não está vazio
-  if (cartPrepared.length === 0) {
-    alert("O carrinho está vazio ou contém produtos inválidos.");
-    return;
-  }
-
-  console.log("Cart que será enviado:", cartPrepared);
-
-  // Cria objeto do cliente
-  const loggedUser = getUser();
-  const customer = {
-      id: loggedUser?.id || 8, // teste
-    deliveryInfo: {
-      first_name: firstName,
-      last_name: lastName,
-      address1,
-      address2,
-      city,
-      province,
-      postal_code: postalCode,
-      phone,
-      country,
-    },
-  };
-
-  try {
-    const response = await fetch("http://localhost:3005/api/orders/", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer,
-        cart: cartPrepared,   // envia cart preparado
-        paymentMethod: activeMethod,
-        paymentData,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(data.error || "Erro ao criar pedido");
-      console.error("Erro do backend:", data);
+    // Verifica se há método de pagamento
+    if (!activeMethod) {
+      alert("Selecione um método de pagamento");
       return;
     }
 
-    console.log("VENDA REGISTADA:", data);
-    alert("Venda criada com sucesso!");
-    emptyCart();
-  } catch (err) {
-    console.error("Erro de ligação ao servidor:", err);
-    alert("Erro de ligação ao servidor");
-  }
-};
+    // Verifica dados obrigatórios de entrega
+    if (!firstName || !lastName || !address1 || !city || !phone) {
+      alert("Preencha todos os dados de entrega obrigatórios");
+      return;
+    }
+
+    // Prepara o carrinho para envio
+    const cartPrepared = cart
+      .map((item) => {
+        if (item.type === "product") {
+          return {
+            ...item,
+            type: "product",
+            product_id: Number(item.product_id),
+            product_color_id: Number(item.product_color_id),
+            product_color_size_id: Number(item.product_color_size_id),
+            quantity: Number(item.quantity || 1),
+            price: Number(item.price || 0),
+          };
+        }
+
+        if (item.type === "jibbitz") {
+          return {
+            type: "jibbitz",
+            cart_item_id: item.cart_item_id,
+            jibbitz_id: Number(item.jibbitz_id),
+            unit_cost: Number(item.unit_cost),
+            quantity: Number(item.quantity),
+            price: Number(item.price),
+            stock_quantity: Number(item.stock_quantity || 0),
+            is_on_promotion: item.is_on_promotion || false,
+            promotion_id: item.promotion_id || null,
+            discount_percentage: item.discount_percentage || null,
+            promo_stock_used: Number(item.promo_stock_used) || 0,
+            promo_stock_limit: Number(item.promo_stock_limit) || null,
+          };
+        }
+
+        return null;
+      })
+      .filter(Boolean);
+
+    // Validação simples
+    const invalidItems = cartPrepared.filter((item) => {
+      if (item.type === "product") return !item.product_color_size_id;
+      if (item.type === "jibbitz") return !item.jibbitz_id;
+      return true; // qualquer outro tipo é inválido
+    });
+
+    if (invalidItems.length > 0) {
+      console.error("Itens inválidos no carrinho:", invalidItems);
+      alert("Há produtos inválidos no carrinho.");
+      return;
+    }
+
+    // Verifica se o carrinho não está vazio
+    if (cartPrepared.length === 0) {
+      alert("O carrinho está vazio ou contém produtos inválidos.");
+      return;
+    }
+
+    console.log("Cart que será enviado:", cartPrepared);
+
+    // Cria objeto do cliente
+    const loggedUser = getUser();
+    const customer = {
+      id: loggedUser?.id || 8, // teste
+      deliveryInfo: {
+        first_name: firstName,
+        last_name: lastName,
+        address1,
+        address2,
+        city,
+        province,
+        postal_code: postalCode,
+        phone,
+        country,
+      },
+    };
+
+    try {
+      const response = await fetch("http://localhost:3005/api/orders/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer,
+          cart: cartPrepared, // envia cart preparado
+          paymentMethod: activeMethod,
+          paymentData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Erro ao criar pedido");
+        console.error("Erro do backend:", data);
+        return;
+      }
+
+      console.log("VENDA REGISTADA:", data);
+      alert("Venda criada com sucesso!");
+      emptyCart();
+    } catch (err) {
+      console.error("Erro de ligação ao servidor:", err);
+      alert("Erro de ligação ao servidor");
+    }
+  };
 
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
@@ -196,7 +195,11 @@ if (invalidItems.length > 0) {
       alert(`Pagamento M-Pesa confirmado. Referência: ${mpesaData.reference}`);
     } catch (err) {
       console.error("Erro M-Pesa:", err);
-      alert(err.details?.message || err.message || "Erro de ligação ao servidor M-Pesa");
+      alert(
+        err.details?.message ||
+          err.message ||
+          "Erro de ligação ao servidor M-Pesa",
+      );
     } finally {
       setMpesaLoading(false);
     }
@@ -222,8 +225,6 @@ if (invalidItems.length > 0) {
     };
   }, []);
 
-  
-
   const emptyCart = () => {
     setCart([]); // Esvazia o estado do carrinho
     localStorage.removeItem("cart"); // Remove os dados do carrinho do localStorage
@@ -232,7 +233,7 @@ if (invalidItems.length > 0) {
   const calculateTotal = () => {
     return cart.reduce((total, product) => {
       const price = Number(
-        product?.price ?? product?.unit_cost ?? product?.sale_price ?? 0
+        product?.price ?? product?.unit_cost ?? product?.sale_price ?? 0,
       );
       const quantity = Number(product?.quantity ?? 1);
 
@@ -241,6 +242,41 @@ if (invalidItems.length > 0) {
       }
 
       return total + price * quantity;
+    }, 0);
+  };
+
+  // Subtotal sem desconto
+  const calculateSubtotal = () => {
+    return cart.reduce((total, product) => {
+      const basePrice = Number(
+        product?.base_price ?? product?.unit_cost ?? product?.price ?? 0,
+      );
+      const quantity = Number(product?.quantity ?? 1);
+
+      if (!Number.isFinite(basePrice) || !Number.isFinite(quantity)) {
+        return total;
+      }
+
+      return total + basePrice * quantity;
+    }, 0);
+  };
+
+  // Quanto o cliente poupou
+  const calculateDiscount = () => {
+    return cart.reduce((total, product) => {
+      const basePrice = Number(product?.base_price ?? product?.price ?? 0);
+      const price = Number(product?.price ?? 0);
+      const quantity = Number(product?.quantity ?? 1);
+
+      if (!Number.isFinite(basePrice) || !Number.isFinite(price)) {
+        return total;
+      }
+
+      if (basePrice > price) {
+        return total + (basePrice - price) * quantity;
+      }
+
+      return total;
     }, 0);
   };
 
@@ -338,9 +374,7 @@ if (invalidItems.length > 0) {
                 display: "flex",
                 flexDirection: "column",
               }}
-            >
-    
-            </div>
+            ></div>
 
             <section className="Payments">
               <h3 style={{ color: "#5b5b5b", width: "100%" }}>Pagamento*</h3>
@@ -419,7 +453,9 @@ if (invalidItems.length > 0) {
 
                 {activeMethod === "mpesa" && (
                   <div className="M-pesa_payment">
-                    <p>Insira o seu número M-Pesa para confirmar o pagamento.</p>
+                    <p>
+                      Insira o seu número M-Pesa para confirmar o pagamento.
+                    </p>
                     <label>Número de Celular</label>
                     <input
                       type="tel"
@@ -436,7 +472,10 @@ if (invalidItems.length > 0) {
                       {mpesaLoading ? (
                         <span>A processar...</span>
                       ) : (
-                        <><span>Pagar com </span><img src={mpesa} alt="" /></>
+                        <>
+                          <span>Pagar com </span>
+                          <img src={mpesa} alt="" />
+                        </>
                       )}
                     </button>
                   </div>
@@ -466,7 +505,7 @@ if (invalidItems.length > 0) {
           <div className="Order_summary">
             <ul className="productList">
               {cart.map((product) => (
-              <li key={product.cart_item_id} className="productItem">
+                <li key={product.cart_item_id} className="productItem">
                   <div className="product">
                     <div className="productDetails">
                       <div className="productDetails_1">
@@ -480,27 +519,24 @@ if (invalidItems.length > 0) {
                         />
                       </div>
                       <div className="productDetails_2">
-  <h3>{product.name}</h3>
+                        <h3>{product.name}</h3>
 
-  <p>Preço: {product.price} Mzn</p>
-  <p>Quantidade: {product.quantity}</p>
+                        <p>Preço: {product.price} Mzn</p>
+                        <p>Quantidade: {product.quantity}</p>
 
-  {/* ===== DETALHES POR TIPO ===== */}
+                        {/* ===== DETALHES POR TIPO ===== */}
 
-  {product.type === "product" && (
-    <>
-      <p>Cor: {product.color}</p>
-      <p>
-        Tamanho: {product.size} ({product.size_type})
-      </p>
-    </>
-  )}
+                        {product.type === "product" && (
+                          <>
+                            <p>Cor: {product.color}</p>
+                            <p>
+                              Tamanho: {product.size} ({product.size_type})
+                            </p>
+                          </>
+                        )}
 
-  {product.type === "jibbitz" && (
-    <p>Tipo: Jibbitz</p>
-  )}
-</div>
-
+                        {product.type === "jibbitz" && <p>Tipo: Jibbitz</p>}
+                      </div>
                     </div>
                   </div>
                 </li>
@@ -510,19 +546,38 @@ if (invalidItems.length > 0) {
               <h2>RESUMO DO PEDIDO</h2>
               <div className="subtotal">
                 <p>SubTotal</p>
-                <p>0 Mzn</p>
+                <p>
+                  {calculateSubtotal().toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </p>
               </div>
+
               <div className="shipping">
-                <p>Shipping</p>
-                <p>Calculated on next step</p>
+                <p>Entrega (Delivery)</p>
+                <p>Será calculado a seguir</p>
               </div>
+
               <div className="descounted">
-                <p>Voce Poupou</p>
-                <p> 0 Mzn</p>
+                <p>Você Poupou</p>
+                <p style={{ color: "green" }}>
+                  -
+                  {calculateDiscount().toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </p>
               </div>
+
               <div className="total">
-                <p>Total: </p>
-                <p> {calculateTotal()} Mzn</p>
+                <p>Total:</p>
+                <p>
+                  {calculateTotal().toLocaleString("pt-MZ", {
+                    style: "currency",
+                    currency: "MZN",
+                  })}
+                </p>
               </div>
             </div>
 
@@ -599,7 +654,9 @@ if (invalidItems.length > 0) {
                 </button>
                 {activeMethod === "mpesa" && (
                   <div className="M-pesa_payment">
-                    <p>Insira o seu número M-Pesa para confirmar o pagamento.</p>
+                    <p>
+                      Insira o seu número M-Pesa para confirmar o pagamento.
+                    </p>
                     <label>Número de Celular</label>
                     <input
                       type="tel"
@@ -616,7 +673,10 @@ if (invalidItems.length > 0) {
                       {mpesaLoading ? (
                         <span>A processar...</span>
                       ) : (
-                        <><span>Pagar com </span><img src={mpesa} alt="" /></>
+                        <>
+                          <span>Pagar com </span>
+                          <img src={mpesa} alt="" />
+                        </>
                       )}
                     </button>
                   </div>
