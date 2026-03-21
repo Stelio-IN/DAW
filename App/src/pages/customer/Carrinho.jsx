@@ -64,14 +64,14 @@ function Carrinho() {
   };
 
   // Quanto o cliente poupou
-  const calculateDiscount = () => {
-    return cart.reduce((total, product) => {
-      if (product.promotion?.is_on_promotion) {
-        return total + (product.base_price - product.price) * product.quantity;
-      }
-      return total;
-    }, 0);
-  };
+ const calculateDiscount = () => {
+  return cart.reduce((total, product) => {
+    if (product.is_on_promotion) {
+      return total + (product.base_price - product.price) * product.quantity;
+    }
+    return total;
+  }, 0);
+};
 
   const handlePurchaseClick = () => {
     setShowPaymentModal(true);
@@ -150,10 +150,23 @@ function Carrinho() {
                           )}
 
                           {/* Preço */}
-                          <p>
-                            <span>Preço</span>
-                            <span>{product.price} Mzn</span>
-                          </p>
+                         <p>
+  <span>Preço</span>
+  <span>
+    {product.promotion?.is_on_promotion ? (
+      <>
+        <span style={{ textDecoration: "line-through", color: "#888", marginRight: "8px" }}>
+          {product.promo_price} Mzn
+        </span>
+        <span style={{ color: "red" }}>
+          {product.price} Mzn
+        </span>
+      </>
+    ) : (
+      <span>{product.price} Mzn</span>
+    )}
+  </span>
+</p>
 
                           {/* Quantidade */}
                           <p>

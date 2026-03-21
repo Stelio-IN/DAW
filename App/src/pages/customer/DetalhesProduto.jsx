@@ -112,17 +112,17 @@ const ProdutoDetalhado = () => {
       promo_stock_limit: tamanhoSelecionado.promo_stock_limit || null,
       promo_stock_used: tamanhoSelecionado.promo_stock_used || null,
       cost_price: tamanhoSelecionado.cost_price,
-      base_price: tamanhoSelecionado.base_price,
+      base_price: Number(tamanhoSelecionado.base_price),
       is_on_promotion: tamanhoSelecionado.is_on_promotion,
 
       promotion_id: tamanhoSelecionado.promotion?.promotion_id || null,
-promo_price: tamanhoSelecionado.promotion?.promo_price,
+promo_price: Number(tamanhoSelecionado.promotion?.promo_price || 0),
 discount_percentage: tamanhoSelecionado.promotion?.discount_percentage,
 promotion_name: tamanhoSelecionado.promotion?.name,
 promotion_description: tamanhoSelecionado.promotion?.description,
 
       price: tamanhoSelecionado.is_on_promotion
-        ? tamanhoSelecionado.promo_price
+        ? Number(tamanhoSelecionado.promotion?.promo_price)
         : tamanhoSelecionado.base_price,
 
       stock_quantity: tamanhoSelecionado.stock_quantity,
